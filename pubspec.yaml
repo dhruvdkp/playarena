@@ -1,0 +1,55 @@
+name: gamebooking
+description: "Sports Super App - Box Cricket, Football Turfs & Pickleball Booking"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^3.12.1
+  firebase_auth: ^5.5.1
+  firebase_analytics: ^11.5.1
+  firebase_crashlytics: ^4.3.1
+  cloud_firestore: ^5.6.5
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.4
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+  go_router: ^14.8.1
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+  cached_network_image: ^3.4.1
+  flutter_staggered_animations: ^1.1.1
+  shimmer: ^3.0.0
+  table_calendar: ^3.2.0
+  fl_chart: ^0.70.2
+  flutter_rating_bar: ^4.0.1
+  uuid: ^4.5.1
+  share_plus: ^10.1.4
+  crypto: ^3.0.6
+  shared_preferences: ^2.5.4
+  image_picker: ^1.2.1
+  firebase_storage: ^12.4.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/

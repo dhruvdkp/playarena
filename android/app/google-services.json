@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "589299917168",
+    "project_id": "play-arena-e71ef",
+    "storage_bucket": "play-arena-e71ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589299917168:android:64eb00d446c24ad207efb5",
+        "android_client_info": {
+          "package_name": "com.example.gamebooking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589299917168-5dinahdgftpq3b8iqpg5qkkcfe4ffm0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApNb5ZTkagPr0YmqIsj3B0kJOyPapBzVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589299917168-5dinahdgftpq3b8iqpg5qkkcfe4ffm0g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "589299917168-v337qfdjp8a7gpn27i3hc2kq6bdo4gu0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gamebooking"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
