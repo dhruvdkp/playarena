@@ -9,6 +9,9 @@ import 'package:gamebooking/presentation/screens/venues/venue_list_screen.dart';
 import 'package:gamebooking/presentation/screens/venues/venue_detail_screen.dart';
 import 'package:gamebooking/presentation/screens/booking/booking_screen.dart';
 import 'package:gamebooking/presentation/screens/booking/booking_confirmation_screen.dart';
+import 'package:gamebooking/presentation/screens/booking/payment_success_screen.dart';
+import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart';
+import 'package:gamebooking/presentation/screens/settings/settings_screen.dart';
 import 'package:gamebooking/presentation/screens/matchmaker/matchmaker_screen.dart';
 import 'package:gamebooking/presentation/screens/tournament/tournament_list_screen.dart';
 import 'package:gamebooking/presentation/screens/tournament/tournament_detail_screen.dart';
@@ -37,7 +40,10 @@ abstract class AppRoutes {
   static const String venues = '/venues';
   static const String venueDetail = '/venues/:id';
   static const String booking = '/booking/:venueId';
+  static const String paymentSuccess = '/booking/payment-success';
   static const String bookingConfirmation = '/booking/confirmation';
+  static const String myBookings = '/my-bookings';
+  static const String settings = '/settings';
   static const String matchmaker = '/matchmaker';
   static const String tournaments = '/tournaments';
   static const String tournamentDetail = '/tournaments/:id';
@@ -261,6 +267,21 @@ class AppRouter {
       ),
 
       // ── Booking (pushed on top of user shell) ────────────────────────
+      // IMPORTANT: static paths MUST come before the parameterized
+      // `/booking/:venueId` route, otherwise GoRouter matches them as a
+      // venueId parameter and silently renders the wrong screen.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.paymentSuccess,
+        name: 'paymentSuccess',
+        builder: (context, state) => const PaymentSuccessScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.bookingConfirmation,
+        name: 'bookingConfirmation',
+        builder: (context, state) => const BookingConfirmationScreen(),
+      ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: AppRoutes.booking,
@@ -272,9 +293,15 @@ class AppRouter {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.bookingConfirmation,
-        name: 'bookingConfirmation',
-        builder: (context, state) => const BookingConfirmationScreen(),
+        path: AppRoutes.myBookings,
+        name: 'myBookings',
+        builder: (context, state) => const MyBookingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.settings,
+        name: 'settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
 
       // ── Tournaments ─────────────────────────────────────────────────

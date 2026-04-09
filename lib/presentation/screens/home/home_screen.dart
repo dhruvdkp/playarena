@@ -64,13 +64,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        color: AppColors.actionGreen,
-        backgroundColor: AppColors.surface,
-        onRefresh: () async => _loadData(),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
+      // SafeArea keeps scrollable content below the status bar / notch so
+      // it can't slide up under the battery icon when the user scrolls.
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          color: AppColors.actionGreen,
+          backgroundColor: AppColors.surface,
+          onRefresh: () async => _loadData(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Greeting Header ──────────────────────────────────
@@ -117,6 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 32),
             ],
           ),
+          ),
         ),
       ),
     );
@@ -133,12 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
             state is AuthAuthenticated ? state.user.avatarUrl : null;
 
         return Container(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 20,
-            right: 20,
-            bottom: 16,
-          ),
+          // SafeArea around the body already handles status-bar inset.
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,

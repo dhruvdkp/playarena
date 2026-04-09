@@ -280,6 +280,32 @@ class FirestoreService {
     });
   }
 
+  /// Marks a slot as booked by a specific user. Used by the booking flow
+  /// to atomically flip availability + record who holds the slot.
+  Future<void> markSlotBooked(
+    String venueId,
+    String slotId,
+    String userId,
+    String bookingId,
+  ) async {
+    await _venuesRef.doc(venueId).collection('slots').doc(slotId).update({
+      'isAvailable': false,
+      'bookedBy': userId,
+      'bookingId': bookingId,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Releases a slot back to available state — used when a booking is cancelled.
+  Future<void> releaseSlot(String venueId, String slotId) async {
+    await _venuesRef.doc(venueId).collection('slots').doc(slotId).update({
+      'isAvailable': true,
+      'bookedBy': null,
+      'bookingId': null,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   // ===========================================================================
   // Match Requests Collection
   // ===========================================================================

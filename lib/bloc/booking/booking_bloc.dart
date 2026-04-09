@@ -34,7 +34,21 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   ) async {
     emit(const BookingLoading());
     try {
-      final booking = await _bookingRepository.createBooking(event.booking);
+      // ── BYPASSED PAYMENT GATEWAY (test mode) ──────────────────────────
+      // Real payment integration (Razorpay/Stripe) is not yet wired up.
+      // For now we simulate a short processing delay and treat every
+      // booking as paid. The booking is persisted with paymentStatus =
+      // completed by the caller (booking_screen.dart).
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      // Force payment status to completed regardless of what the caller
+      // sent — guarantees the bypass works even if a screen forgets it.
+      final paidBooking = event.booking.copyWith(
+        paymentStatus: PaymentStatus.completed,
+        bookingStatus: BookingStatus.upcoming,
+      );
+
+      final booking = await _bookingRepository.createBooking(paidBooking);
       _resetInProgressState();
       emit(BookingCreated(booking: booking));
     } catch (e) {

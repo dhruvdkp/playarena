@@ -1,0 +1,296 @@
+:root {
+    --primary-color: #0d47a1;
+    --secondary-color: #00838f;
+    --text-color: #2c3e50;
+    --label-color: #546e7a;
+    --border-color: #e0e6ed;
+    --bg-color: #f4f7f9;
+    --white: #ffffff;
+    --font-main: 'Inter', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Container styling for the letter */
+.letter-container {
+    background-color: var(--white);
+    width: 100%;
+    max-width: 800px;
+    min-height: 1050px;
+    padding: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle corner decoration */
+.letter-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 150px;
+    background: linear-gradient(135deg, transparent 50%, rgba(13, 71, 161, 0.05) 50%);
+    z-index: 0;
+}
+
+/* Header Sections */
+.letter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+}
+
+.company-info h1 {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.tagline {
+    font-size: 14px;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.contact-details {
+    text-align: right;
+    font-size: 12px;
+    color: var(--label-color);
+}
+
+.contact-details p {
+    margin-bottom: 4px;
+}
+
+.divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    margin-bottom: 40px;
+    opacity: 0.8;
+}
+
+/* Main Body Content */
+.letter-title {
+    text-align: center;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-bottom: 40px;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+}
+
+.project-summary {
+    background-color: rgba(13, 71, 161, 0.03);
+    padding: 20px;
+    border-radius: 6px;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 30px;
+}
+
+.summary-item {
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+}
+
+.label {
+    font-weight: 600;
+    color: var(--label-color);
+    min-width: 140px;
+}
+
+.value {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.certification-text {
+    margin-bottom: 30px;
+}
+
+.candidates-table-container {
+    margin: 20px 0;
+}
+
+.candidates-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.candidates-table th, .candidates-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.candidates-table th {
+    background-color: #f8fafc;
+    color: var(--label-color);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.candidates-table td {
+    font-size: 15px;
+}
+
+.working-context {
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.project-details {
+    margin-bottom: 30px;
+}
+
+.detail-block {
+    margin-bottom: 20px;
+    text-align: justify;
+    font-size: 15px;
+    color: #455a64;
+}
+
+.closing {
+    font-weight: 500;
+    margin-bottom: 60px;
+}
+
+/* Footer Section */
+.footer-columns {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+}
+
+.supervisor-details h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.supervisor-details p {
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.supervisor-details .name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.signature-section {
+    text-align: center;
+}
+
+.signature-label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.seal-signature {
+    font-size: 13px;
+    color: var(--label-color);
+    border-top: 1px dashed var(--label-color);
+    padding-top: 10px;
+    width: 150px;
+}
+
+.office-address {
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--label-color);
+}
+
+/* Action Buttons */
+.action-buttons {
+    margin-top: 30px;
+}
+
+.print-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(13, 71, 161, 0.3);
+}
+
+.print-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 71, 161, 0.4);
+}
+
+/* Print Specific Styles */
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+    }
+    .letter-container {
+        box-shadow: none;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .no-print {
+        display: none;
+    }
+    .letter-container::before {
+        display: none;
+    }
+}

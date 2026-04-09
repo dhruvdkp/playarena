@@ -12,18 +12,28 @@ class BookingRepository {
     json.remove('id');
     final id = await _firestoreService.createBooking(json);
 
-    // Mark the slot as unavailable in Firestore
+    // Mark the slot as booked by this user (records bookedBy + bookingId).
+    // If the slot document doesn't exist (demo data), don't fail the booking
+    // — but log other errors so real issues aren't hidden.
     try {
-      await _firestoreService.updateSlotAvailability(
+      await _firestoreService.markSlotBooked(
         booking.venueId,
         booking.slot.id,
-        false,
+        booking.userId,
+        id,
       );
-    } catch (_) {
-      // Slot might not exist in subcollection (e.g., demo data) — ignore
+    } catch (e) {
+      // ignore: avoid_print
+      print('[BookingRepository] markSlotBooked failed: $e');
     }
 
-    return booking.copyWith(id: id);
+    return booking.copyWith(
+      id: id,
+      slot: booking.slot.copyWith(
+        isAvailable: false,
+        bookedBy: booking.userId,
+      ),
+    );
   }
 
   Future<List<BookingModel>> getUserBookings(String userId) async {
@@ -38,10 +48,23 @@ class BookingRepository {
   }
 
   Future<BookingModel> cancelBooking(String id) async {
+    // Load first so we know which slot to release.
+    final existing = await _firestoreService.getBookingById(id);
+    if (existing == null) throw Exception('Booking not found');
+    final booking = BookingModel.fromJson(existing);
+
     await _firestoreService.cancelBooking(id);
-    final data = await _firestoreService.getBookingById(id);
-    if (data == null) throw Exception('Booking not found');
-    return BookingModel.fromJson(data);
+
+    // Release the slot back to available so others can book it.
+    try {
+      await _firestoreService.releaseSlot(booking.venueId, booking.slot.id);
+    } catch (e) {
+      // ignore: avoid_print
+      print('[BookingRepository] releaseSlot failed: $e');
+    }
+
+    final updated = await _firestoreService.getBookingById(id);
+    return BookingModel.fromJson(updated!);
   }
 
   Future<List<BookingModel>> getBookingHistory(String userId) async {

@@ -29,6 +29,7 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
   final _peakPriceController = TextEditingController();
   final _happyHourPriceController = TextEditingController();
   final _rulesController = TextEditingController();
+  final _imageUrlController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   bool _isUploading = false;
 
@@ -89,7 +90,45 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
     _peakPriceController.dispose();
     _happyHourPriceController.dispose();
     _rulesController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
+  }
+
+  /// Adds an image URL pasted by the admin to the venue's image list.
+  /// Validates that the URL is non-empty and looks like a valid http(s) URL.
+  void _addImageUrl() {
+    final url = _imageUrlController.text.trim();
+    if (url.isEmpty) return;
+
+    final uri = Uri.tryParse(url);
+    final isValid = uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid http(s) image URL'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    if (_imageUrls.contains(url)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('That URL is already added'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _imageUrls.add(url);
+      _imageUrlController.clear();
+    });
   }
 
   Future<void> _pickTime(bool isOpen) async {
@@ -558,6 +597,45 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
                   foregroundColor: AppColors.actionGreen,
                   side: const BorderSide(color: AppColors.actionGreen),
                   padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        // ── Paste image URL ─────────────────────────────────────────
+        // Lets the admin add an image without using device storage —
+        // useful when hosting images on a CDN, Imgur, Unsplash, etc.
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _imageUrlController,
+                style: const TextStyle(color: AppColors.textPrimary),
+                keyboardType: TextInputType.url,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _addImageUrl(),
+                decoration: const InputDecoration(
+                  labelText: 'Paste image URL',
+                  hintText: 'https://example.com/photo.jpg',
+                  prefixIcon: Icon(Icons.link),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: _addImageUrl,
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('Add'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.actionGreen,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

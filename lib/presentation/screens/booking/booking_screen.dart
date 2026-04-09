@@ -61,7 +61,9 @@ class _BookingScreenState extends State<BookingScreen> {
       body: BlocConsumer<BookingBloc, BookingState>(
         listener: (context, state) {
           if (state is BookingCreated) {
-            context.go(AppRoutes.bookingConfirmation);
+            // Payment is bypassed for testing — go straight to the
+            // payment-success screen which then leads to booking details.
+            context.go(AppRoutes.paymentSuccess);
           } else if (state is BookingError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -823,7 +825,10 @@ class _BookingScreenState extends State<BookingScreen> {
                       slot: slot,
                       addOns: selectedAddOns,
                       totalAmount: total,
-                      paymentStatus: PaymentStatus.pending,
+                      // Payment is bypassed for testing — booking is
+                      // recorded as paid immediately. Replace with real
+                      // gateway result when integrating Razorpay/Stripe.
+                      paymentStatus: PaymentStatus.completed,
                       bookingStatus: BookingStatus.upcoming,
                       splitPayment: splitPayments,
                       createdAt: DateTime.now(),

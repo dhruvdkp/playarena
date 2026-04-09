@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:gamebooking/bloc/booking/booking_bloc.dart';
 import 'package:gamebooking/bloc/venue/venue_bloc.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
 import 'package:gamebooking/core/constants/app_strings.dart';
@@ -55,6 +56,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   void _onSlotSelected(SlotModel slot) {
     setState(() => _selectedSlotId = slot.id);
+    // Push the chosen slot into BookingBloc so the booking screen sees the
+    // correct dynamic price (regular / peak / happy hour) instead of falling
+    // back to ₹0 or stale state.
+    context.read<BookingBloc>().add(BookingSelectSlot(slot: slot));
   }
 
   @override

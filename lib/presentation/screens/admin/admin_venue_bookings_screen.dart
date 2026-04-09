@@ -30,15 +30,18 @@ class _AdminVenueBookingsScreenState extends State<AdminVenueBookingsScreen> {
   }
 
   Future<void> _loadBookings() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       final data =
           await _firestoreService.getBookingsByVenue(widget.venueId);
+      if (!mounted) return;
       setState(() {
         _bookings = data.map((j) => BookingModel.fromJson(j)).toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }

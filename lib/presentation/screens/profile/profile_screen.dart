@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:gamebooking/bloc/auth/auth_bloc.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
 import 'package:gamebooking/core/routes/app_router.dart';
+import 'package:gamebooking/data/models/booking_model.dart';
 import 'package:gamebooking/data/models/user_model.dart';
+import 'package:gamebooking/data/services/firestore_service.dart';
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -75,6 +77,8 @@ class ProfileScreen extends StatelessWidget {
           _buildAvatarSection(user),
           const SizedBox(height: 24),
           _buildStatsRow(user),
+          const SizedBox(height: 12),
+          _buildMemberSinceRow(user),
           const SizedBox(height: 24),
           _buildMenuSection(context),
           const SizedBox(height: 32),
@@ -199,6 +203,11 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildStatsRow(UserModel user) {
+    // Live-counts bookings from Firestore so the numbers reflect actual
+    // state instead of the stale `user.totalBookings` field (which is only
+    // set once at sign-in and never updated when a booking is created).
+    final firestoreService = FirestoreService();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -207,25 +216,89 @@ class ProfileScreen extends StatelessWidget {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(14),
         ),
+        child: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: firestoreService.userBookingsStream(user.id),
+          builder: (context, snapshot) {
+            final bookings = (snapshot.data ?? [])
+                .map((j) {
+                  try {
+                    return BookingModel.fromJson(j);
+                  } catch (_) {
+                    return null;
+                  }
+                })
+                .whereType<BookingModel>()
+                .toList();
+
+            final total = bookings.length;
+            final upcoming = bookings
+                .where((b) => b.bookingStatus == BookingStatus.upcoming)
+                .length;
+            final completed = bookings
+                .where((b) => b.bookingStatus == BookingStatus.completed)
+                .length;
+
+            // Show a subtle loading state for the very first frame so the
+            // user doesn't see a flash of "0".
+            final isLoading =
+                snapshot.connectionState == ConnectionState.waiting &&
+                    !snapshot.hasData;
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _statItem(
+                  isLoading ? '—' : '$total',
+                  'Total Bookings',
+                  Icons.calendar_month,
+                ),
+                Container(width: 1, height: 44, color: AppColors.divider),
+                _statItem(
+                  isLoading ? '—' : '$upcoming',
+                  'Upcoming',
+                  Icons.event_available,
+                ),
+                Container(width: 1, height: 44, color: AppColors.divider),
+                _statItem(
+                  isLoading ? '—' : '$completed',
+                  'Completed',
+                  Icons.check_circle_outline,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberSinceRow(UserModel user) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(14),
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _statItem(
-              '${user.totalBookings}',
-              'Total Bookings',
-              Icons.calendar_month,
+            const Icon(Icons.card_membership,
+                color: AppColors.actionGreen, size: 20),
+            const SizedBox(width: 12),
+            const Text(
+              'Member since',
+              style:
+                  TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
-            Container(width: 1, height: 44, color: AppColors.divider),
-            _statItem(
-              '${user.favoriteVenues.length}',
-              'Favorite Venues',
-              Icons.favorite,
-            ),
-            Container(width: 1, height: 44, color: AppColors.divider),
-            _statItem(
+            const Spacer(),
+            Text(
               DateFormat('MMM yyyy').format(user.createdAt),
-              'Member Since',
-              Icons.card_membership,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -273,9 +346,7 @@ class ProfileScreen extends StatelessWidget {
             _menuItem(
               icon: Icons.book_outlined,
               label: 'My Bookings',
-              onTap: () {
-                // TODO: Add my bookings route
-              },
+              onTap: () => context.push(AppRoutes.myBookings),
             ),
             const Divider(color: AppColors.divider, height: 1, indent: 56),
             _menuItem(
@@ -297,9 +368,7 @@ class ProfileScreen extends StatelessWidget {
             _menuItem(
               icon: Icons.settings_outlined,
               label: 'Settings',
-              onTap: () {
-                // TODO: Add settings route
-              },
+              onTap: () => context.push(AppRoutes.settings),
             ),
             const Divider(color: AppColors.divider, height: 1, indent: 56),
             _menuItem(

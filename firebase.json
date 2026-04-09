@@ -1,1 +1,34 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"play-arena-e71ef","appId":"1:589299917168:android:64eb00d446c24ad207efb5","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"play-arena-e71ef","appId":"1:589299917168:ios:9828732eb0713d4f07efb5","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"play-arena-e71ef","configurations":{"android":"1:589299917168:android:64eb00d446c24ad207efb5","ios":"1:589299917168:ios:9828732eb0713d4f07efb5","web":"1:589299917168:web:ef792769f23039e007efb5"}}}}}}
+{
+  "firestore": {
+    "indexes": "firestore.indexes.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "play-arena-e71ef",
+          "appId": "1:589299917168:android:64eb00d446c24ad207efb5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "play-arena-e71ef",
+          "appId": "1:589299917168:ios:9828732eb0713d4f07efb5",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "play-arena-e71ef",
+          "configurations": {
+            "android": "1:589299917168:android:64eb00d446c24ad207efb5",
+            "ios": "1:589299917168:ios:9828732eb0713d4f07efb5",
+            "web": "1:589299917168:web:ef792769f23039e007efb5"
+          }
+        }
+      }
+    }
+  }
+}

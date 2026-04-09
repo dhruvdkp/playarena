@@ -31,14 +31,17 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
   }
 
   Future<void> _loadBookings() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       final data = await _firestoreService.getAllBookings();
+      if (!mounted) return;
       setState(() {
         _allBookings = data.map((j) => BookingModel.fromJson(j)).toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
