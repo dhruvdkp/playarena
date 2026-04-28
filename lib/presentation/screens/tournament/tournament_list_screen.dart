@@ -38,7 +38,7 @@ class _TournamentListScreenState extends State<TournamentListScreen>
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Tournaments',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -46,7 +46,7 @@ class _TournamentListScreenState extends State<TournamentListScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.actionGreen,
@@ -82,7 +82,7 @@ class _TournamentListScreenState extends State<TournamentListScreen>
                   const SizedBox(height: 12),
                   Text(
                     state.message,
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: AppColors.textSecondary, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -144,14 +144,14 @@ class _TournamentListScreenState extends State<TournamentListScreen>
             const SizedBox(height: 16),
             Text(
               emptyMsg,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Check back later for updates',
               style:
                   TextStyle(color: AppColors.textSecondary, fontSize: 14),
@@ -209,7 +209,7 @@ class _TournamentListScreenState extends State<TournamentListScreen>
                       Expanded(
                         child: Text(
                           tournament.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textPrimary,
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
@@ -235,13 +235,13 @@ class _TournamentListScreenState extends State<TournamentListScreen>
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Icon(Icons.location_on,
+                      Icon(Icons.location_on,
                           color: AppColors.textSecondary, size: 14),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           tournament.venueName,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: AppColors.textSecondary, fontSize: 13),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -327,13 +327,13 @@ class _TournamentListScreenState extends State<TournamentListScreen>
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
               color: AppColors.textDisabled, fontSize: 11),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w600,

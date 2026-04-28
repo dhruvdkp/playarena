@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
 import 'package:gamebooking/data/models/booking_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
+import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart'
+    show effectiveBookingStatus;
 
 class AdminBookingsScreen extends StatefulWidget {
   const AdminBookingsScreen({super.key});
@@ -48,7 +50,9 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
 
   List<BookingModel> _filteredBookings(BookingStatus? status) {
     if (status == null) return _allBookings;
-    return _allBookings.where((b) => b.bookingStatus == status).toList();
+    return _allBookings
+        .where((b) => effectiveBookingStatus(b) == status)
+        .toList();
   }
 
   Future<void> _cancelBooking(BookingModel booking) async {
@@ -57,16 +61,16 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Cancel Booking',
+        title: Text('Cancel Booking',
             style: TextStyle(color: AppColors.textPrimary)),
         content: Text(
           'Cancel booking by ${booking.userName} at ${booking.venueName}?',
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('No',
+            child: Text('No',
                 style: TextStyle(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
@@ -91,7 +95,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
-        title: const Text(
+        title: Text(
           'All Bookings',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -102,7 +106,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
         actions: [
           IconButton(
             onPressed: _loadBookings,
-            icon: const Icon(Icons.refresh, color: AppColors.textSecondary),
+            icon: Icon(Icons.refresh, color: AppColors.textSecondary),
           ),
         ],
         bottom: TabBar(
@@ -147,12 +151,12 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.receipt_long_outlined,
+            Icon(Icons.receipt_long_outlined,
                 size: 48, color: AppColors.textDisabled),
             const SizedBox(height: 12),
             Text(
               status == null ? 'No bookings yet' : 'No ${status.name} bookings',
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -170,7 +174,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
           final booking = bookings[index];
           return _AdminBookingCard(
             booking: booking,
-            onCancel: booking.bookingStatus == BookingStatus.upcoming
+            onCancel: effectiveBookingStatus(booking) == BookingStatus.upcoming
                 ? () => _cancelBooking(booking)
                 : null,
           );
@@ -186,8 +190,10 @@ class _AdminBookingCard extends StatelessWidget {
 
   const _AdminBookingCard({required this.booking, this.onCancel});
 
+  BookingStatus get _effectiveStatus => effectiveBookingStatus(booking);
+
   Color get _statusColor {
-    switch (booking.bookingStatus) {
+    switch (_effectiveStatus) {
       case BookingStatus.upcoming:
         return AppColors.footballAccent;
       case BookingStatus.ongoing:
@@ -241,7 +247,7 @@ class _AdminBookingCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     booking.userName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -256,7 +262,7 @@ class _AdminBookingCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    booking.bookingStatus.name.toUpperCase(),
+                    _effectiveStatus.name.toUpperCase(),
                     style: TextStyle(
                       color: _statusColor,
                       fontSize: 10,
@@ -373,7 +379,7 @@ class _DetailRow extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
               color: AppColors.textSecondary, fontSize: 13),
         ),
         Expanded(

@@ -7,6 +7,8 @@ import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/data/models/booking_model.dart';
 import 'package:gamebooking/data/models/venue_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
+import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart'
+    show effectiveBookingStatus;
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -74,7 +76,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   int get _upcomingBookings {
     return _allBookings
-        .where((b) => b.bookingStatus == BookingStatus.upcoming)
+        .where((b) => effectiveBookingStatus(b) == BookingStatus.upcoming)
         .length;
   }
 
@@ -87,7 +89,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Admin Dashboard',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -111,7 +113,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               context.read<AuthBloc>().add(const AuthLogoutRequested());
               context.go(AppRoutes.login);
             },
-            icon: const Icon(Icons.logout, color: AppColors.textSecondary),
+            icon: Icon(Icons.logout, color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -186,7 +188,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Quick Actions',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -247,7 +249,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Recent Bookings',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -275,7 +277,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'No bookings yet',
                 style: TextStyle(color: AppColors.textSecondary),
@@ -295,7 +297,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Your Venues',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -326,10 +328,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             child: Center(
               child: Column(
                 children: [
-                  const Icon(Icons.stadium_outlined,
+                  Icon(Icons.stadium_outlined,
                       size: 48, color: AppColors.textDisabled),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'No venues added yet',
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
@@ -419,7 +421,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 11,
             ),
@@ -484,8 +486,10 @@ class _BookingTile extends StatelessWidget {
 
   const _BookingTile({required this.booking});
 
+  BookingStatus get _effectiveStatus => effectiveBookingStatus(booking);
+
   Color get _statusColor {
-    switch (booking.bookingStatus) {
+    switch (_effectiveStatus) {
       case BookingStatus.upcoming:
         return AppColors.footballAccent;
       case BookingStatus.ongoing:
@@ -530,7 +534,7 @@ class _BookingTile extends StatelessWidget {
               children: [
                 Text(
                   booking.userName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -538,7 +542,7 @@ class _BookingTile extends StatelessWidget {
                 ),
                 Text(
                   '${booking.venueName} · ${booking.slot.startTime}–${booking.slot.endTime}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                   ),
@@ -564,7 +568,7 @@ class _BookingTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  booking.bookingStatus.name.toUpperCase(),
+                  _effectiveStatus.name.toUpperCase(),
                   style: TextStyle(
                     color: _statusColor,
                     fontSize: 9,
@@ -626,7 +630,7 @@ class _VenueCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     venue.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -640,7 +644,7 @@ class _VenueCard extends StatelessWidget {
             const Spacer(),
             Text(
               venue.city,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
               ),
@@ -659,7 +663,7 @@ class _VenueCard extends StatelessWidget {
                 ),
                 Text(
                   '$bookingCount bookings',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textDisabled,
                     fontSize: 11,
                   ),

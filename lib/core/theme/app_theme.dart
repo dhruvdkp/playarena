@@ -4,155 +4,148 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:gamebooking/core/constants/app_colors.dart';
 
-/// Provides the single dark [ThemeData] used throughout GameBooking.
+/// Builds the dark and light [ThemeData]s used throughout GameBooking.
 ///
-/// Every widget style is explicitly configured so that the stadium-night
-/// aesthetic is consistent across the entire app.
+/// Both variants are produced from a single `_build()` helper so their
+/// widget-theme structure is byte-for-byte identical — only the palette
+/// differs. This is a **requirement** for `AnimatedTheme.lerp` to succeed
+/// when the user toggles modes at runtime; if one theme defines (e.g.)
+/// an `outlinedButtonTheme` with a `GoogleFonts.poppins(...)` text style
+/// and the other doesn't, Flutter throws
+/// `"Cannot interpolate between these two TextStyles"` the moment the
+/// animated crossfade kicks in.
 class AppTheme {
   AppTheme._();
 
-  // ── Private helpers ───────────────────────────────────────────────────
+  // ── Palettes ──────────────────────────────────────────────────────────
 
-  static TextTheme get _textTheme {
+  static const _Palette _darkPalette = _Palette(
+    primaryBackground: Color(0xFF0F172A),
+    surface: Color(0xFF1E293B),
+    card: Color(0xFF334155),
+    divider: Color(0xFF475569),
+    textPrimary: Color(0xFFF8FAFC),
+    textSecondary: Color(0xFF94A3B8),
+    textDisabled: Color(0xFF64748B),
+  );
+
+  static const _Palette _lightPalette = _Palette(
+    // Soft gray page — white surfaces/cards pop cleanly on this.
+    primaryBackground: Color(0xFFF1F5F9),
+    // Pure white for AppBar, cards, sheets, dialogs, input fields, etc.
+    // — visually distinct from the gray page bg.
+    surface: Color(0xFFFFFFFF),
+    // Cards on the page also pure white (same elevation feel as surface).
+    card: Color(0xFFFFFFFF),
+    divider: Color(0xFFCBD5E1),
+    textPrimary: Color(0xFF0F172A),
+    textSecondary: Color(0xFF475569),
+    textDisabled: Color(0xFF94A3B8),
+  );
+
+  // ── Shared TextTheme builder ─────────────────────────────────────────
+
+  static TextTheme _buildTextTheme(_Palette p) {
     return GoogleFonts.poppinsTextTheme().copyWith(
       displayLarge: GoogleFonts.poppins(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.5,
-      ),
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: p.textPrimary,
+          letterSpacing: -0.5),
       displayMedium: GoogleFonts.poppins(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.25,
-      ),
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: p.textPrimary,
+          letterSpacing: -0.25),
       displaySmall: GoogleFonts.poppins(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 24, fontWeight: FontWeight.w600, color: p.textPrimary),
       headlineLarge: GoogleFonts.poppins(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 22, fontWeight: FontWeight.w600, color: p.textPrimary),
       headlineMedium: GoogleFonts.poppins(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 20, fontWeight: FontWeight.w600, color: p.textPrimary),
       headlineSmall: GoogleFonts.poppins(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 18, fontWeight: FontWeight.w600, color: p.textPrimary),
       titleLarge: GoogleFonts.poppins(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 16, fontWeight: FontWeight.w600, color: p.textPrimary),
       titleMedium: GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 14, fontWeight: FontWeight.w600, color: p.textPrimary),
       titleSmall: GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 12, fontWeight: FontWeight.w600, color: p.textPrimary),
       bodyLarge: GoogleFonts.poppins(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 16, fontWeight: FontWeight.w400, color: p.textPrimary),
       bodyMedium: GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-      ),
+          fontSize: 14, fontWeight: FontWeight.w400, color: p.textPrimary),
       bodySmall: GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      ),
+          fontSize: 12, fontWeight: FontWeight.w400, color: p.textSecondary),
       labelLarge: GoogleFonts.poppins(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-        letterSpacing: 0.5,
-      ),
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: p.textPrimary,
+          letterSpacing: 0.5),
       labelMedium: GoogleFonts.poppins(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
-      ),
+          fontSize: 12, fontWeight: FontWeight.w500, color: p.textSecondary),
       labelSmall: GoogleFonts.poppins(
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
-        letterSpacing: 0.5,
-      ),
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: p.textSecondary,
+          letterSpacing: 0.5),
     );
   }
 
-  // ── Public Theme ──────────────────────────────────────────────────────
+  // ── Shared theme builder ─────────────────────────────────────────────
 
-  static ThemeData get darkTheme {
-    final textTheme = _textTheme;
-
+  static ThemeData _build({
+    required Brightness brightness,
+    required _Palette p,
+  }) {
+    final isDark = brightness == Brightness.dark;
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.primaryBackground,
-      textTheme: textTheme,
+      brightness: brightness,
+      scaffoldBackgroundColor: p.primaryBackground,
+      textTheme: _buildTextTheme(p),
 
-      // ── Color Scheme ────────────────────────────────────────────────
-      colorScheme: const ColorScheme.dark(
+      // ── ColorScheme ───────────────────────────────────────────────
+      colorScheme: (isDark ? const ColorScheme.dark() : const ColorScheme.light())
+          .copyWith(
         primary: AppColors.actionGreen,
-        onPrimary: AppColors.primaryBackground,
+        onPrimary: isDark ? p.primaryBackground : Colors.white,
         secondary: AppColors.accentYellow,
-        onSecondary: AppColors.primaryBackground,
+        onSecondary: p.primaryBackground,
         error: AppColors.error,
-        onError: AppColors.textPrimary,
-        surface: AppColors.surface,
-        onSurface: AppColors.textPrimary,
-        outline: AppColors.divider,
+        onError: isDark ? p.textPrimary : Colors.white,
+        surface: p.surface,
+        onSurface: p.textPrimary,
+        outline: p.divider,
       ),
 
-      // ── AppBar ──────────────────────────────────────────────────────
+      // ── AppBar ────────────────────────────────────────────────────
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 2,
-        backgroundColor: AppColors.primaryBackground,
+        backgroundColor: p.primaryBackground,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
-        systemOverlayStyle: const SystemUiOverlayStyle(
+        systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         ),
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
-        iconTheme: const IconThemeData(
-          color: AppColors.textPrimary,
-          size: 24,
-        ),
-        actionsIconTheme: const IconThemeData(
-          color: AppColors.textPrimary,
-          size: 24,
-        ),
+        iconTheme: IconThemeData(color: p.textPrimary, size: 24),
+        actionsIconTheme: IconThemeData(color: p.textPrimary, size: 24),
       ),
 
-      // ── Card ────────────────────────────────────────────────────────
+      // ── Card ──────────────────────────────────────────────────────
       cardTheme: CardThemeData(
-        color: AppColors.card,
+        color: p.card,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        elevation: isDark ? 0 : 1,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -160,13 +153,13 @@ class AppTheme {
         clipBehavior: Clip.antiAlias,
       ),
 
-      // ── Elevated Button ─────────────────────────────────────────────
+      // ── Elevated Button ───────────────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.actionGreen,
-          foregroundColor: AppColors.primaryBackground,
-          disabledBackgroundColor: AppColors.divider,
-          disabledForegroundColor: AppColors.textDisabled,
+          foregroundColor: isDark ? p.primaryBackground : Colors.white,
+          disabledBackgroundColor: p.divider,
+          disabledForegroundColor: p.textDisabled,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
@@ -179,7 +172,7 @@ class AppTheme {
         ),
       ),
 
-      // ── Outlined Button ─────────────────────────────────────────────
+      // ── Outlined Button ───────────────────────────────────────────
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.actionGreen,
@@ -195,7 +188,7 @@ class AppTheme {
         ),
       ),
 
-      // ── Text Button ─────────────────────────────────────────────────
+      // ── Text Button ───────────────────────────────────────────────
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.actionGreen,
@@ -206,51 +199,51 @@ class AppTheme {
         ),
       ),
 
-      // ── Icon Button ─────────────────────────────────────────────────
+      // ── Icon Button ───────────────────────────────────────────────
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: p.textPrimary,
         ),
       ),
 
-      // ── Floating Action Button ──────────────────────────────────────
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      // ── FAB ───────────────────────────────────────────────────────
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.actionGreen,
-        foregroundColor: AppColors.primaryBackground,
+        foregroundColor: isDark ? p.primaryBackground : Colors.white,
         elevation: 4,
-        shape: StadiumBorder(),
+        shape: const StadiumBorder(),
       ),
 
-      // ── Input Decoration (TextField) ────────────────────────────────
+      // ── Input Decoration ──────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: p.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         hintStyle: GoogleFonts.poppins(
           fontSize: 14,
-          color: AppColors.textDisabled,
+          color: p.textDisabled,
         ),
         labelStyle: GoogleFonts.poppins(
           fontSize: 14,
-          color: AppColors.textSecondary,
+          color: p.textSecondary,
         ),
         floatingLabelStyle: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: AppColors.actionGreen,
         ),
-        prefixIconColor: AppColors.textSecondary,
-        suffixIconColor: AppColors.textSecondary,
+        prefixIconColor: p.textSecondary,
+        suffixIconColor: p.textSecondary,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderSide: BorderSide(color: p.divider),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderSide: BorderSide(color: p.divider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -273,11 +266,11 @@ class AppTheme {
         ),
       ),
 
-      // ── Bottom Navigation Bar ───────────────────────────────────────
+      // ── Bottom Navigation Bar ─────────────────────────────────────
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: p.surface,
         selectedItemColor: AppColors.actionGreen,
-        unselectedItemColor: AppColors.textSecondary,
+        unselectedItemColor: p.textSecondary,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
         showUnselectedLabels: true,
@@ -291,9 +284,9 @@ class AppTheme {
         ),
       ),
 
-      // ── Navigation Bar (Material 3) ─────────────────────────────────
+      // ── Navigation Bar (Material 3) ───────────────────────────────
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: p.surface,
         indicatorColor: AppColors.actionGreen.withValues(alpha: 0.15),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
@@ -309,7 +302,7 @@ class AppTheme {
           return GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.w400,
-            color: AppColors.textSecondary,
+            color: p.textSecondary,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -319,29 +312,26 @@ class AppTheme {
               size: 24,
             );
           }
-          return const IconThemeData(
-            color: AppColors.textSecondary,
-            size: 24,
-          );
+          return IconThemeData(color: p.textSecondary, size: 24);
         }),
       ),
 
-      // ── Chip ────────────────────────────────────────────────────────
+      // ── Chip ──────────────────────────────────────────────────────
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: p.surface,
         selectedColor: AppColors.actionGreen.withValues(alpha: 0.15),
-        disabledColor: AppColors.surface,
+        disabledColor: p.surface,
         labelStyle: GoogleFonts.poppins(
           fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
         secondaryLabelStyle: GoogleFonts.poppins(
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: AppColors.actionGreen,
         ),
-        side: const BorderSide(color: AppColors.divider),
+        side: BorderSide(color: p.divider),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -349,10 +339,10 @@ class AppTheme {
         showCheckmark: false,
       ),
 
-      // ── Tab Bar ─────────────────────────────────────────────────────
+      // ── Tab Bar ───────────────────────────────────────────────────
       tabBarTheme: TabBarThemeData(
         labelColor: AppColors.actionGreen,
-        unselectedLabelColor: AppColors.textSecondary,
+        unselectedLabelColor: p.textSecondary,
         indicatorColor: AppColors.actionGreen,
         indicatorSize: TabBarIndicatorSize.label,
         labelStyle: GoogleFonts.poppins(
@@ -366,21 +356,21 @@ class AppTheme {
         dividerColor: Colors.transparent,
       ),
 
-      // ── Bottom Sheet ────────────────────────────────────────────────
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.surface,
+      // ── Bottom Sheet ──────────────────────────────────────────────
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: p.surface,
         surfaceTintColor: Colors.transparent,
-        modalBackgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
+        modalBackgroundColor: p.surface,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         showDragHandle: true,
-        dragHandleColor: AppColors.divider,
+        dragHandleColor: p.divider,
       ),
 
-      // ── Dialog ──────────────────────────────────────────────────────
+      // ── Dialog ────────────────────────────────────────────────────
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: p.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 8,
         shape: RoundedRectangleBorder(
@@ -389,20 +379,20 @@ class AppTheme {
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
         contentTextStyle: GoogleFonts.poppins(
           fontSize: 14,
-          color: AppColors.textSecondary,
+          color: p.textSecondary,
         ),
       ),
 
-      // ── Snack Bar ───────────────────────────────────────────────────
+      // ── Snack Bar ─────────────────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.card,
+        backgroundColor: p.card,
         contentTextStyle: GoogleFonts.poppins(
           fontSize: 14,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -411,45 +401,45 @@ class AppTheme {
         actionTextColor: AppColors.actionGreen,
       ),
 
-      // ── Divider ─────────────────────────────────────────────────────
-      dividerTheme: const DividerThemeData(
-        color: AppColors.divider,
+      // ── Divider ───────────────────────────────────────────────────
+      dividerTheme: DividerThemeData(
+        color: p.divider,
         thickness: 0.5,
         space: 1,
       ),
 
-      // ── List Tile ───────────────────────────────────────────────────
+      // ── List Tile ─────────────────────────────────────────────────
       listTileTheme: ListTileThemeData(
         tileColor: Colors.transparent,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
         subtitleTextStyle: GoogleFonts.poppins(
           fontSize: 12,
-          color: AppColors.textSecondary,
+          color: p.textSecondary,
         ),
-        iconColor: AppColors.textSecondary,
+        iconColor: p.textSecondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
 
-      // ── Switch / Checkbox / Radio ───────────────────────────────────
+      // ── Switch / Checkbox / Radio ─────────────────────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return AppColors.actionGreen;
           }
-          return AppColors.textSecondary;
+          return p.textSecondary;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return AppColors.actionGreen.withValues(alpha: 0.3);
           }
-          return AppColors.divider;
+          return p.divider;
         }),
       ),
       checkboxTheme: CheckboxThemeData(
@@ -459,8 +449,9 @@ class AppTheme {
           }
           return Colors.transparent;
         }),
-        checkColor: WidgetStateProperty.all(AppColors.primaryBackground),
-        side: const BorderSide(color: AppColors.divider, width: 1.5),
+        checkColor: WidgetStateProperty.all(
+            isDark ? p.primaryBackground : Colors.white),
+        side: BorderSide(color: p.divider, width: 1.5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),
@@ -470,28 +461,28 @@ class AppTheme {
           if (states.contains(WidgetState.selected)) {
             return AppColors.actionGreen;
           }
-          return AppColors.textSecondary;
+          return p.textSecondary;
         }),
       ),
 
-      // ── Progress Indicator ──────────────────────────────────────────
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
+      // ── Progress Indicator ────────────────────────────────────────
+      progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.actionGreen,
-        linearTrackColor: AppColors.divider,
-        circularTrackColor: AppColors.divider,
+        linearTrackColor: p.divider,
+        circularTrackColor: p.divider,
       ),
 
-      // ── Date / Time Picker ──────────────────────────────────────────
+      // ── Date / Time Picker ────────────────────────────────────────
       datePickerTheme: DatePickerThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: p.surface,
         surfaceTintColor: Colors.transparent,
-        headerBackgroundColor: AppColors.primaryBackground,
-        headerForegroundColor: AppColors.textPrimary,
+        headerBackgroundColor: p.primaryBackground,
+        headerForegroundColor: p.textPrimary,
         dayForegroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryBackground;
+            return isDark ? p.primaryBackground : Colors.white;
           }
-          return AppColors.textPrimary;
+          return p.textPrimary;
         }),
         dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -502,29 +493,60 @@ class AppTheme {
         todayForegroundColor: WidgetStateProperty.all(AppColors.actionGreen),
         todayBorder: const BorderSide(color: AppColors.actionGreen),
       ),
-      timePickerTheme: const TimePickerThemeData(
-        backgroundColor: AppColors.surface,
-        dialBackgroundColor: AppColors.card,
-        hourMinuteColor: AppColors.card,
-        dayPeriodColor: AppColors.card,
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: p.surface,
+        dialBackgroundColor: p.card,
+        hourMinuteColor: p.card,
+        dayPeriodColor: p.card,
       ),
 
-      // ── Tooltip ─────────────────────────────────────────────────────
+      // ── Tooltip ───────────────────────────────────────────────────
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: p.card,
           borderRadius: BorderRadius.circular(8),
         ),
         textStyle: GoogleFonts.poppins(
           fontSize: 12,
-          color: AppColors.textPrimary,
+          color: p.textPrimary,
         ),
       ),
 
-      // ── Splash / Highlight ──────────────────────────────────────────
+      // ── Splash / Highlight ────────────────────────────────────────
       splashColor: AppColors.actionGreen.withValues(alpha: 0.08),
       highlightColor: AppColors.actionGreen.withValues(alpha: 0.04),
       splashFactory: InkSparkle.splashFactory,
     );
   }
+
+  // ── Public themes ────────────────────────────────────────────────
+
+  static ThemeData get darkTheme =>
+      _build(brightness: Brightness.dark, p: _darkPalette);
+
+  static ThemeData get lightTheme =>
+      _build(brightness: Brightness.light, p: _lightPalette);
+}
+
+/// Private palette record — a minimal set of mode-dependent colors that
+/// the shared theme builder reads. Brand/semantic colors (actionGreen,
+/// accentYellow, error, sport accents) come directly from [AppColors].
+class _Palette {
+  final Color primaryBackground;
+  final Color surface;
+  final Color card;
+  final Color divider;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textDisabled;
+
+  const _Palette({
+    required this.primaryBackground,
+    required this.surface,
+    required this.card,
+    required this.divider,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textDisabled,
+  });
 }

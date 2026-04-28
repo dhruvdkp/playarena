@@ -143,12 +143,12 @@ class MatchCard extends StatelessWidget {
             // ── Player progress bar ──
             Row(
               children: [
-                const Icon(Icons.people_outline,
+                Icon(Icons.people_outline,
                     size: 15, color: AppColors.textSecondary),
                 const SizedBox(width: 6),
                 Text(
                   '$joined / $needed players',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

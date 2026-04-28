@@ -65,7 +65,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
         backgroundColor: AppColors.surface,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
+        title: Text(
           'Booking Confirmed',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -103,13 +103,13 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
             color: AppColors.textDisabled,
             size: 64,
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No booking data available',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
           ),
@@ -166,7 +166,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Booking ID',
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -236,7 +236,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Booking Details',
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -274,14 +274,14 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
               'Split With',
               '${booking.splitPayment.length} friend${booking.splitPayment.length > 1 ? 's' : ''}',
             ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Divider(color: AppColors.divider, height: 1),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Total Paid',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -316,7 +316,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
             width: 80,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 13,
               ),
@@ -325,7 +325,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -344,7 +344,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
       child: OutlinedButton.icon(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Sharing booking details...'),
               backgroundColor: AppColors.surface,
             ),

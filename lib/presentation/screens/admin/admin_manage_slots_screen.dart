@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
+import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/data/models/slot_model.dart';
 import 'package:gamebooking/data/models/venue_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
@@ -52,109 +53,115 @@ class _AdminManageSlotsScreenState extends State<AdminManageSlotsScreen> {
   Future<void> _generateSlots() async {
     if (_venue == null) return;
 
-    final daysController = TextEditingController(text: '7');
-    final durationController = TextEditingController(text: '60');
-
-    final confirmed = await showDialog<bool>(
+    final cfg = await showDialog<_GenSlotsConfig>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Generate Slots',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Auto-generate time slots based on venue operating hours.',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: daysController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Number of days',
-                hintText: '7',
-                prefixIcon: Icon(Icons.calendar_today),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: durationController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Slot duration (minutes)',
-                hintText: '60',
-                prefixIcon: Icon(Icons.timer),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.actionGreen),
-            child:
-                const Text('Generate', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+      builder: (ctx) => _GenerateSlotsDialog(venue: _venue!),
     );
 
-    if (confirmed != true) return;
+    if (cfg == null) return;
 
     setState(() => _isLoading = true);
 
-    final days = int.tryParse(daysController.text) ?? 7;
-    final duration = int.tryParse(durationController.text) ?? 60;
-    final openParts = _venue!.openTime.split(':');
-    final closeParts = _venue!.closeTime.split(':');
-    final openHour = int.parse(openParts[0]);
-    final closeHour = int.parse(closeParts[0]);
+    final duration = cfg.duration;
+    final openHour = cfg.startTime.hour;
+    final openMinTotal = cfg.startTime.minute;
+    final closeHour = cfg.endTime.hour;
+    final closeMinTotal = cfg.endTime.minute;
+    // Convert to absolute minutes since midnight for cleaner comparisons.
+    final windowStartMin = openHour * 60 + openMinTotal;
+    final windowEndMin = closeHour * 60 + closeMinTotal;
+
+    if (windowEndMin <= windowStartMin) {
+      setState(() => _isLoading = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('End time must be after start time')),
+      );
+      return;
+    }
+
+    final dateStart = DateTime(
+      cfg.dateRange.start.year,
+      cfg.dateRange.start.month,
+      cfg.dateRange.start.day,
+    );
+    final dateEnd = DateTime(
+      cfg.dateRange.end.year,
+      cfg.dateRange.end.month,
+      cfg.dateRange.end.day,
+    );
+    final days = dateEnd.difference(dateStart).inDays + 1;
+
+    // Skip slots starting within the next hour so users always have a buffer
+    // to book + arrive.
+    final earliestStart = DateTime.now().add(const Duration(hours: 1));
+
+    // Build a Set of existing slot keys "yyyy-MM-dd|HH:mm" so we never
+    // create a duplicate when admin re-runs generate.
+    final existing = <String>{};
+    for (final s in _slots) {
+      final d = s.date;
+      final key =
+          '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}|${s.startTime}';
+      existing.add(key);
+    }
+
+    int created = 0;
+    int skippedDup = 0;
 
     for (int d = 0; d < days; d++) {
-      final date = DateTime.now().add(Duration(days: d));
-      final dayStart = DateTime(date.year, date.month, date.day);
+      final dayStart = dateStart.add(Duration(days: d));
 
-      for (int hour = openHour; hour < closeHour; hour++) {
-        for (int min = 0; min < 60; min += duration) {
-          if (hour + (min + duration) / 60 > closeHour) break;
+      for (int curMin = windowStartMin;
+          curMin + duration <= windowEndMin;
+          curMin += duration) {
+        final startHour = curMin ~/ 60;
+        final startMinPart = curMin % 60;
+        final endTotal = curMin + duration;
+        final endHour = endTotal ~/ 60;
+        final endMinute = endTotal % 60;
 
-          final startHour = hour;
-          final startMin = min;
-          final endMin = min + duration;
-          final endHour = hour + endMin ~/ 60;
-          final endMinute = endMin % 60;
+        final slotStart = DateTime(
+          dayStart.year,
+          dayStart.month,
+          dayStart.day,
+          startHour,
+          startMinPart,
+        );
+        if (slotStart.isBefore(earliestStart)) continue;
 
-          final isPeak = hour >= 17 && hour <= 21;
-          final isHappy = hour >= 6 && hour < 9;
-          final price = isPeak
-              ? _venue!.peakPricePerHour
-              : isHappy
-                  ? _venue!.happyHourPrice
-                  : _venue!.pricePerHour;
-
-          await _firestoreService.createSlot(widget.venueId, {
-            'venueId': widget.venueId,
-            'date': Timestamp.fromDate(dayStart),
-            'startTime':
-                '${startHour.toString().padLeft(2, '0')}:${startMin.toString().padLeft(2, '0')}',
-            'endTime':
-                '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}',
-            'duration': duration,
-            'price': price,
-            'isAvailable': true,
-            'isHappyHour': isHappy,
-            'isPeakHour': isPeak,
-          });
+        final startStr =
+            '${startHour.toString().padLeft(2, '0')}:${startMinPart.toString().padLeft(2, '0')}';
+        final dateKey =
+            '${dayStart.year}-${dayStart.month.toString().padLeft(2, '0')}-${dayStart.day.toString().padLeft(2, '0')}';
+        final key = '$dateKey|$startStr';
+        if (existing.contains(key)) {
+          skippedDup++;
+          continue;
         }
+        existing.add(key);
+
+        final isPeak = startHour >= 17 && startHour <= 21;
+        final isHappy = startHour >= 6 && startHour < 9;
+        final price = isPeak
+            ? _venue!.peakPricePerHour
+            : isHappy
+                ? _venue!.happyHourPrice
+                : _venue!.pricePerHour;
+
+        await _firestoreService.createSlot(widget.venueId, {
+          'venueId': widget.venueId,
+          'date': Timestamp.fromDate(dayStart),
+          'startTime': startStr,
+          'endTime':
+              '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}',
+          'duration': duration,
+          'price': price,
+          'isAvailable': true,
+          'isHappyHour': isHappy,
+          'isPeakHour': isPeak,
+        });
+        created++;
       }
     }
 
@@ -162,10 +169,16 @@ class _AdminManageSlotsScreenState extends State<AdminManageSlotsScreen> {
     setState(() => _isLoading = false);
 
     if (mounted) {
+      final msg = skippedDup > 0
+          ? 'Created $created new slot${created == 1 ? '' : 's'}. '
+              'Skipped $skippedDup duplicate${skippedDup == 1 ? '' : 's'}.'
+          : 'Created $created slot${created == 1 ? '' : 's'} for $days day${days == 1 ? '' : 's'}.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Slots generated for $days days!'),
-          backgroundColor: AppColors.actionGreen,
+          content: Text(msg),
+          backgroundColor: created > 0
+              ? AppColors.actionGreen
+              : AppColors.accentYellow,
         ),
       );
     }
@@ -192,21 +205,27 @@ class _AdminManageSlotsScreenState extends State<AdminManageSlotsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
         leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_ios_new,
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.adminVenues);
+            }
+          },
+          icon: Icon(Icons.arrow_back_ios_new,
               color: AppColors.textPrimary),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Manage Slots',
+            Text('Manage Slots',
                 style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             if (_venue != null)
               Text(_venue!.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 12)),
           ],
         ),
@@ -297,7 +316,7 @@ class _AdminManageSlotsScreenState extends State<AdminManageSlotsScreen> {
                     children: [
                       Text(
                         '${_slots.length} slots',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppColors.textSecondary, fontSize: 13),
                       ),
                       Row(
@@ -323,10 +342,10 @@ class _AdminManageSlotsScreenState extends State<AdminManageSlotsScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.event_busy,
+                              Icon(Icons.event_busy,
                                   size: 48, color: AppColors.textDisabled),
                               const SizedBox(height: 12),
-                              const Text('No slots for this date',
+                              Text('No slots for this date',
                                   style: TextStyle(
                                       color: AppColors.textSecondary)),
                               const SizedBox(height: 16),
@@ -380,7 +399,7 @@ class _LegendDot extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(label,
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
       ],
     );
   }
@@ -435,7 +454,7 @@ class _SlotTile extends StatelessWidget {
               children: [
                 Text(
                   '${slot.startTime} – ${slot.endTime}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -528,6 +547,255 @@ class _SlotTile extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// Generate Slots dialog — date range + start/end time + duration
+// ═════════════════════════════════════════════════════════════════════════
+
+class _GenSlotsConfig {
+  final DateTimeRange dateRange;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final int duration;
+  const _GenSlotsConfig({
+    required this.dateRange,
+    required this.startTime,
+    required this.endTime,
+    required this.duration,
+  });
+}
+
+class _GenerateSlotsDialog extends StatefulWidget {
+  final VenueModel venue;
+  const _GenerateSlotsDialog({required this.venue});
+
+  @override
+  State<_GenerateSlotsDialog> createState() => _GenerateSlotsDialogState();
+}
+
+class _GenerateSlotsDialogState extends State<_GenerateSlotsDialog> {
+  DateTimeRange? _range;
+  TimeOfDay? _start;
+  TimeOfDay? _end;
+  int _duration = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    final today = DateTime.now();
+    _range = DateTimeRange(
+      start: DateTime(today.year, today.month, today.day),
+      end: DateTime(today.year, today.month, today.day)
+          .add(const Duration(days: 6)),
+    );
+    _start = _parseTimeOfDay(widget.venue.openTime) ??
+        const TimeOfDay(hour: 9, minute: 0);
+    _end = _parseTimeOfDay(widget.venue.closeTime) ??
+        const TimeOfDay(hour: 21, minute: 0);
+  }
+
+  TimeOfDay? _parseTimeOfDay(String s) {
+    final parts = s.split(':');
+    if (parts.length < 2) return null;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return null;
+    return TimeOfDay(hour: h, minute: m);
+  }
+
+  Future<void> _pickRange() async {
+    final today = DateTime.now();
+    final picked = await showDateRangePicker(
+      context: context,
+      initialDateRange: _range,
+      firstDate: DateTime(today.year, today.month, today.day),
+      lastDate: today.add(const Duration(days: 90)),
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
+          colorScheme: ColorScheme.dark(
+            primary: AppColors.accentYellow,
+            surface: AppColors.surface,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) setState(() => _range = picked);
+  }
+
+  Future<void> _pickTime(bool isStart) async {
+    final initial = isStart
+        ? (_start ?? const TimeOfDay(hour: 9, minute: 0))
+        : (_end ?? const TimeOfDay(hour: 21, minute: 0));
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: initial,
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
+          colorScheme: ColorScheme.dark(
+            primary: AppColors.accentYellow,
+            surface: AppColors.surface,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStart) {
+          _start = picked;
+        } else {
+          _end = picked;
+        }
+      });
+    }
+  }
+
+  String _fmtRange(DateTimeRange r) {
+    String d(DateTime x) =>
+        '${x.day.toString().padLeft(2, '0')}/${x.month.toString().padLeft(2, '0')}/${x.year}';
+    return '${d(r.start)} → ${d(r.end)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text('Generate Slots',
+          style: TextStyle(color: AppColors.textPrimary)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Pick date range and operating window.',
+                style: TextStyle(
+                    color: AppColors.textSecondary, fontSize: 13)),
+            const SizedBox(height: 16),
+            _pickerTile(
+              label: 'Date range',
+              value: _range == null ? 'Pick dates' : _fmtRange(_range!),
+              icon: Icons.date_range,
+              onTap: _pickRange,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _pickerTile(
+                    label: 'Start',
+                    value: _start?.format(context) ?? '—',
+                    icon: Icons.schedule,
+                    onTap: () => _pickTime(true),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _pickerTile(
+                    label: 'End',
+                    value: _end?.format(context) ?? '—',
+                    icon: Icons.schedule,
+                    onTap: () => _pickTime(false),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<int>(
+              initialValue: _duration,
+              decoration: InputDecoration(
+                labelText: 'Slot duration (minutes)',
+                labelStyle:
+                    TextStyle(color: AppColors.textSecondary),
+                prefixIcon: const Icon(Icons.timer),
+              ),
+              dropdownColor: AppColors.surface,
+              style: TextStyle(color: AppColors.textPrimary),
+              items: const [30, 45, 60, 90, 120]
+                  .map((v) => DropdownMenuItem(
+                        value: v,
+                        child: Text('$v min'),
+                      ))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) setState(() => _duration = v);
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel',
+              style: TextStyle(color: AppColors.textSecondary)),
+        ),
+        ElevatedButton(
+          onPressed: (_range == null || _start == null || _end == null)
+              ? null
+              : () {
+                  Navigator.pop(
+                    context,
+                    _GenSlotsConfig(
+                      dateRange: _range!,
+                      startTime: _start!,
+                      endTime: _end!,
+                      duration: _duration,
+                    ),
+                  );
+                },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.actionGreen),
+          child: const Text('Generate',
+              style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    );
+  }
+
+  Widget _pickerTile({
+    required String label,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: AppColors.textSecondary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label,
+                      style: TextStyle(
+                          color: AppColors.textSecondary, fontSize: 11)),
+                  const SizedBox(height: 2),
+                  Text(value,
+                      style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

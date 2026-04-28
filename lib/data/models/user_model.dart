@@ -15,6 +15,7 @@ class UserModel extends Equatable {
   final int totalBookings;
   final List<String> favoriteVenues;
   final DateTime createdAt;
+  final DateTime? updatedAt;
 
   const UserModel({
     required this.id,
@@ -27,6 +28,7 @@ class UserModel extends Equatable {
     required this.totalBookings,
     required this.favoriteVenues,
     required this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,9 @@ class UserModel extends Equatable {
       totalBookings: json['totalBookings'] as int? ?? 0,
       favoriteVenues: List<String>.from(json['favoriteVenues'] ?? []),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -62,6 +67,7 @@ class UserModel extends Equatable {
       'totalBookings': totalBookings,
       'favoriteVenues': favoriteVenues,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -76,6 +82,7 @@ class UserModel extends Equatable {
     int? totalBookings,
     List<String>? favoriteVenues,
     DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -88,6 +95,7 @@ class UserModel extends Equatable {
       totalBookings: totalBookings ?? this.totalBookings,
       favoriteVenues: favoriteVenues ?? this.favoriteVenues,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -103,5 +111,6 @@ class UserModel extends Equatable {
         totalBookings,
         favoriteVenues,
         createdAt,
+        updatedAt,
       ];
 }

@@ -49,7 +49,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                   const SizedBox(height: 12),
                   Text(
                     state.message,
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: AppColors.textSecondary, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -109,11 +109,11 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
       expandedHeight: 180,
       pinned: true,
       backgroundColor: AppColors.surface,
-      iconTheme: const IconThemeData(color: AppColors.textPrimary),
+      iconTheme: IconThemeData(color: AppColors.textPrimary),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           tournament.name,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -182,13 +182,13 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         const SizedBox(height: 6),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
               color: AppColors.textDisabled, fontSize: 11),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -216,7 +216,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 const Icon(Icons.emoji_events,
                     color: AppColors.accentYellow, size: 28),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Prize Pool',
                   style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 12),
@@ -249,7 +249,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 const Icon(Icons.confirmation_number,
                     color: AppColors.actionGreen, size: 28),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Entry Fee',
                   style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 12),
@@ -282,7 +282,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Teams',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -292,7 +292,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             ),
             Text(
               '$registered / $max registered',
-              style: const TextStyle(
+              style: TextStyle(
                   color: AppColors.textSecondary, fontSize: 14),
             ),
           ],
@@ -328,7 +328,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Matches',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -345,7 +345,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
               color: AppColors.card,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(Icons.sports_score,
                     color: AppColors.textDisabled, size: 40),
@@ -402,7 +402,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             children: [
               Text(
                 match.round,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textDisabled, fontSize: 12),
               ),
               Container(
@@ -461,7 +461,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
+                child: Text(
                   'VS',
                   style: TextStyle(
                     color: AppColors.textDisabled,
@@ -504,12 +504,12 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.schedule,
+              Icon(Icons.schedule,
                   color: AppColors.textDisabled, size: 14),
               const SizedBox(width: 4),
               Text(
                 '${DateFormat('dd MMM').format(match.matchDate)} at ${match.matchTime}',
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textDisabled, fontSize: 12),
               ),
             ],
@@ -536,7 +536,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.rule, color: AppColors.textSecondary, size: 20),
                     SizedBox(width: 10),
@@ -553,7 +553,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 AnimatedRotation(
                   turns: _rulesExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 200),
-                  child: const Icon(Icons.keyboard_arrow_down,
+                  child: Icon(Icons.keyboard_arrow_down,
                       color: AppColors.textSecondary),
                 ),
               ],
@@ -573,7 +573,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             ),
             child: Text(
               tournament.rules,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
                 height: 1.6,

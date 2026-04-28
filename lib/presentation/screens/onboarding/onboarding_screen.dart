@@ -60,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -84,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: _completeOnboarding,
                     child: Text(
                       _currentPage == _pages.length - 1 ? '' : 'Skip',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -144,7 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           // Title
                           Text(
                             page.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 28,
                               fontWeight: FontWeight.w800,
@@ -157,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           // Description
                           Text(
                             page.description,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 15,
                               height: 1.5,

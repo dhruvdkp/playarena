@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
+import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/data/models/venue_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
 
@@ -143,7 +144,7 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: AppColors.accentYellow,
               surface: AppColors.surface,
             ),
@@ -309,15 +310,21 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
         leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.adminVenues);
+            }
+          },
+          icon: Icon(
             Icons.arrow_back_ios_new,
             color: AppColors.textPrimary,
           ),
         ),
         title: Text(
           _isEditing ? 'Edit Venue' : 'Add New Venue',
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -615,7 +622,7 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
             Expanded(
               child: TextField(
                 controller: _imageUrlController,
-                style: const TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: AppColors.textPrimary),
                 keyboardType: TextInputType.url,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) => _addImageUrl(),
@@ -647,7 +654,7 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
         // Upload progress
         if (_isUploading) ...[
           const SizedBox(height: 12),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
@@ -692,7 +699,7 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
                           width: 100,
                           height: 100,
                           color: AppColors.card,
-                          child: const Icon(
+                          child: Icon(
                             Icons.broken_image,
                             color: AppColors.textDisabled,
                           ),
@@ -851,14 +858,14 @@ class _AdminAddVenueScreenState extends State<AdminAddVenueScreen> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 11,
                   ),
                 ),
                 Text(
                   time,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

@@ -12,6 +12,9 @@ class SlotModel extends Equatable {
   final bool isHappyHour;
   final bool isPeakHour;
   final String? bookedBy;
+  final String? bookingId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const SlotModel({
     required this.id,
@@ -25,6 +28,9 @@ class SlotModel extends Equatable {
     required this.isHappyHour,
     required this.isPeakHour,
     this.bookedBy,
+    this.bookingId,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory SlotModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +46,13 @@ class SlotModel extends Equatable {
       isHappyHour: json['isHappyHour'] as bool? ?? false,
       isPeakHour: json['isPeakHour'] as bool? ?? false,
       bookedBy: json['bookedBy'] as String?,
+      bookingId: json['bookingId'] as String?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -56,6 +69,9 @@ class SlotModel extends Equatable {
       'isHappyHour': isHappyHour,
       'isPeakHour': isPeakHour,
       'bookedBy': bookedBy,
+      'bookingId': bookingId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -71,6 +87,9 @@ class SlotModel extends Equatable {
     bool? isHappyHour,
     bool? isPeakHour,
     String? bookedBy,
+    String? bookingId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return SlotModel(
       id: id ?? this.id,
@@ -84,6 +103,9 @@ class SlotModel extends Equatable {
       isHappyHour: isHappyHour ?? this.isHappyHour,
       isPeakHour: isPeakHour ?? this.isPeakHour,
       bookedBy: bookedBy ?? this.bookedBy,
+      bookingId: bookingId ?? this.bookingId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -100,5 +122,8 @@ class SlotModel extends Equatable {
         isHappyHour,
         isPeakHour,
         bookedBy,
+        bookingId,
+        createdAt,
+        updatedAt,
       ];
 }

@@ -29,6 +29,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthCheckStatus>(_onCheckStatus);
     on<AuthProfileUpdateRequested>(_onProfileUpdateRequested);
     on<AuthResetPasswordRequested>(_onResetPassword);
+    on<AuthDeleteAccountRequested>(_onDeleteAccount);
+  }
+
+  Future<void> _onDeleteAccount(
+    AuthDeleteAccountRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      await _authRepository.deleteAccount();
+      emit(const AuthUnauthenticated());
+    } catch (e, stack) {
+      await _crashlyticsService.recordError(e, stack);
+      emit(AuthError(message: _parseErrorMessage(e)));
+    }
   }
 
   Future<void> _onLoginRequested(

@@ -72,3 +72,7 @@ class AuthResetPasswordRequested extends AuthEvent {
   @override
   List<Object?> get props => [email];
 }
+
+class AuthDeleteAccountRequested extends AuthEvent {
+  const AuthDeleteAccountRequested();
+}

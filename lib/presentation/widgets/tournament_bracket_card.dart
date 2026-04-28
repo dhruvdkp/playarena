@@ -41,7 +41,7 @@ class TournamentBracketCard extends StatelessWidget {
         children: [
           // ── Header with format and status badges ──
           _buildHeader(),
-          const Divider(color: AppColors.divider, height: 1),
+          Divider(color: AppColors.divider, height: 1),
 
           Padding(
             padding: const EdgeInsets.all(16),
@@ -99,7 +99,7 @@ class TournamentBracketCard extends StatelessWidget {
                 // ── Team registration progress ──
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.groups_outlined,
                       size: 16,
                       color: AppColors.textSecondary,
@@ -107,7 +107,7 @@ class TournamentBracketCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       '$registered / $max teams registered',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -192,7 +192,7 @@ class TournamentBracketCard extends StatelessWidget {
           Expanded(
             child: Text(
               tournament.name,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
@@ -218,7 +218,7 @@ class TournamentBracketCard extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 13,
             ),
@@ -235,7 +235,7 @@ class TournamentBracketCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w500,

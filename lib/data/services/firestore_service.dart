@@ -60,6 +60,18 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> get _tournamentsRef =>
       _db.collection('tournaments');
 
+  CollectionReference<Map<String, dynamic>> get _matchesRef =>
+      _db.collection('matches');
+
+  CollectionReference<Map<String, dynamic>> get _teamsRef =>
+      _db.collection('teams');
+
+  CollectionReference<Map<String, dynamic>> get _addOnsRef =>
+      _db.collection('addOns');
+
+  CollectionReference<Map<String, dynamic>> get _reviewsRef =>
+      _db.collection('reviews');
+
   // ===========================================================================
   // User Collection
   // ===========================================================================
@@ -84,6 +96,25 @@ class FirestoreService {
     return _docToMap(doc);
   }
 
+  /// Batch-fetches user profiles by uid. Firestore caps `whereIn` at 30
+  /// items, so we chunk accordingly. Missing uids are silently skipped.
+  Future<List<Map<String, dynamic>>> getUsersByIds(List<String> uids) async {
+    if (uids.isEmpty) return const [];
+    final unique = uids.toSet().toList();
+    final results = <Map<String, dynamic>>[];
+    for (var i = 0; i < unique.length; i += 30) {
+      final chunk = unique.sublist(
+        i,
+        i + 30 > unique.length ? unique.length : i + 30,
+      );
+      final snap = await _usersRef
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get();
+      results.addAll(_snapshotToList(snap));
+    }
+    return results;
+  }
+
   Future<void> updateUserProfile(
     String uid,
     Map<String, dynamic> data,
@@ -92,6 +123,12 @@ class FirestoreService {
       ...data,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  /// Permanently deletes the user's profile document. Called as part of
+  /// the delete-account flow before the Auth user is removed.
+  Future<void> deleteUserProfile(String uid) async {
+    await _usersRef.doc(uid).delete();
   }
 
   // ===========================================================================
@@ -340,6 +377,72 @@ class FirestoreService {
     });
   }
 
+  Future<void> leaveMatchRequest(String matchId, String userId) async {
+    await _matchRequestsRef.doc(matchId).update({
+      'playersJoined': FieldValue.arrayRemove([userId]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Atomically joins [userId] to match [matchId]. Validates that the match
+  /// is open and the user isn't already in it; flips status to 'full' in the
+  /// same transaction if capacity is reached.
+  ///
+  /// Throws human-readable Exception messages on guard failures so the BLoC
+  /// can surface them via SnackBar.
+  Future<void> joinMatchTransaction(String matchId, String userId) async {
+    await _db.runTransaction<void>((txn) async {
+      final ref = _matchRequestsRef.doc(matchId);
+      final snap = await txn.get(ref);
+      if (!snap.exists) {
+        throw Exception('Match not found');
+      }
+      final data = snap.data()!;
+      if (data['status'] != 'open') {
+        throw Exception('This match is no longer open for joining');
+      }
+      final players = List<String>.from(data['playersJoined'] ?? const []);
+      if (players.contains(userId)) {
+        throw Exception('You have already joined this match');
+      }
+      final playersNeeded = (data['playersNeeded'] as num).toInt();
+      final newPlayers = [...players, userId];
+      final becomesFull = newPlayers.length >= playersNeeded;
+      txn.update(ref, {
+        'playersJoined': newPlayers,
+        if (becomesFull) 'status': 'full',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    });
+  }
+
+  /// Atomically removes [userId] from match [matchId]. Hosts cannot leave.
+  /// If the match was full, flips status back to open.
+  Future<void> leaveMatchTransaction(String matchId, String userId) async {
+    await _db.runTransaction<void>((txn) async {
+      final ref = _matchRequestsRef.doc(matchId);
+      final snap = await txn.get(ref);
+      if (!snap.exists) {
+        throw Exception('Match not found');
+      }
+      final data = snap.data()!;
+      if (data['hostUserId'] == userId) {
+        throw Exception('The host cannot leave; cancel the match instead');
+      }
+      final players = List<String>.from(data['playersJoined'] ?? const []);
+      if (!players.contains(userId)) {
+        throw Exception('You are not in this match');
+      }
+      final newPlayers = players.where((p) => p != userId).toList();
+      final wasFull = data['status'] == 'full';
+      txn.update(ref, {
+        'playersJoined': newPlayers,
+        if (wasFull) 'status': 'open',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    });
+  }
+
   Future<void> updateMatchRequestStatus(String matchId, String status) async {
     await _matchRequestsRef.doc(matchId).update({
       'status': status,
@@ -353,6 +456,15 @@ class FirestoreService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(_snapshotToList);
+  }
+
+  /// Live stream of a single match-request doc. Used by the match detail
+  /// screen so the player list and status update as other users join/leave.
+  Stream<Map<String, dynamic>?> matchRequestStream(String matchId) {
+    return _matchRequestsRef.doc(matchId).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return _docToMap(doc);
+    });
   }
 
   // ===========================================================================
@@ -388,6 +500,34 @@ class FirestoreService {
     });
   }
 
+  /// Streams all tournament fixtures currently in `live` status.
+  /// Watches ongoing tournaments and flattens their embedded matches.
+  Stream<List<Map<String, dynamic>>> liveTournamentMatchesStream() {
+    return _tournamentsRef
+        .where('status', isEqualTo: 'ongoing')
+        .snapshots()
+        .map((snapshot) {
+      final live = <Map<String, dynamic>>[];
+      for (final doc in snapshot.docs) {
+        final data = _convertTimestamps({'id': doc.id, ...doc.data()});
+        final venueName = data['venueName'] as String? ?? '';
+        final matches = (data['matches'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>();
+        for (final m in matches) {
+          if (m['status'] == 'live') {
+            live.add({
+              ...m,
+              'venueName': venueName,
+              'tournamentName': data['name'],
+              'sportType': data['sportType'],
+            });
+          }
+        }
+      }
+      return live;
+    });
+  }
+
   Future<void> registerTeamForTournament(
     String tournamentId,
     String teamId,
@@ -420,6 +560,210 @@ class FirestoreService {
         .orderBy('createdAt', descending: true)
         .get();
     return _snapshotToList(snapshot);
+  }
+
+  // ===========================================================================
+  // Matches Collection (pickup games — distinct from tournament matches)
+  // ===========================================================================
+
+  Future<String> createMatch(Map<String, dynamic> data) async {
+    final docRef = await _matchesRef.add({
+      ...data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    return docRef.id;
+  }
+
+  Future<Map<String, dynamic>?> getMatchById(String id) async {
+    final doc = await _matchesRef.doc(id).get();
+    if (!doc.exists) return null;
+    return _docToMap(doc);
+  }
+
+  Future<List<Map<String, dynamic>>> getOpenMatches() async {
+    final snapshot = await _matchesRef
+        .where('status', isEqualTo: 'open')
+        .orderBy('matchDate')
+        .get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<List<Map<String, dynamic>>> getMatchesByVenue(String venueId) async {
+    final snapshot = await _matchesRef
+        .where('venueId', isEqualTo: venueId)
+        .orderBy('matchDate', descending: true)
+        .get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<void> joinPickupMatch(String matchId, String userId) async {
+    await _matchesRef.doc(matchId).update({
+      'playerIds': FieldValue.arrayUnion([userId]),
+      'currentPlayers': FieldValue.increment(1),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> leavePickupMatch(String matchId, String userId) async {
+    await _matchesRef.doc(matchId).update({
+      'playerIds': FieldValue.arrayRemove([userId]),
+      'currentPlayers': FieldValue.increment(-1),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> updateMatchStatus(String matchId, String status) async {
+    await _matchesRef.doc(matchId).update({
+      'status': status,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> openMatchesLiveStream() {
+    return _matchesRef
+        .where('status', isEqualTo: 'open')
+        .orderBy('matchDate')
+        .snapshots()
+        .map(_snapshotToList);
+  }
+
+  // ===========================================================================
+  // Teams Collection
+  // ===========================================================================
+
+  Future<String> createTeam(Map<String, dynamic> data) async {
+    final docRef = await _teamsRef.add({
+      ...data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    return docRef.id;
+  }
+
+  Future<Map<String, dynamic>?> getTeamById(String id) async {
+    final doc = await _teamsRef.doc(id).get();
+    if (!doc.exists) return null;
+    return _docToMap(doc);
+  }
+
+  Future<List<Map<String, dynamic>>> getTeams() async {
+    final snapshot = await _teamsRef.orderBy('name').get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<List<Map<String, dynamic>>> getTeamsByCaptain(String captainId) async {
+    final snapshot =
+        await _teamsRef.where('captainId', isEqualTo: captainId).get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<void> updateTeam(String id, Map<String, dynamic> data) async {
+    await _teamsRef.doc(id).update({
+      ...data,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> addTeamMember(
+    String teamId,
+    Map<String, dynamic> member,
+  ) async {
+    await _teamsRef.doc(teamId).update({
+      'members': FieldValue.arrayUnion([member]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> removeTeamMember(
+    String teamId,
+    Map<String, dynamic> member,
+  ) async {
+    await _teamsRef.doc(teamId).update({
+      'members': FieldValue.arrayRemove([member]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteTeam(String id) async {
+    await _teamsRef.doc(id).delete();
+  }
+
+  // ===========================================================================
+  // AddOns Collection (catalog of rentable items)
+  // ===========================================================================
+
+  Future<String> createAddOn(Map<String, dynamic> data) async {
+    final docRef = await _addOnsRef.add({
+      ...data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    return docRef.id;
+  }
+
+  Future<Map<String, dynamic>?> getAddOnById(String id) async {
+    final doc = await _addOnsRef.doc(id).get();
+    if (!doc.exists) return null;
+    return _docToMap(doc);
+  }
+
+  Future<List<Map<String, dynamic>>> getAddOns() async {
+    final snapshot = await _addOnsRef.orderBy('name').get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<void> updateAddOn(String id, Map<String, dynamic> data) async {
+    await _addOnsRef.doc(id).update({
+      ...data,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteAddOn(String id) async {
+    await _addOnsRef.doc(id).delete();
+  }
+
+  // ===========================================================================
+  // Reviews — top-level mirror (in addition to venues/{id}/reviews subcoll)
+  // Use the top-level collection for cross-venue queries (e.g., a user's
+  // review history), and the per-venue subcollection for venue detail pages.
+  // ===========================================================================
+
+  Future<String> createReview(Map<String, dynamic> data) async {
+    final docRef = await _reviewsRef.add({
+      ...data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    return docRef.id;
+  }
+
+  Future<List<Map<String, dynamic>>> getReviewsByUser(String userId) async {
+    final snapshot = await _reviewsRef
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<List<Map<String, dynamic>>> getReviewsByVenue(String venueId) async {
+    final snapshot = await _reviewsRef
+        .where('venueId', isEqualTo: venueId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    return _snapshotToList(snapshot);
+  }
+
+  Future<void> incrementReviewHelpfulCount(String reviewId) async {
+    await _reviewsRef.doc(reviewId).update({
+      'helpfulCount': FieldValue.increment(1),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteReview(String reviewId) async {
+    await _reviewsRef.doc(reviewId).delete();
   }
 
   // ===========================================================================

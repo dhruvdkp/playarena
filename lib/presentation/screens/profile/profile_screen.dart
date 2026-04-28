@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Profile',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
@@ -45,10 +45,10 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.person_off_outlined,
+                Icon(Icons.person_off_outlined,
                     color: AppColors.textDisabled, size: 64),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Not logged in',
                   style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 16),
@@ -111,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primaryBackground,
                 shape: BoxShape.circle,
               ),
@@ -129,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           user.name,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -138,7 +138,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           user.email,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 14,
           ),
@@ -286,7 +286,7 @@ class ProfileScreen extends StatelessWidget {
             const Icon(Icons.card_membership,
                 color: AppColors.actionGreen, size: 20),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               'Member since',
               style:
                   TextStyle(color: AppColors.textSecondary, fontSize: 13),
@@ -294,7 +294,7 @@ class ProfileScreen extends StatelessWidget {
             const Spacer(),
             Text(
               DateFormat('MMM yyyy').format(user.createdAt),
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -314,7 +314,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -324,7 +324,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
                 color: AppColors.textDisabled, fontSize: 11),
             textAlign: TextAlign.center,
           ),
@@ -348,37 +348,19 @@ class ProfileScreen extends StatelessWidget {
               label: 'My Bookings',
               onTap: () => context.push(AppRoutes.myBookings),
             ),
-            const Divider(color: AppColors.divider, height: 1, indent: 56),
+            Divider(color: AppColors.divider, height: 1, indent: 56),
             _menuItem(
               icon: Icons.groups_outlined,
               label: 'My Teams',
-              onTap: () {
-                // TODO: Add my teams route
-              },
+              onTap: () => context.push(AppRoutes.myTeams),
             ),
-            const Divider(color: AppColors.divider, height: 1, indent: 56),
-            _menuItem(
-              icon: Icons.payment_outlined,
-              label: 'Payment Methods',
-              onTap: () {
-                // TODO: Add payment methods route
-              },
-            ),
-            const Divider(color: AppColors.divider, height: 1, indent: 56),
+            Divider(color: AppColors.divider, height: 1, indent: 56),
             _menuItem(
               icon: Icons.settings_outlined,
               label: 'Settings',
               onTap: () => context.push(AppRoutes.settings),
             ),
-            const Divider(color: AppColors.divider, height: 1, indent: 56),
-            _menuItem(
-              icon: Icons.help_outline,
-              label: 'Help & Support',
-              onTap: () {
-                // TODO: Add help route
-              },
-            ),
-            const Divider(color: AppColors.divider, height: 1, indent: 56),
+            Divider(color: AppColors.divider, height: 1, indent: 56),
             _menuItem(
               icon: Icons.logout,
               label: 'Logout',
@@ -390,18 +372,18 @@ class ProfileScreen extends StatelessWidget {
                     backgroundColor: AppColors.surface,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
-                    title: const Text(
+                    title: Text(
                       'Logout',
                       style: TextStyle(color: AppColors.textPrimary),
                     ),
-                    content: const Text(
+                    content: Text(
                       'Are you sure you want to logout?',
                       style: TextStyle(color: AppColors.textSecondary),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
                           style:
                               TextStyle(color: AppColors.textSecondary),
@@ -446,9 +428,13 @@ class ProfileScreen extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
+                // `primaryBackground` (soft gray in light / dark navy in dark)
+                // gives contrast against the enclosing `card` colour — using
+                // `surface` here would make the icon tile disappear into the
+                // white card in light mode.
                 color: isDestructive
                     ? AppColors.error.withValues(alpha: 0.1)
-                    : AppColors.surface,
+                    : AppColors.primaryBackground,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

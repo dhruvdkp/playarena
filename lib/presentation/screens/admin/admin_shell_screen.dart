@@ -34,7 +34,7 @@ class AdminShellScreen extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           height: 65,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(Icons.dashboard_outlined, color: AppColors.textSecondary),
               selectedIcon: Icon(Icons.dashboard, color: AppColors.accentYellow),

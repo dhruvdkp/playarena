@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gamebooking/bloc/auth/auth_bloc.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
 import 'package:gamebooking/core/routes/app_router.dart';
+import 'package:gamebooking/core/theme/theme_controller.dart';
 import 'package:gamebooking/data/models/user_model.dart';
 
 /// Fully dynamic Settings screen.
@@ -25,7 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // SharedPreferences keys for notification settings.
   static const _kBookingReminders = 'pref_notif_booking_reminders';
   static const _kPromoEmails = 'pref_notif_promo_emails';
-  static const _kMatchInvites = 'pref_notif_match_invites';
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -34,11 +34,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // immediately so the values are always live.
   bool _bookingReminders = true;
   bool _promoEmails = false;
-  bool _matchInvites = true;
   bool _prefsLoaded = false;
 
   bool _editingProfile = false;
   bool _savingProfile = false;
+  bool _deletingAccount = false;
+  final _deleteConfirmController = TextEditingController();
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
+    _deleteConfirmController.dispose();
     super.dispose();
   }
 
@@ -64,7 +66,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _bookingReminders = prefs.getBool(_kBookingReminders) ?? true;
       _promoEmails = prefs.getBool(_kPromoEmails) ?? false;
-      _matchInvites = prefs.getBool(_kMatchInvites) ?? true;
       _prefsLoaded = true;
     });
   }
@@ -98,24 +99,221 @@ class _SettingsScreenState extends State<SettingsScreen> {
     context.read<AuthBloc>().add(AuthProfileUpdateRequested(user: updated));
   }
 
+  // ── Delete account flow ─────────────────────────────────────────────────
+
+  /// Two-step confirmation: a warning dialog, then a typed-confirmation
+  /// dialog requiring the user to type "DELETE" before we dispatch the
+  /// destructive event.
+  Future<void> _confirmDeleteAccount() async {
+    final proceed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded,
+                color: AppColors.error, size: 24),
+            SizedBox(width: 10),
+            Text(
+              'Delete account?',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
+          ],
+        ),
+        content: Text(
+          'This will permanently delete your account, profile, and booking '
+          'history. This action cannot be undone.',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+            child: const Text(
+              'Continue',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (proceed != true || !mounted) return;
+
+    _deleteConfirmController.clear();
+    final confirmedTyped = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          final matches = _deleteConfirmController.text.trim() == 'DELETE';
+          return AlertDialog(
+            backgroundColor: AppColors.surface,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(
+              'Type DELETE to confirm',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'To prevent accidents, type DELETE (in capitals) below.',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _deleteConfirmController,
+                  autofocus: true,
+                  onChanged: (_) => setDialogState(() {}),
+                  style: TextStyle(color: AppColors.textPrimary),
+                  decoration: const InputDecoration(
+                    hintText: 'DELETE',
+                    prefixIcon: Icon(Icons.delete_forever),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: matches ? () => Navigator.pop(ctx, true) : null,
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+                child: const Text(
+                  'Delete forever',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    if (confirmedTyped != true || !mounted) return;
+
+    setState(() => _deletingAccount = true);
+    context.read<AuthBloc>().add(const AuthDeleteAccountRequested());
+  }
+
+  // ── Delete account card ─────────────────────────────────────────────────
+
+  Widget _buildDeleteAccountCard() {
+    return _cardContainer(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.delete_forever_outlined,
+                    color: AppColors.error,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Delete account',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Permanently deletes your profile, bookings, and sign-in '
+              'credentials. You may be asked to sign in again for security.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed:
+                    _deletingAccount ? null : _confirmDeleteAccount,
+                icon: _deletingAccount
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.error,
+                        ),
+                      )
+                    : const Icon(Icons.delete_outline,
+                        color: AppColors.error, size: 18),
+                label: Text(
+                  _deletingAccount ? 'Deleting…' : 'Delete my account',
+                  style: const TextStyle(color: AppColors.error),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.error),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _confirmLogout() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Logout?',
           style: TextStyle(color: AppColors.textPrimary),
         ),
-        content: const Text(
+        content: Text(
           'You will need to sign in again to access your bookings.',
           style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(color: AppColors.textSecondary),
             ),
@@ -143,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Settings',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -151,7 +349,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -176,8 +374,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 backgroundColor: AppColors.error,
               ),
             );
+          } else if (state is AuthError && _deletingAccount) {
+            setState(() => _deletingAccount = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Could not delete account: ${state.message}'),
+                backgroundColor: AppColors.error,
+              ),
+            );
           } else if (state is AuthUnauthenticated) {
-            // After logout — bounce back to login.
+            // After logout or account deletion — bounce back to login.
+            if (_deletingAccount) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Account deleted'),
+                  backgroundColor: AppColors.actionGreen,
+                ),
+              );
+            }
             context.go(AppRoutes.login);
           }
         },
@@ -199,6 +413,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 10),
               _buildAccountCard(state.user),
               const SizedBox(height: 24),
+              _sectionTitle('Appearance'),
+              const SizedBox(height: 10),
+              _buildThemeCard(),
+              const SizedBox(height: 24),
               _sectionTitle('Notifications'),
               const SizedBox(height: 10),
               _buildNotificationsCard(),
@@ -206,6 +424,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _sectionTitle('Account actions'),
               const SizedBox(height: 10),
               _buildLogoutCard(),
+              const SizedBox(height: 24),
+              _sectionTitle('Danger zone'),
+              const SizedBox(height: 10),
+              _buildDeleteAccountCard(),
               const SizedBox(height: 32),
             ],
           );
@@ -247,10 +469,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.lock_outline,
+          Icon(Icons.lock_outline,
               color: AppColors.textDisabled, size: 64),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Please sign in to manage settings',
             style: TextStyle(color: AppColors.textSecondary),
           ),
@@ -306,7 +528,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Text(
                         user.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -315,7 +537,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(height: 2),
                       Text(
                         user.email,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
@@ -339,11 +561,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             if (_editingProfile) ...[
               const SizedBox(height: 16),
-              const Divider(color: AppColors.divider, height: 1),
+              Divider(color: AppColors.divider, height: 1),
               const SizedBox(height: 16),
               TextField(
                 controller: _nameController,
-                style: const TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: AppColors.textPrimary),
                 decoration: const InputDecoration(
                   labelText: 'Full name',
                   prefixIcon: Icon(Icons.person_outline),
@@ -353,7 +575,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                style: const TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: AppColors.textPrimary),
                 decoration: const InputDecoration(
                   labelText: 'Phone',
                   prefixIcon: Icon(Icons.phone_outlined),
@@ -418,7 +640,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(width: 10),
         Text(
           '$label:',
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 13,
           ),
@@ -427,7 +649,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -481,7 +703,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _setPref(_kBookingReminders, v);
             },
           ),
-          const Divider(color: AppColors.divider, height: 1, indent: 56),
+          Divider(color: AppColors.divider, height: 1, indent: 56),
           _switchTile(
             icon: Icons.local_offer_outlined,
             title: 'Promotional emails',
@@ -490,17 +712,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onChanged: (v) {
               setState(() => _promoEmails = v);
               _setPref(_kPromoEmails, v);
-            },
-          ),
-          const Divider(color: AppColors.divider, height: 1, indent: 56),
-          _switchTile(
-            icon: Icons.group_add_outlined,
-            title: 'Match invites',
-            subtitle: 'Players inviting you to open games',
-            value: _matchInvites,
-            onChanged: (v) {
-              setState(() => _matchInvites = v);
-              _setPref(_kMatchInvites, v);
             },
           ),
         ],
@@ -523,7 +734,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              // Needs contrast against the enclosing white card in light
+              // mode — use primaryBackground (soft gray / navy) not surface.
+              color: AppColors.primaryBackground,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: AppColors.textSecondary, size: 18),
@@ -535,7 +748,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -543,7 +756,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textDisabled,
                     fontSize: 11,
                   ),
@@ -557,6 +770,115 @@ class _SettingsScreenState extends State<SettingsScreen> {
             activeThumbColor: AppColors.actionGreen,
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Theme card ──────────────────────────────────────────────────────────
+
+  Widget _buildThemeCard() {
+    return AnimatedBuilder(
+      animation: ThemeController.instance,
+      builder: (context, _) {
+        final currentMode = ThemeController.instance.mode;
+        return _cardContainer(
+          child: Column(
+            children: [
+              _themeTile(
+                icon: Icons.brightness_auto,
+                title: 'System default',
+                subtitle: 'Match your device setting',
+                mode: ThemeMode.system,
+                currentMode: currentMode,
+              ),
+              Divider(color: AppColors.divider, height: 1, indent: 56),
+              _themeTile(
+                icon: Icons.light_mode_outlined,
+                title: 'Light',
+                subtitle: 'Bright surfaces and dark text',
+                mode: ThemeMode.light,
+                currentMode: currentMode,
+              ),
+              Divider(color: AppColors.divider, height: 1, indent: 56),
+              _themeTile(
+                icon: Icons.dark_mode_outlined,
+                title: 'Dark',
+                subtitle: 'Easier on the eyes at night',
+                mode: ThemeMode.dark,
+                currentMode: currentMode,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _themeTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required ThemeMode mode,
+    required ThemeMode currentMode,
+  }) {
+    final isSelected = mode == currentMode;
+    return InkWell(
+      onTap: () => ThemeController.instance.setMode(mode),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected
+                    ? AppColors.actionGreen
+                    : AppColors.textSecondary,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected
+                          ? AppColors.actionGreen
+                          : AppColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: AppColors.textDisabled,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected
+                  ? AppColors.actionGreen
+                  : AppColors.textDisabled,
+              size: 22,
+            ),
+          ],
+        ),
       ),
     );
   }

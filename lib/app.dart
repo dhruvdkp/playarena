@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamebooking/core/theme/app_theme.dart';
+import 'package:gamebooking/core/theme/theme_controller.dart';
 import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/bloc/auth/auth_bloc.dart';
 import 'package:gamebooking/bloc/venue/venue_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:gamebooking/data/repositories/auth_repository.dart';
 import 'package:gamebooking/data/repositories/venue_repository.dart';
 import 'package:gamebooking/data/repositories/booking_repository.dart';
 import 'package:gamebooking/data/repositories/matchmaker_repository.dart';
+import 'package:gamebooking/data/repositories/team_repository.dart';
 import 'package:gamebooking/data/repositories/tournament_repository.dart';
 import 'package:gamebooking/data/services/firebase_auth_service.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
@@ -54,6 +56,11 @@ class GameBookingApp extends StatelessWidget {
             firestoreService: firestoreService,
           ),
         ),
+        RepositoryProvider(
+          create: (_) => TeamRepository(
+            firestoreService: firestoreService,
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -85,11 +92,30 @@ class GameBookingApp extends StatelessWidget {
             ),
           ),
         ],
-        child: MaterialApp.router(
-          title: 'Play Arena',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkTheme,
-          routerConfig: AppRouter.router,
+        child: AnimatedBuilder(
+          animation: ThemeController.instance,
+          builder: (context, _) {
+            // The KeyedSubtree forces a full tree rebuild when the
+            // effective brightness changes. Required because `AppColors.*`
+            // are runtime getters — widgets built against the old palette
+            // need to re-enter `build()` to pick up the new colors.
+            final brightness =
+                ThemeController.instance.effectiveBrightness;
+            return MaterialApp.router(
+              title: 'Play Arena',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: ThemeController.instance.mode,
+              routerConfig: AppRouter.router,
+              builder: (context, child) {
+                return KeyedSubtree(
+                  key: ValueKey(brightness),
+                  child: child ?? const SizedBox.shrink(),
+                );
+              },
+            );
+          },
         ),
       ),
     );

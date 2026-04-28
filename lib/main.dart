@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gamebooking/app.dart';
+import 'package:gamebooking/core/theme/theme_controller.dart';
 import 'package:gamebooking/firebase_options.dart';
 import 'package:gamebooking/data/services/crashlytics_service.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
@@ -16,6 +17,10 @@ void main() async {
 
   // Initialize Crashlytics error handlers
   await CrashlyticsService().init();
+
+  // Load persisted theme mode so the first frame renders with the
+  // user's saved preference (light / dark / system).
+  await ThemeController.instance.init();
 
   // Seed Firestore with demo data in background (don't block app startup)
   final firestoreService = FirestoreService();

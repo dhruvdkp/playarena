@@ -31,6 +31,15 @@ class _SplashScreenState extends State<SplashScreen>
   late final Animation<Offset> _textSlide;
   late final Animation<double> _glowOpacity;
 
+  // Navigate only once the minimum splash time has elapsed AND the
+  // AuthBloc has resolved to either `AuthAuthenticated` or
+  // `AuthUnauthenticated`. Otherwise we would route based on the
+  // transient `AuthInitial` / `AuthLoading` state and briefly flash the
+  // login screen before `AuthCheckStatus` completes.
+  bool _minTimeElapsed = false;
+  bool _authResolved = false;
+  bool _navigated = false;
+
   @override
   void initState() {
     super.initState();
@@ -88,26 +97,42 @@ class _SplashScreenState extends State<SplashScreen>
       }
     });
 
-    // ── Navigate after 2.5s based on state ───────────────────────────
+    // ── Kick off the minimum-display timer ───────────────────────────
     Timer(const Duration(milliseconds: 2500), () {
-      if (mounted) _navigate();
+      if (!mounted) return;
+      _minTimeElapsed = true;
+      _maybeNavigate();
     });
+
+    // ── Check auth synchronously in case it's already resolved ───────
+    // (e.g. the user hot-restarted and Firebase had a cached session).
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated || authState is AuthUnauthenticated) {
+      _authResolved = true;
+    }
   }
 
-  Future<void> _navigate() async {
-    // 1. Check if onboarding is complete
+  /// Performs the actual navigation once both:
+  ///   - the minimum splash time has elapsed, AND
+  ///   - the AuthBloc has resolved (we're no longer in AuthInitial/Loading).
+  ///
+  /// Without the auth-resolved gate, a cold start would route to `/login`
+  /// for a second before `AuthCheckStatus` completes and bounces the
+  /// authenticated user back to `/home`.
+  Future<void> _maybeNavigate() async {
+    if (_navigated || !_minTimeElapsed || !_authResolved) return;
+    _navigated = true;
+
     final prefs = await SharedPreferences.getInstance();
     final onboardingDone = prefs.getBool('onboarding_complete') ?? false;
+    if (!mounted) return;
 
     if (!onboardingDone) {
-      if (mounted) context.go(AppRoutes.onboarding);
+      context.go(AppRoutes.onboarding);
       return;
     }
 
-    // 2. Check auth state
-    if (!mounted) return;
     final authState = context.read<AuthBloc>().state;
-
     if (authState is AuthAuthenticated) {
       if (authState.user.role == UserRole.admin) {
         context.go(AppRoutes.adminDashboard);
@@ -129,22 +154,32 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF0A0F1E),
-              AppColors.primaryBackground,
-              Color(0xFF1E293B),
-            ],
-            stops: [0.0, 0.5, 1.0],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated || state is AuthUnauthenticated) {
+          _authResolved = true;
+          _maybeNavigate();
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            // Theme-aware gradient — dark stadium-night in dark mode,
+            // soft gray-to-white in light mode. Uses `primaryBackground`
+            // and `surface` from the active palette.
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.primaryBackground,
+                AppColors.surface,
+                AppColors.primaryBackground,
+              ],
+              stops: const [0.0, 0.5, 1.0],
+            ),
           ),
-        ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -217,6 +252,7 @@ class _SplashScreenState extends State<SplashScreen>
             ],
           ),
         ),
+      ),
       ),
     );
   }

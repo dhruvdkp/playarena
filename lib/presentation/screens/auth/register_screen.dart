@@ -74,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       onPressed: () => context.pop(),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new,
                         color: AppColors.textPrimary,
                       ),

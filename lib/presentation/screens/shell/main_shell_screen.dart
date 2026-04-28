@@ -34,7 +34,7 @@ class MainShellScreen extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           height: 65,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(Icons.home_outlined, color: AppColors.textSecondary),
               selectedIcon: Icon(Icons.home, color: AppColors.actionGreen),

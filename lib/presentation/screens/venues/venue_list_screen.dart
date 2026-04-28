@@ -220,7 +220,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
                   state is VenueLoaded ? state.venues.length : 0;
               return Text(
                 '$count venues found',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 13,
                 ),
@@ -239,9 +239,9 @@ class _VenueListScreenState extends State<VenueListScreen> {
                 value: _selectedSort,
                 isDense: true,
                 dropdownColor: AppColors.surface,
-                icon: const Icon(Icons.keyboard_arrow_down,
+                icon: Icon(Icons.keyboard_arrow_down,
                     size: 18, color: AppColors.textSecondary),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -292,10 +292,10 @@ class _VenueListScreenState extends State<VenueListScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.stadium_outlined,
+                  Icon(Icons.stadium_outlined,
                       size: 56, color: AppColors.textDisabled),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     AppStrings.noResults,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -345,7 +345,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
                 const SizedBox(height: 16),
                 Text(
                   state.message,
-                  style: const TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(color: AppColors.textSecondary),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -428,7 +428,7 @@ class _VenueShimmerCardState extends State<_VenueShimmerCard>
             gradient: LinearGradient(
               begin: Alignment(-1.0 + 2.0 * _controller.value, 0),
               end: Alignment(1.0 + 2.0 * _controller.value, 0),
-              colors: const [
+              colors: [
                 AppColors.surface,
                 AppColors.card,
                 AppColors.surface,

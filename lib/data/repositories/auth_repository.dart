@@ -111,6 +111,34 @@ class AuthRepository {
     await _authService.resetPassword(email);
   }
 
+  /// Permanently deletes the current user's account.
+  ///
+  /// Deletes the Firestore user document first (best-effort) and then
+  /// removes the Firebase Auth user. If Auth throws
+  /// `requires-recent-login`, the UI should prompt the user to sign in
+  /// again and retry.
+  Future<void> deleteAccount() async {
+    final firebaseUser = _authService.currentUser;
+    if (firebaseUser == null) {
+      throw Exception('No user is currently signed in.');
+    }
+
+    final uid = firebaseUser.uid;
+
+    // Best-effort: wipe the Firestore profile. Don't block the Auth
+    // delete on a Firestore failure — leaving a dangling doc is less bad
+    // than leaving a dangling Auth user the owner can't remove.
+    try {
+      await _firestoreService
+          .deleteUserProfile(uid)
+          .timeout(const Duration(seconds: 5));
+    } catch (_) {}
+
+    // This throws FirebaseAuthException('requires-recent-login') if the
+    // user's credential is stale — caller must surface that to the UI.
+    await _authService.deleteAccount();
+  }
+
   // Get existing profile or create a new one for social sign-in users.
   // Falls back to Firebase Auth data if Firestore is unavailable.
   Future<UserModel> _getOrCreateProfile(User user) async {

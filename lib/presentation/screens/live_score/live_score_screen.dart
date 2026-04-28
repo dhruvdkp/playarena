@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
 import 'package:gamebooking/data/models/venue_model.dart';
+import 'package:gamebooking/data/services/firestore_service.dart';
 
 class LiveScoreScreen extends StatefulWidget {
   const LiveScoreScreen({super.key});
@@ -13,40 +14,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
-
-  // Mock live match data for demonstration
-  final List<_LiveMatch> _liveMatches = [
-    _LiveMatch(
-      id: 'live_1',
-      team1: 'Thunder Strikers',
-      team2: 'Royal Challengers',
-      score1: 45,
-      score2: 38,
-      sportType: SportType.boxCricket,
-      venue: 'Arena Sports Complex',
-      status: 'Innings 2 - Over 8.3',
-    ),
-    _LiveMatch(
-      id: 'live_2',
-      team1: 'FC Warriors',
-      team2: 'United XI',
-      score1: 2,
-      score2: 1,
-      sportType: SportType.football,
-      venue: 'Green Field Stadium',
-      status: '72nd min',
-    ),
-    _LiveMatch(
-      id: 'live_3',
-      team1: 'Smash Kings',
-      team2: 'Net Ninjas',
-      score1: 11,
-      score2: 9,
-      sportType: SportType.badminton,
-      venue: 'City Badminton Hall',
-      status: 'Set 2 - Game Point',
-    ),
-  ];
+  final FirestoreService _firestore = FirestoreService();
 
   @override
   void initState() {
@@ -99,7 +67,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
               },
             ),
             const SizedBox(width: 10),
-            const Text(
+            Text(
               'Live Now',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -109,16 +77,64 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
             ),
           ],
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
-      body: _liveMatches.isEmpty
-          ? _buildEmptyState()
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _liveMatches.length,
-              itemBuilder: (context, index) =>
-                  _buildLiveMatchCard(_liveMatches[index]),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: _firestore.liveTournamentMatchesStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.accentYellow),
+            );
+          }
+          if (snapshot.hasError) {
+            return _buildErrorState(snapshot.error.toString());
+          }
+          final matches = (snapshot.data ?? [])
+              .map(_LiveMatch.fromMap)
+              .toList();
+          if (matches.isEmpty) {
+            return _buildEmptyState();
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: matches.length,
+            itemBuilder: (context, index) =>
+                _buildLiveMatchCard(matches[index]),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline,
+                color: AppColors.error.withValues(alpha: 0.7), size: 72),
+            const SizedBox(height: 16),
+            Text(
+              'Could not load live matches',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style:
+                  TextStyle(color: AppColors.textSecondary, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -133,7 +149,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
             size: 80,
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'No Live Matches',
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -142,7 +158,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'There are no matches being played right now.\nCheck back later!',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             textAlign: TextAlign.center,
@@ -245,7 +261,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                         child: Center(
                           child: Text(
                             match.team1.substring(0, 2).toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -256,7 +272,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                       const SizedBox(height: 8),
                       Text(
                         match.team1,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -281,13 +297,13 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                     children: [
                       Text(
                         '${match.score1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           ':',
@@ -300,7 +316,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                       ),
                       Text(
                         '${match.score2}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -324,7 +340,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                         child: Center(
                           child: Text(
                             match.team2.substring(0, 2).toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -335,7 +351,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                       const SizedBox(height: 8),
                       Text(
                         match.team2,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -355,7 +371,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
           Container(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius:
                   BorderRadius.vertical(bottom: Radius.circular(16)),
@@ -380,14 +396,17 @@ class _LiveScoreScreenState extends State<LiveScoreScreen>
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.location_on,
+                    Icon(Icons.location_on,
                         color: AppColors.textDisabled, size: 14),
                     const SizedBox(width: 4),
-                    Text(
-                      match.venue,
-                      style: const TextStyle(
-                        color: AppColors.textDisabled,
-                        fontSize: 12,
+                    Flexible(
+                      child: Text(
+                        match.venue,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: AppColors.textDisabled,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -466,4 +485,20 @@ class _LiveMatch {
     required this.venue,
     required this.status,
   });
+
+  factory _LiveMatch.fromMap(Map<String, dynamic> m) {
+    return _LiveMatch(
+      id: m['id'] as String? ?? '',
+      team1: (m['team1Name'] as String?) ?? 'Team 1',
+      team2: (m['team2Name'] as String?) ?? 'Team 2',
+      score1: (m['team1Score'] as num?)?.toInt() ?? 0,
+      score2: (m['team2Score'] as num?)?.toInt() ?? 0,
+      sportType: SportType.values.firstWhere(
+        (e) => e.name == m['sportType'],
+        orElse: () => SportType.boxCricket,
+      ),
+      venue: (m['venueName'] as String?) ?? '',
+      status: (m['round'] as String?) ?? 'Live',
+    );
+  }
 }

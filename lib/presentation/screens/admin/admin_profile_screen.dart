@@ -15,7 +15,7 @@ class AdminProfileScreen extends StatelessWidget {
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
-        title: const Text(
+        title: Text(
           'Admin Profile',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -55,7 +55,7 @@ class AdminProfileScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   user?.name ?? 'Admin',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
@@ -64,7 +64,7 @@ class AdminProfileScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   user?.email ?? '',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 14,
                   ),
@@ -121,7 +121,7 @@ class AdminProfileScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
-                const Divider(color: AppColors.divider),
+                Divider(color: AppColors.divider),
                 const SizedBox(height: 16),
 
                 _ProfileMenuItem(
@@ -190,7 +190,7 @@ class _ProfileMenuItem extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
@@ -198,7 +198,7 @@ class _ProfileMenuItem extends StatelessWidget {
                   ),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,
                     ),
@@ -206,7 +206,7 @@ class _ProfileMenuItem extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+            Icon(Icons.chevron_right, color: AppColors.textDisabled),
           ],
         ),
       ),

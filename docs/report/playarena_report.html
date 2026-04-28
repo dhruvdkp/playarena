@@ -1,0 +1,4926 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Finaviya Dhruvil Nareshbhai" />
+  <meta name="author" content="Bambhaniya Pratik Jagdishbhai" />
+  <meta name="author" content="Hariyani Sujal Mukeshbhai" />
+  <title>PlayArena — Mobile Application Project Report</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 12pt;
+      line-height: 1.4;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+
+<style>
+@page { size: A4; margin: 1in; }
+body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #111; max-width: 7in; margin: 0 auto; }
+h1 { font-size: 22pt; color: #1a5490; border-bottom: 2px solid #1a5490; padding-bottom: 6px; margin-top: 48px; page-break-before: always; text-align: center; }
+h1:first-of-type { page-break-before: avoid; }
+h2 { font-size: 16pt; color: #1a5490; margin-top: 24px; }
+h3 { font-size: 13pt; color: #333; margin-top: 16px; }
+p, li { text-align: justify; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; page-break-inside: avoid; font-size: 11pt; }
+th, td { border: 1px solid #666; padding: 6px 8px; vertical-align: top; }
+th { background: #1a5490; color: white; font-weight: bold; }
+tr:nth-child(even) td { background: #eaf2fb; }
+code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; font-size: 90%; }
+pre { background: #f4f4f4; border-left: 3px solid #1a5490; padding: 10px; overflow-x: auto; font-size: 10pt; }
+.mermaid { text-align: center; margin: 20px auto; padding: 10px; background: white; page-break-inside: avoid; }
+em { color: #555; }
+blockquote { border-left: 4px solid #1a5490; background: #f9f9f9; padding: 8px 12px; margin: 12px 0; color: #333; }
+#TOC { page-break-after: always; }
+#TOC ul { list-style: none; padding-left: 20px; }
+#TOC > ul { padding-left: 0; }
+#TOC a { color: #1a5490; text-decoration: none; }
+header#title-block-header { text-align: center; page-break-after: always; padding-top: 2in; }
+header#title-block-header h1.title { font-size: 28pt; border: none; }
+header#title-block-header .author { font-size: 14pt; margin: 6px 0; }
+.center, div.center { text-align: center; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { useMaxWidth: true, htmlLabels: true }, sequence: { useMaxWidth: true }, er: { useMaxWidth: true }, class: { useMaxWidth: true } });
+</script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">PlayArena — Mobile Application Project Report</h1>
+<p class="subtitle">A Mobile Application Project Report</p>
+<p class="author">Finaviya Dhruvil Nareshbhai</p>
+<p class="author">Bambhaniya Pratik Jagdishbhai</p>
+<p class="author">Hariyani Sujal Mukeshbhai</p>
+<p class="date">2025-2026</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#college-certificate" id="toc-college-certificate">College
+Certificate</a></li>
+<li><a href="#company-certificate" id="toc-company-certificate">Company
+Certificate</a></li>
+<li><a href="#acknowledgement"
+id="toc-acknowledgement">ACKNOWLEDGEMENT</a></li>
+<li><a href="#index" id="toc-index">Index</a></li>
+<li><a href="#company-profile" id="toc-company-profile">Company
+Profile</a></li>
+<li><a href="#project-profile" id="toc-project-profile">PROJECT
+PROFILE</a></li>
+<li><a href="#introduction" id="toc-introduction">INTRODUCTION</a></li>
+<li><a href="#existing-system" id="toc-existing-system">EXISTING
+SYSTEM</a></li>
+<li><a href="#proposed-system" id="toc-proposed-system">PROPOSED
+SYSTEM</a></li>
+<li><a href="#tools-and-technologies-used"
+id="toc-tools-and-technologies-used">Tools and Technologies
+Used</a></li>
+<li><a href="#feasibility-study" id="toc-feasibility-study">Feasibility
+Study</a>
+<ul>
+<li><a href="#technical-feasibility" id="toc-technical-feasibility">1.
+Technical Feasibility</a></li>
+<li><a href="#economic-feasibility" id="toc-economic-feasibility">2.
+Economic Feasibility</a></li>
+<li><a href="#operational-feasibility"
+id="toc-operational-feasibility">3. Operational Feasibility</a></li>
+</ul></li>
+<li><a href="#software-requirements-specification-srs"
+id="toc-software-requirements-specification-srs">SOFTWARE REQUIREMENTS
+SPECIFICATION (SRS)</a>
+<ul>
+<li><a href="#purpose" id="toc-purpose">1. Purpose</a></li>
+<li><a href="#scope" id="toc-scope">2. Scope</a></li>
+<li><a href="#functional-requirements"
+id="toc-functional-requirements">3. Functional Requirements</a></li>
+<li><a href="#non-functional-requirements"
+id="toc-non-functional-requirements">4. Non-Functional
+Requirements</a></li>
+<li><a href="#hardware-requirements" id="toc-hardware-requirements">5.
+Hardware Requirements</a></li>
+<li><a href="#software-requirements" id="toc-software-requirements">6.
+Software Requirements</a></li>
+<li><a href="#user-characteristics" id="toc-user-characteristics">7.
+User Characteristics</a></li>
+</ul></li>
+<li><a href="#modules" id="toc-modules">MODULES</a>
+<ul>
+<li><a href="#admin" id="toc-admin">ADMIN</a></li>
+<li><a href="#user-player" id="toc-user-player">USER (PLAYER)</a></li>
+<li><a href="#ground-manager-venue-owner-sub-role"
+id="toc-ground-manager-venue-owner-sub-role">GROUND MANAGER (Venue Owner
+Sub-Role)</a></li>
+<li><a href="#admin-detailed-responsibilities"
+id="toc-admin-detailed-responsibilities">Admin — detailed
+responsibilities</a></li>
+<li><a href="#user-detailed-responsibilities"
+id="toc-user-detailed-responsibilities">User — detailed
+responsibilities</a></li>
+</ul></li>
+<li><a href="#module-hierarchy" id="toc-module-hierarchy">MODULE
+HIERARCHY</a>
+<ul>
+<li><a href="#what-is-module-hierarchy"
+id="toc-what-is-module-hierarchy">What is Module Hierarchy?</a></li>
+<li><a href="#why-use-module-hierarchy"
+id="toc-why-use-module-hierarchy">Why Use Module Hierarchy?</a></li>
+<li><a href="#module-hierarchy-playarena"
+id="toc-module-hierarchy-playarena">Module Hierarchy —
+PlayArena</a></li>
+<li><a href="#module-description-table"
+id="toc-module-description-table">Module Description Table</a></li>
+</ul></li>
+<li><a href="#system-architecture" id="toc-system-architecture">SYSTEM
+ARCHITECTURE</a>
+<ul>
+<li><a href="#what-is-system-architecture"
+id="toc-what-is-system-architecture">What is System
+Architecture?</a></li>
+<li><a href="#why-architecture-matters"
+id="toc-why-architecture-matters">Why Architecture Matters</a></li>
+<li><a href="#playarena-architecture-style"
+id="toc-playarena-architecture-style">PlayArena — Architecture
+Style</a></li>
+<li><a href="#system-architecture-diagram"
+id="toc-system-architecture-diagram">System Architecture
+Diagram</a></li>
+<li><a href="#layer-wise-responsibilities"
+id="toc-layer-wise-responsibilities">Layer-wise
+Responsibilities</a></li>
+<li><a href="#typical-data-flow-example-booking-a-slot"
+id="toc-typical-data-flow-example-booking-a-slot">Typical Data Flow —
+Example: Booking a Slot</a></li>
+</ul></li>
+<li><a href="#system-flow-diagram" id="toc-system-flow-diagram">SYSTEM
+FLOW DIAGRAM</a>
+<ul>
+<li><a href="#symbols-used-for-system-flow-diagram"
+id="toc-symbols-used-for-system-flow-diagram">Symbols Used for System
+Flow Diagram</a></li>
+<li><a href="#extended-flowchart-symbols"
+id="toc-extended-flowchart-symbols">Extended Flowchart Symbols</a></li>
+<li><a href="#system-flow-diagram-playarena"
+id="toc-system-flow-diagram-playarena">System Flow Diagram —
+PlayArena</a></li>
+</ul></li>
+<li><a href="#uml-diagram" id="toc-uml-diagram">UML DIAGRAM</a>
+<ul>
+<li><a href="#what-is-uml-and-what-is-it-used-for"
+id="toc-what-is-uml-and-what-is-it-used-for">What is UML and What Is It
+Used For?</a></li>
+<li><a href="#why-do-we-use-uml-diagrams"
+id="toc-why-do-we-use-uml-diagrams">Why Do We Use UML Diagrams?</a></li>
+<li><a href="#why-are-uml-diagrams-important"
+id="toc-why-are-uml-diagrams-important">Why Are UML Diagrams
+Important?</a></li>
+<li><a href="#what-is-the-need-of-uml-diagrams"
+id="toc-what-is-the-need-of-uml-diagrams">What is the Need of UML
+Diagrams?</a></li>
+<li><a href="#advantages" id="toc-advantages">Advantages</a></li>
+<li><a href="#types-of-uml-diagrams-used-in-playarena"
+id="toc-types-of-uml-diagrams-used-in-playarena">Types of UML Diagrams
+Used in PlayArena</a></li>
+</ul></li>
+<li><a href="#use-case-diagram" id="toc-use-case-diagram">USE CASE
+DIAGRAM</a>
+<ul>
+<li><a href="#purpose-of-use-case-diagram"
+id="toc-purpose-of-use-case-diagram">Purpose of Use Case
+Diagram</a></li>
+<li><a href="#importance-of-use-cases"
+id="toc-importance-of-use-cases">Importance of Use Cases</a></li>
+<li><a href="#use-case-diagram-notations"
+id="toc-use-case-diagram-notations">Use Case Diagram Notations</a></li>
+<li><a href="#symbols-of-use-case-diagram"
+id="toc-symbols-of-use-case-diagram">Symbols of Use Case
+Diagram</a></li>
+<li><a href="#use-case-diagram-admin-side"
+id="toc-use-case-diagram-admin-side">Use Case Diagram — Admin
+Side</a></li>
+<li><a href="#use-case-diagram-user-side"
+id="toc-use-case-diagram-user-side">Use Case Diagram — User
+Side</a></li>
+</ul></li>
+<li><a href="#activity-diagram" id="toc-activity-diagram">Activity
+Diagram</a>
+<ul>
+<li><a href="#what-is-activity-diagram"
+id="toc-what-is-activity-diagram">What is Activity Diagram?</a></li>
+<li><a href="#why-do-we-use-activity-diagram"
+id="toc-why-do-we-use-activity-diagram">Why do we use Activity
+Diagram?</a></li>
+<li><a href="#how-do-you-write-an-activity-diagram"
+id="toc-how-do-you-write-an-activity-diagram">How do you write an
+Activity Diagram?</a></li>
+<li><a href="#elements-of-activity-diagram"
+id="toc-elements-of-activity-diagram">Elements of Activity
+Diagram</a></li>
+<li><a href="#what-is-a-swim-lane-diagram"
+id="toc-what-is-a-swim-lane-diagram">What is a Swim Lane
+Diagram?</a></li>
+<li><a href="#usage-of-swim-lane-diagram"
+id="toc-usage-of-swim-lane-diagram">Usage of Swim Lane Diagram</a></li>
+<li><a href="#symbols-of-activity-diagram"
+id="toc-symbols-of-activity-diagram">Symbols of Activity
+Diagram</a></li>
+<li><a href="#activity-diagram-admin-side"
+id="toc-activity-diagram-admin-side">Activity Diagram — Admin
+Side</a></li>
+<li><a href="#activity-diagram-user-side"
+id="toc-activity-diagram-user-side">Activity Diagram — User
+Side</a></li>
+</ul></li>
+<li><a href="#sequence-diagram" id="toc-sequence-diagram">Sequence
+Diagram</a>
+<ul>
+<li><a href="#what-is-a-sequence-diagram"
+id="toc-what-is-a-sequence-diagram">What is a Sequence Diagram?</a></li>
+<li><a href="#what-is-a-sequence-diagram-used-for"
+id="toc-what-is-a-sequence-diagram-used-for">What is a Sequence Diagram
+Used For?</a></li>
+<li><a href="#sequence-diagram-notations-and-elements"
+id="toc-sequence-diagram-notations-and-elements">Sequence Diagram
+Notations and Elements</a></li>
+<li><a href="#sequence-diagram-symbol-table"
+id="toc-sequence-diagram-symbol-table">Sequence Diagram Symbol
+Table</a></li>
+<li><a href="#sequence-diagram-admin-side"
+id="toc-sequence-diagram-admin-side">Sequence Diagram — Admin
+Side</a></li>
+<li><a href="#sequence-diagram-user-side"
+id="toc-sequence-diagram-user-side">Sequence Diagram — User
+Side</a></li>
+</ul></li>
+<li><a href="#class-diagram" id="toc-class-diagram">Class Diagram</a>
+<ul>
+<li><a href="#what-is-a-class-diagram"
+id="toc-what-is-a-class-diagram">What is a Class Diagram?</a></li>
+<li><a href="#how-do-you-identify-classes-in-a-class-diagram"
+id="toc-how-do-you-identify-classes-in-a-class-diagram">How do you
+Identify Classes in a Class Diagram?</a></li>
+<li><a href="#components-of-class-diagram"
+id="toc-components-of-class-diagram">Components of Class
+Diagram</a></li>
+<li><a href="#class-diagram-symbol-table"
+id="toc-class-diagram-symbol-table">Class Diagram Symbol Table</a></li>
+<li><a href="#class-diagram-playarena"
+id="toc-class-diagram-playarena">Class Diagram — PlayArena</a></li>
+</ul></li>
+<li><a href="#er-diagram" id="toc-er-diagram">ER Diagram</a>
+<ul>
+<li><a href="#what-is-an-er-diagram" id="toc-what-is-an-er-diagram">What
+is an ER Diagram?</a></li>
+<li><a href="#why-do-we-use-er-diagrams"
+id="toc-why-do-we-use-er-diagrams">Why do we use ER Diagrams?</a></li>
+<li><a href="#er-diagram-symbols" id="toc-er-diagram-symbols">ER Diagram
+Symbols</a></li>
+<li><a href="#er-diagram-playarena" id="toc-er-diagram-playarena">ER
+Diagram — PlayArena</a></li>
+</ul></li>
+<li><a href="#data-dictionary" id="toc-data-dictionary">Data
+Dictionary</a>
+<ul>
+<li><a href="#what-is-a-data-dictionary"
+id="toc-what-is-a-data-dictionary">What is a Data Dictionary?</a></li>
+<li><a href="#benefits-of-a-data-dictionary"
+id="toc-benefits-of-a-data-dictionary">Benefits of a Data
+Dictionary</a></li>
+<li><a href="#why-do-we-need-a-data-dictionary"
+id="toc-why-do-we-need-a-data-dictionary">Why Do We Need a Data
+Dictionary?</a></li>
+<li><a href="#users" id="toc-users">1) USERS</a></li>
+<li><a href="#venues" id="toc-venues">2) VENUES</a></li>
+<li><a href="#slots" id="toc-slots">3) SLOTS</a></li>
+<li><a href="#bookings" id="toc-bookings">4) BOOKINGS</a></li>
+<li><a href="#matches-pickup" id="toc-matches-pickup">5) MATCHES
+(Pickup)</a></li>
+<li><a href="#match_requests" id="toc-match_requests">6)
+MATCH_REQUESTS</a></li>
+<li><a href="#teams" id="toc-teams">7) TEAMS</a></li>
+<li><a href="#tournaments" id="toc-tournaments">8) TOURNAMENTS</a></li>
+<li><a href="#reviews" id="toc-reviews">9) REVIEWS</a></li>
+<li><a href="#add_ons" id="toc-add_ons">10) ADD_ONS</a></li>
+</ul></li>
+<li><a href="#screen-layouts" id="toc-screen-layouts">Screen
+Layouts</a></li>
+<li><a href="#user-layout" id="toc-user-layout">USER LAYOUT</a>
+<ul>
+<li><a href="#splash-onboarding" id="toc-splash-onboarding">14.1 Splash
+/ Onboarding</a></li>
+<li><a href="#user-registration" id="toc-user-registration">14.2 User
+Registration</a></li>
+<li><a href="#user-login-email-otp" id="toc-user-login-email-otp">14.3
+User Login (Email / OTP)</a></li>
+<li><a href="#home-dashboard" id="toc-home-dashboard">14.4 Home /
+Dashboard</a></li>
+<li><a href="#venue-listing" id="toc-venue-listing">14.5 Venue
+Listing</a></li>
+<li><a href="#venue-detail" id="toc-venue-detail">14.6 Venue
+Detail</a></li>
+<li><a href="#select-sport-slot" id="toc-select-sport-slot">14.7 Select
+Sport &amp; Slot</a></li>
+<li><a href="#booking-confirmation" id="toc-booking-confirmation">14.8
+Booking Confirmation</a></li>
+<li><a href="#payment" id="toc-payment">14.9 Payment</a></li>
+<li><a href="#payment-success-receipt"
+id="toc-payment-success-receipt">14.10 Payment Success /
+Receipt</a></li>
+<li><a href="#my-bookings" id="toc-my-bookings">14.11 My
+Bookings</a></li>
+<li><a href="#matchmaker" id="toc-matchmaker">14.12 Matchmaker</a></li>
+<li><a href="#tournaments-1" id="toc-tournaments-1">14.13
+Tournaments</a></li>
+<li><a href="#profile-settings" id="toc-profile-settings">14.14 Profile
+&amp; Settings</a></li>
+</ul></li>
+<li><a href="#admin-layout" id="toc-admin-layout">ADMIN LAYOUT</a>
+<ul>
+<li><a href="#admin-login" id="toc-admin-login">15.1 Admin
+Login</a></li>
+<li><a href="#admin-dashboard" id="toc-admin-dashboard">15.2 Admin
+Dashboard</a></li>
+<li><a href="#manage-venues" id="toc-manage-venues">15.3 Manage
+Venues</a></li>
+<li><a href="#manage-slots" id="toc-manage-slots">15.4 Manage
+Slots</a></li>
+<li><a href="#manage-bookings" id="toc-manage-bookings">15.5 Manage
+Bookings</a></li>
+<li><a href="#venue-wise-bookings" id="toc-venue-wise-bookings">15.6
+Venue-wise Bookings</a></li>
+<li><a href="#admin-profile" id="toc-admin-profile">15.7 Admin
+Profile</a></li>
+</ul></li>
+<li><a href="#future-enhancement" id="toc-future-enhancement">FUTURE
+ENHANCEMENT</a></li>
+<li><a href="#conclusion" id="toc-conclusion">CONCLUSION</a></li>
+<li><a href="#bibliography" id="toc-bibliography">BIBLIOGRAPHY</a></li>
+<li><a href="#log-sheet" id="toc-log-sheet">Log-sheet</a></li>
+</ul>
+</nav>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Name</strong></th>
+<th style="text-align: center;"><strong>Enrollment Number</strong></th>
+<th style="text-align: center;"><strong>Roll Number</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Finaviya Dhruvil Nareshbhai</td>
+<td style="text-align: center;">202312102176</td>
+<td style="text-align: center;">5111</td>
+</tr>
+<tr>
+<td style="text-align: center;">Bambhaniya Pratik Jagdishbhai</td>
+<td style="text-align: center;">202312102136</td>
+<td style="text-align: center;">5199</td>
+</tr>
+<tr>
+<td style="text-align: center;">Hariyani Sujal Mukeshbhai</td>
+<td style="text-align: center;">202312102195</td>
+<td style="text-align: center;">5215</td>
+</tr>
+</tbody>
+</table>
+<h1 id="college-certificate">College Certificate</h1>
+
+<h1 id="company-certificate">Company Certificate</h1>
+
+<h1 id="acknowledgement">ACKNOWLEDGEMENT</h1>
+<p>I would like to express my sincere gratitude to my project guide
+<strong>Prof. AyushSingh Kushwaha</strong> for her valuable guidance,
+support, and encouragement throughout the development of this
+project.</p>
+<p>We owe our deep gratitude to our project guide
+<strong>Prof. AyushSingh Kushwaha</strong>, who took keen interest in
+our project work and guided us all along, till the completion of our
+project work by providing all the necessary information for developing a
+good system.</p>
+<p>I also wish to extend my sincere thanks to <strong>Mr. Arpan
+Vaghasiya</strong> and the entire team at <strong>Jeritech</strong> for
+providing the opportunity to work on this live project during the
+internship. Their mentorship, technical inputs, and industry exposure
+were extremely helpful in shaping the final outcome of this project.</p>
+<p>I extend my thanks to my friends for their cooperation and
+constructive feedback during the project work.</p>
+<p>Finally, I am deeply grateful to my family for their constant
+encouragement and moral support which helped me complete this project
+successfully.</p>
+<p>Finaviya Dhruvil</p>
+<p>Bambhaniya Pratik</p>
+<p>Hariyani Sujal</p>
+<h1 id="index">Index</h1>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>SR NO.</strong></th>
+<th style="text-align: left;"><strong>PARTICULARS</strong></th>
+<th style="text-align: center;"><strong>PAGE NO.</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Title Page</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Certificate</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Acknowledgement</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Company Profile</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Project Profile</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;">Introduction</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;">Tools and Technologies Used</td>
+<td style="text-align: center;">13</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Feasibility Study</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;">Software Requirements Specification
+(SRS)</td>
+<td style="text-align: center;">15</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Modules</td>
+<td style="text-align: center;">20</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;">Module Hierarchy</td>
+<td style="text-align: center;">23</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;">System Architecture</td>
+<td style="text-align: center;">25</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;">System Flow Diagram</td>
+<td style="text-align: center;">28</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;">UML Diagrams</td>
+<td style="text-align: center;">31</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">   ➢ Use Case Diagram</td>
+<td style="text-align: center;">34</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">   ➢ Activity Diagram</td>
+<td style="text-align: center;">39</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">   ➢ Sequence Diagram</td>
+<td style="text-align: center;">45</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">   ➢ Class Diagram</td>
+<td style="text-align: center;">52</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">ER Diagram</td>
+<td style="text-align: center;">58</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;">Data Dictionary</td>
+<td style="text-align: center;">63</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;">User Layout (Screenshots)</td>
+<td style="text-align: center;">72</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.1 Splash / Onboarding</td>
+<td style="text-align: center;">73</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.2 User Registration</td>
+<td style="text-align: center;">74</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.3 User Login (Email / OTP)</td>
+<td style="text-align: center;">75</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.4 Home / Dashboard</td>
+<td style="text-align: center;">76</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.5 Venue Listing</td>
+<td style="text-align: center;">77</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.6 Venue Detail</td>
+<td style="text-align: center;">78</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.7 Select Sport &amp; Slot</td>
+<td style="text-align: center;">79</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.8 Booking Confirmation</td>
+<td style="text-align: center;">80</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.9 Payment</td>
+<td style="text-align: center;">81</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.10 Payment Success / Receipt</td>
+<td style="text-align: center;">82</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.11 My Bookings</td>
+<td style="text-align: center;">83</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.12 Matchmaker</td>
+<td style="text-align: center;">84</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.13 Tournaments</td>
+<td style="text-align: center;">85</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">17.14 Profile &amp; Settings</td>
+<td style="text-align: center;">86</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;">Admin Layout (Screenshots)</td>
+<td style="text-align: center;">87</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.1 Admin Login</td>
+<td style="text-align: center;">88</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.2 Admin Dashboard</td>
+<td style="text-align: center;">89</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.3 Manage Venues</td>
+<td style="text-align: center;">90</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.4 Manage Slots</td>
+<td style="text-align: center;">91</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.5 Manage Bookings</td>
+<td style="text-align: center;">92</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.6 Venue-wise Bookings</td>
+<td style="text-align: center;">93</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: left;">18.7 Admin Profile</td>
+<td style="text-align: center;">94</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;">Future Enhancement</td>
+<td style="text-align: center;">95</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: left;">Conclusion</td>
+<td style="text-align: center;">96</td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: left;">References / Bibliography</td>
+<td style="text-align: center;">97</td>
+</tr>
+<tr>
+<td style="text-align: center;">22</td>
+<td style="text-align: left;">Log-sheet</td>
+<td style="text-align: center;">98</td>
+</tr>
+</tbody>
+</table>
+<h1 id="company-profile">Company Profile</h1>
+<ul>
+<li><p><strong>Jeritech</strong> is a technology-oriented organization
+that provides software development services, technical solutions, and
+internship opportunities for students and professionals. The company
+focuses on developing modern mobile applications, web platforms, and
+innovative technology solutions for businesses and individuals.</p></li>
+<li><p>Jeritech supports students by providing real-world project
+experience, technical mentorship, and exposure to modern development
+tools and frameworks such as <strong>Flutter, Firebase, and
+BLoC</strong>. Through this internship opportunity, students gain
+practical knowledge in full-stack mobile application development,
+cloud-based system design, and end-to-end software
+implementation.</p></li>
+<li><p>The project <strong>“PlayArena — Book, Play, Connect”</strong>
+was developed during the internship period under the guidance and
+support of Jeritech.</p></li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Field</strong></th>
+<th style="text-align: left;"><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Company Name</td>
+<td style="text-align: left;">Jeritech</td>
+</tr>
+<tr>
+<td style="text-align: left;">Company Person</td>
+<td style="text-align: left;">Arpan Vaghasiya</td>
+</tr>
+<tr>
+<td style="text-align: left;">Contact No.</td>
+<td style="text-align: left;">+91 9023848330</td>
+</tr>
+<tr>
+<td style="text-align: left;">Email ID</td>
+<td style="text-align: left;">Jeri.technology34@gmail.com</td>
+</tr>
+<tr>
+<td style="text-align: left;">Address</td>
+<td style="text-align: left;">C-503, Giriraj Enclave, nr. Danev Super
+Market, Avkash Park Society, Nikol, Ahmedabad, Gujarat 380049</td>
+</tr>
+<tr>
+<td style="text-align: left;">Website</td>
+<td style="text-align: left;">www.jeritech.in</td>
+</tr>
+</tbody>
+</table>
+<h1 id="project-profile">PROJECT PROFILE</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Field</strong></th>
+<th style="text-align: left;"><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">PLAYARENA</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Objective</strong></td>
+<td style="text-align: left;">The main objective of PlayArena is to
+provide a unified mobile platform that lets users discover nearby sports
+venues, book time slots for multiple sports (box cricket, football,
+pickleball, badminton, tennis), make secure online payments, find
+players for pickup matches, and participate in tournaments. The system
+also provides dedicated admin and ground-manager dashboards to manage
+venues, slots, bookings, users and payments in real time.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Group No</strong></td>
+<td style="text-align: left;">13</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Group Members</strong></td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Team Members</strong></td>
+<td style="text-align: left;">- Finaviya Dhruvil Nareshbhai - Bambhaniya
+Pratik Jagdishbhai - Hariyani Sujal Mukeshbhai</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Platform</strong></td>
+<td style="text-align: left;">Mobile Application (Android &amp;
+iOS)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Framework</strong></td>
+<td style="text-align: left;">Flutter (Dart)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backend</strong></td>
+<td style="text-align: left;">Firebase (Firestore, Authentication,
+Storage, Crashlytics)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>State Management</strong></td>
+<td style="text-align: left;">BLoC (flutter_bloc)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Institute</strong></td>
+<td style="text-align: left;">President Institute of Computer
+Application</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>University</strong></td>
+<td style="text-align: left;">Gujarat University (2025-2026)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Internship</strong></td>
+<td style="text-align: left;">Jeritech, Ahmedabad</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Guide</strong></td>
+<td style="text-align: left;">Prof. AyushSingh Kushwaha</td>
+</tr>
+</tbody>
+</table>
+<h1 id="introduction">INTRODUCTION</h1>
+<h3 id="welcome-to-playarena">Welcome to PlayArena</h3>
+<p><strong>The easiest way to book, play, and connect with sports lovers
+around you!</strong></p>
+<p><strong>PlayArena</strong> is a modern cross-platform mobile
+application designed to simplify the way users discover, reserve, and
+enjoy sports experiences in their local area. The system allows users to
+explore a wide range of sports venues, view detailed information about
+each venue’s facilities, sports offered, ratings and pricing, and book
+time slots instantly based on their preferred sport, date and
+location.</p>
+<p>With PlayArena, users can easily find nearby sports venues for
+<strong>box cricket, football, pickleball, badminton, and
+tennis</strong>, check real-time slot availability, compare peak-hour
+and happy-hour pricing, and make secure bookings without any hassle.
+Whether a user is looking for solo practice, a friendly match with
+friends, a pickup game with strangers of similar skill level, or
+participating in organized tournaments — PlayArena provides a seamless,
+end-to-end experience.</p>
+<p>The application also includes a dedicated <strong>Matchmaker</strong>
+module that allows players to host open matches or respond to “looking
+for players” requests, making it easy for new players in a city to
+connect with a community of sports enthusiasts. A
+<strong>Tournaments</strong> module lets venue owners organize
+professional knockout, round-robin or league events and lets teams
+register and track fixtures inside the app.</p>
+<p>Designed with modern technology — <strong>Flutter</strong> on the
+client side and <strong>Firebase</strong> on the server side — PlayArena
+focuses on convenience, efficiency and reliability. Features such as
+instant booking confirmation, secure integrated payment, QR-code based
+venue entry, split-payment among friends, real-time slot synchronisation
+and push notifications make the entire process smooth and
+trustworthy.</p>
+<p>Our mission is to create a connected sports community where players
+can not only book slots but also discover new sports, connect with
+teammates and opponents, and enjoy a complete sports-entertainment
+experience — all from a single mobile app.</p>
+<h1 id="existing-system">EXISTING SYSTEM</h1>
+<ul>
+<li>The existing system for booking sports venues is largely
+<strong>manual and fragmented</strong>.</li>
+<li>Users typically have to physically visit the ground, call the
+manager on WhatsApp or telephone, or send messages on Instagram to check
+availability and block a slot.</li>
+<li>This process <strong>wastes a lot of time</strong> — especially
+during peak evening and weekend hours when lines are busy and multiple
+users compete for the same slot.</li>
+<li>Payments are usually made in <strong>cash or by manual UPI
+transfer</strong> with no formal receipt, which creates disputes and a
+lack of trust.</li>
+<li>There is <strong>no centralised view</strong> of nearby venues — a
+user cannot compare price, rating, facility and distance in one
+place.</li>
+<li><strong>New players</strong> in a city cannot easily connect with
+other gamers or form teams for pickup matches.</li>
+<li>Tournaments are announced through posters or word-of-mouth, causing
+<strong>low visibility and poor participation</strong>.</li>
+<li>Venue owners have no clean system to track bookings, payments,
+customer history or peak-hour demand — everything is maintained in paper
+diaries or scattered Excel files.</li>
+<li>There is <strong>no online option</strong> for live slot booking,
+refunds, or customer feedback.</li>
+</ul>
+<h1 id="proposed-system">PROPOSED SYSTEM</h1>
+<ul>
+<li>We have developed a new system based on a <strong>cross-platform
+mobile application</strong> built using Flutter and Firebase.</li>
+<li>The app reduces complexity and efficiently handles large volumes of
+real-time data through Cloud Firestore.</li>
+<li>Players do not need to visit the ground or contact staff in person —
+they can see all venues, filter by sport and price, and book a slot from
+home.</li>
+<li>They <strong>don’t have to wait</strong> for their slot anymore —
+availability is shown in real time and slots are reserved atomically so
+double-booking is impossible.</li>
+<li>Users can <strong>book slots, make secure online payments, give
+ratings, connect with other players</strong>, and join tournaments — all
+from a single app.</li>
+<li>The <strong>Matchmaker</strong> module lets users host or join
+pickup matches based on sport, skill level and location.</li>
+<li>A <strong>Tournaments</strong> module lets organisers run knockout,
+round-robin or league events with team registration, fixture generation
+and score tracking.</li>
+<li><strong>Split Payment</strong> lets friends share the booking cost —
+each user pays their portion directly.</li>
+<li><strong>QR code based entry</strong> removes manual verification at
+the venue gate.</li>
+<li>A dedicated <strong>Admin / Ground Manager Dashboard</strong> gives
+owners real-time visibility of bookings, revenue, pending slots, user
+feedback and venue performance.</li>
+<li>The system is more <strong>secure and user-friendly</strong> —
+powered by Firebase Authentication (email + phone OTP) with role-based
+access for Player, Admin and Ground Manager.</li>
+<li>This saves a lot of time and effort for both users and venue
+owners.</li>
+</ul>
+<h1 id="tools-and-technologies-used">Tools and Technologies Used</h1>
+<p><strong>Frontend / Mobile Client:</strong></p>
+<ul>
+<li>Flutter (cross-platform UI framework)</li>
+<li>Dart (programming language)</li>
+<li>Material 3 Design System</li>
+</ul>
+<p><strong>State Management:</strong></p>
+<ul>
+<li>flutter_bloc (BLoC pattern)</li>
+<li>Equatable (value equality)</li>
+</ul>
+<p><strong>Backend (Cloud / Serverless):</strong></p>
+<ul>
+<li>Firebase Authentication (email + phone OTP)</li>
+<li>Cloud Firestore (NoSQL real-time database)</li>
+<li>Firebase Storage (venue images, user avatars)</li>
+<li>Firebase Crashlytics (error monitoring)</li>
+</ul>
+<p><strong>Navigation:</strong></p>
+<ul>
+<li>GoRouter (declarative routing)</li>
+</ul>
+<p><strong>Payments:</strong></p>
+<ul>
+<li>Razorpay / UPI (secure online payment)</li>
+</ul>
+<p><strong>Other Libraries:</strong></p>
+<ul>
+<li>image_picker (upload photos)</li>
+<li>cached_network_image (image caching)</li>
+<li>qr_flutter (QR code generation for booking entry)</li>
+<li>intl (date/time formatting)</li>
+</ul>
+<p><strong>Development Tools:</strong></p>
+<ul>
+<li>IDE: Visual Studio Code, Android Studio</li>
+<li>Version Control: Git, GitHub</li>
+<li>Design: Figma</li>
+<li>Testing: Flutter Test, Firebase Emulator Suite</li>
+<li>AI assistance: ChatGPT, GitHub Copilot</li>
+</ul>
+<p><strong>Platforms Supported:</strong></p>
+<ul>
+<li>Android (API 21+)</li>
+<li>iOS (iOS 12+)</li>
+<li>Web (secondary, for admin panel)</li>
+</ul>
+<h1 id="feasibility-study">Feasibility Study</h1>
+<h2 id="technical-feasibility">1. Technical Feasibility</h2>
+<ul>
+<li>All required technologies — <strong>Flutter, Firebase, Dart</strong>
+— are open-source, well-documented and have strong community
+support.</li>
+<li>Firebase provides a managed backend (Auth, Firestore, Storage, Cloud
+Functions) with a generous free tier suitable for a student
+project.</li>
+<li>The development team has working knowledge of Flutter, Dart and
+Firebase.</li>
+<li>The application can run on both Android and iOS from a single code
+base, reducing development effort significantly.</li>
+<li>Firestore’s real-time listeners eliminate the need for custom
+WebSocket servers for live slot updates.</li>
+</ul>
+<h2 id="economic-feasibility">2. Economic Feasibility</h2>
+<ul>
+<li>Payments are <strong>digital, secure and instant</strong> for both
+the user and the venue owner — reducing cash-handling overhead.</li>
+<li>Firebase’s pay-as-you-go model means the operational cost scales
+only with usage; small volumes are effectively free.</li>
+<li>The system reduces the need for paper registers, printed receipts
+and manual staff at reception — lowering the venue’s operating
+cost.</li>
+<li>Venue owners gain better price optimisation through
+<strong>peak-hour and happy-hour pricing</strong>, improving
+revenue.</li>
+<li>Split-payment reduces failed bookings caused by one friend not
+having enough balance.</li>
+</ul>
+<h2 id="operational-feasibility">3. Operational Feasibility</h2>
+<ul>
+<li>Easy to operate for both players and venue administrators.</li>
+<li>Can be accessed from any smartphone (Android / iOS) — no need for
+dedicated hardware.</li>
+<li>Simple, modern Material 3 interface with consistent navigation.</li>
+<li>Offline-friendly: Firestore caches recent data locally so the app
+works on flaky networks.</li>
+<li>Role-based access (Player / Admin / Ground Manager) ensures users
+only see what’s relevant to them.</li>
+</ul>
+<h1 id="software-requirements-specification-srs">SOFTWARE REQUIREMENTS
+SPECIFICATION (SRS)</h1>
+<h2 id="purpose">1. Purpose</h2>
+<p>The Software Requirements Specification (SRS) describes the
+functional and non-functional requirements of the
+<strong>PlayArena</strong> mobile application. It is intended as the
+authoritative reference for:</p>
+<ul>
+<li>The development team building the system.</li>
+<li>The project guide — <strong>Prof. AyushSingh Kushwaha</strong>.</li>
+<li>The evaluators at <strong>Gujarat University</strong>.</li>
+<li>The technical mentors at <strong>Jeritech</strong>.</li>
+</ul>
+<p>The SRS fixes <em>what</em> the system must do; <em>how</em> it does
+it is covered in the System Architecture and UML chapters.</p>
+<h2 id="scope">2. Scope</h2>
+<p>PlayArena is a cross-platform (<strong>Android + iOS</strong>)
+Flutter application backed by <strong>Firebase</strong>. Its scope
+covers three types of users:</p>
+<ul>
+<li><strong>Player</strong> — registers, discovers venues, books slots,
+pays online, joins pickup matches and tournaments, gives reviews.</li>
+<li><strong>Ground Manager</strong> — manages his own venues, slots,
+pricing, and sees venue-wise bookings and revenue.</li>
+<li><strong>Super Admin</strong> — platform-wide control: create/verify
+venues, manage all users, approve tournaments, refund bookings.</li>
+</ul>
+<p>Out of scope for this release:</p>
+<ul>
+<li>Physical hardware at venue gates (turnstiles, RFID).</li>
+<li>Real-time video streaming of tournaments.</li>
+<li>AI-driven player recommendation engine (planned for future).</li>
+</ul>
+<h2 id="functional-requirements">3. Functional Requirements</h2>
+<h3 id="user-player-module">3.1 User (Player) Module</h3>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 28%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>ID</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+<th style="text-align: center;"><strong>Priority</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">FR-U-01</td>
+<td style="text-align: left;">The system shall allow a new user to
+register with name, email, phone and password.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-02</td>
+<td style="text-align: left;">The system shall verify the user’s phone
+via Firebase OTP before activation.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-03</td>
+<td style="text-align: left;">The system shall allow registered users to
+log in via email + password or phone + OTP.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-04</td>
+<td style="text-align: left;">The system shall allow users to reset
+forgotten passwords via email link.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-05</td>
+<td style="text-align: left;">The system shall display a paginated list
+of nearby venues filtered by sport, rating and price.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-06</td>
+<td style="text-align: left;">The system shall show
+<strong>real-time</strong> slot availability for a selected venue, sport
+and date.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-07</td>
+<td style="text-align: left;">The system shall atomically reserve a slot
+when a booking payment succeeds so <strong>double-booking is
+impossible</strong>.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-08</td>
+<td style="text-align: left;">The system shall allow split payment of a
+booking with up to 8 friends.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-09</td>
+<td style="text-align: left;">The system shall generate a unique QR code
+for every confirmed booking, usable at the venue gate.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-10</td>
+<td style="text-align: left;">The system shall allow the user to cancel
+a booking; refunds are governed by the venue’s policy.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-11</td>
+<td style="text-align: left;">The system shall allow users to host a
+pickup match with sport, date/time, max players, skill level and cost
+per player.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-12</td>
+<td style="text-align: left;">The system shall allow users to join an
+existing pickup match if seats are available.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-13</td>
+<td style="text-align: left;">The system shall allow users to post a
+“looking for players” match request.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-14</td>
+<td style="text-align: left;">The system shall allow users to browse
+tournaments and register as a team.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-15</td>
+<td style="text-align: left;">The system shall allow users to submit a
+review and a rating (1–5 stars) for a completed booking.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-16</td>
+<td style="text-align: left;">The system shall let users view, filter
+and sort their booking history.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-17</td>
+<td style="text-align: left;">The system shall let users mark venues as
+favourites for faster access.</td>
+<td style="text-align: center;">LOW</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-U-18</td>
+<td style="text-align: left;">The system shall let users update their
+profile, change avatar and manage membership tier.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="admin-ground-manager-module">3.2 Admin / Ground-Manager
+Module</h3>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 28%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>ID</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+<th style="text-align: center;"><strong>Priority</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">FR-A-01</td>
+<td style="text-align: left;">The system shall restrict admin routes to
+users with <code>role == admin</code> or
+<code>role == groundManager</code>.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-02</td>
+<td style="text-align: left;">The system shall allow admins to create,
+edit and delete venues with images, amenities and pricing tiers.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-03</td>
+<td style="text-align: left;">The system shall allow admins to generate
+slots in bulk for the next 7 or 30 days.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-04</td>
+<td style="text-align: left;">The system shall allow admins to block
+individual slots (e.g. for maintenance).</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-05</td>
+<td style="text-align: left;">The system shall allow admins to view,
+filter and cancel any booking.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-06</td>
+<td style="text-align: left;">The system shall allow admins to scan a
+booking QR code at the venue gate to verify entry.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-07</td>
+<td style="text-align: left;">The system shall allow admins to view
+aggregate KPIs — total users, venues, bookings, feedback.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-08</td>
+<td style="text-align: left;">The system shall allow admins to create
+and publish tournaments in knockout / round-robin / league format.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-09</td>
+<td style="text-align: left;">The system shall allow admins to view and
+respond to user reviews.</td>
+<td style="text-align: center;">LOW</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-A-10</td>
+<td style="text-align: left;">The system shall allow admins to suspend
+abusive users and promote players to ground managers.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="system-wide-functional-requirements">3.3 System-wide Functional
+Requirements</h3>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 28%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>ID</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+<th style="text-align: center;"><strong>Priority</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">FR-S-01</td>
+<td style="text-align: left;">The system shall authenticate every
+request to Firestore using Firebase Auth tokens.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-S-02</td>
+<td style="text-align: left;">The system shall enforce role-based access
+via Firestore Security Rules.</td>
+<td style="text-align: center;">HIGH</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-S-03</td>
+<td style="text-align: left;">The system shall log unhandled exceptions
+to Firebase Crashlytics.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-S-04</td>
+<td style="text-align: left;">The system shall show connection-loss
+banners and queue writes while offline.</td>
+<td style="text-align: center;">MEDIUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-S-05</td>
+<td style="text-align: left;">The system shall cache recent queries
+locally for faster subsequent reads.</td>
+<td style="text-align: center;">LOW</td>
+</tr>
+</tbody>
+</table>
+<h2 id="non-functional-requirements">4. Non-Functional Requirements</h2>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>ID</strong></th>
+<th style="text-align: left;"><strong>Category</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+<th style="text-align: left;"><strong>Target</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">NFR-01</td>
+<td style="text-align: left;">Performance</td>
+<td style="text-align: left;">Time to display venue list after
+login</td>
+<td style="text-align: left;">≤ 3 seconds on 4G</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-02</td>
+<td style="text-align: left;">Performance</td>
+<td style="text-align: left;">Time to confirm a booking after payment
+success</td>
+<td style="text-align: left;">≤ 5 seconds</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-03</td>
+<td style="text-align: left;">Scalability</td>
+<td style="text-align: left;">System shall handle concurrent users
+reading slots</td>
+<td style="text-align: left;">≥ 1,000 (Firestore)</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-04</td>
+<td style="text-align: left;">Reliability</td>
+<td style="text-align: left;">Monthly uptime</td>
+<td style="text-align: left;">≥ 99.5%</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-05</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">All network traffic encrypted</td>
+<td style="text-align: left;">TLS 1.2+ (HTTPS)</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-06</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Passwords stored only as Firebase Auth
+bcrypt hash</td>
+<td style="text-align: left;">Never plain text</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-07</td>
+<td style="text-align: left;">Usability</td>
+<td style="text-align: left;">New user to first booking</td>
+<td style="text-align: left;">≤ 5 minutes</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-08</td>
+<td style="text-align: left;">Portability</td>
+<td style="text-align: left;">Supported mobile platforms</td>
+<td style="text-align: left;">Android 5+, iOS 12+</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-09</td>
+<td style="text-align: left;">Maintainability</td>
+<td style="text-align: left;">Code must follow BLoC + Clean
+Architecture</td>
+<td style="text-align: left;">Required</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-10</td>
+<td style="text-align: left;">Availability</td>
+<td style="text-align: left;">Offline-first data access for
+bookings</td>
+<td style="text-align: left;">Read-only cached</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-11</td>
+<td style="text-align: left;">Accessibility</td>
+<td style="text-align: left;">Supports system-level dynamic text
+sizing</td>
+<td style="text-align: left;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: center;">NFR-12</td>
+<td style="text-align: left;">Localisation</td>
+<td style="text-align: left;">UI supports LTR languages</td>
+<td style="text-align: left;">English (v1), Hindi/Gujarati (future)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="hardware-requirements">5. Hardware Requirements</h2>
+<h3 id="developer-side-minimum">5.1 Developer Side (minimum)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Component</strong></th>
+<th style="text-align: left;"><strong>Specification</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Processor</td>
+<td style="text-align: left;">Intel i5 / Apple M1 or higher</td>
+</tr>
+<tr>
+<td style="text-align: left;">RAM</td>
+<td style="text-align: left;">8 GB (16 GB recommended)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Storage</td>
+<td style="text-align: left;">256 GB SSD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Display</td>
+<td style="text-align: left;">1920×1080 or higher</td>
+</tr>
+<tr>
+<td style="text-align: left;">Internet</td>
+<td style="text-align: left;">Stable broadband (≥ 10 Mbps)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="end-user-side">5.2 End-User Side</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Component</strong></th>
+<th style="text-align: left;"><strong>Specification</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Device</td>
+<td style="text-align: left;">Android 5.0+ smartphone or iPhone (iOS
+12+)</td>
+</tr>
+<tr>
+<td style="text-align: left;">RAM</td>
+<td style="text-align: left;">≥ 2 GB</td>
+</tr>
+<tr>
+<td style="text-align: left;">Storage</td>
+<td style="text-align: left;">≥ 200 MB free</td>
+</tr>
+<tr>
+<td style="text-align: left;">Network</td>
+<td style="text-align: left;">3G / 4G / 5G / Wi-Fi</td>
+</tr>
+<tr>
+<td style="text-align: left;">Camera</td>
+<td style="text-align: left;">Required for QR scan at venue entry</td>
+</tr>
+</tbody>
+</table>
+<h3 id="server-side">5.3 Server Side</h3>
+<p>The server side is fully <strong>managed by Firebase (Google
+Cloud)</strong>. No physical hardware is maintained by the team —
+Firebase provides auto-scaling Firestore, Authentication, Storage,
+Crashlytics and Cloud Messaging out of the box.</p>
+<h2 id="software-requirements">6. Software Requirements</h2>
+<h3 id="developer-environment">6.1 Developer Environment</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Software</strong></th>
+<th style="text-align: left;"><strong>Version</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Operating System</td>
+<td style="text-align: left;">macOS 12+ / Windows 10+ / Ubuntu
+20.04+</td>
+</tr>
+<tr>
+<td style="text-align: left;">Flutter SDK</td>
+<td style="text-align: left;">3.19+</td>
+</tr>
+<tr>
+<td style="text-align: left;">Dart</td>
+<td style="text-align: left;">3.3+</td>
+</tr>
+<tr>
+<td style="text-align: left;">Android Studio / IntelliJ</td>
+<td style="text-align: left;">Latest stable</td>
+</tr>
+<tr>
+<td style="text-align: left;">VS Code</td>
+<td style="text-align: left;">Latest stable (with Flutter + Dart
+extensions)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Xcode (for iOS)</td>
+<td style="text-align: left;">15+</td>
+</tr>
+<tr>
+<td style="text-align: left;">Git</td>
+<td style="text-align: left;">2.30+</td>
+</tr>
+<tr>
+<td style="text-align: left;">Node.js (for tooling)</td>
+<td style="text-align: left;">18 LTS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="end-user-environment">6.2 End-User Environment</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Software</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Mobile OS</td>
+<td style="text-align: left;">Android 5.0 (API 21) or iOS 12.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Google Play Services</td>
+<td style="text-align: left;">Required on Android</td>
+</tr>
+</tbody>
+</table>
+<h3 id="backend-cloud">6.3 Backend (Cloud)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Service</strong></th>
+<th style="text-align: left;"><strong>Use</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Cloud Firestore</td>
+<td style="text-align: left;">Primary NoSQL database</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Authentication</td>
+<td style="text-align: left;">User identity (email + phone OTP)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Storage</td>
+<td style="text-align: left;">Venue images, user avatars</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Crashlytics</td>
+<td style="text-align: left;">Error monitoring</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Cloud Messaging</td>
+<td style="text-align: left;">Push notifications</td>
+</tr>
+<tr>
+<td style="text-align: left;">Razorpay</td>
+<td style="text-align: left;">Payment processing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="user-characteristics">7. User Characteristics</h2>
+<p>PlayArena is designed for three distinct user groups:</p>
+<ul>
+<li><strong>Players (18 – 40 years):</strong> Smartphone-first, familiar
+with booking apps like Ola, Uber and Zomato. Expects quick discovery,
+secure payment and seamless UX. No special training required.</li>
+<li><strong>Ground Managers (25 – 55 years):</strong> Venue owners with
+basic-to-medium technical literacy. Use the admin panel on a phone or
+tablet at the venue. Given a short walkthrough at onboarding.</li>
+<li><strong>Super Admin (Jeritech team):</strong> Highly technical —
+responsible for platform-wide management, abuse prevention, and
+new-venue verification.</li>
+</ul>
+<h1 id="modules">MODULES</h1>
+<h2 id="admin">ADMIN</h2>
+<ul>
+<li>Login</li>
+<li>Manage Venues (Add / Edit / Delete / Verify)</li>
+<li>Manage Slots (Generate, Block, Reschedule, Pricing)</li>
+<li>Manage Bookings (View, Cancel, Refund, QR verify)</li>
+<li>Manage Users (View profiles, Promote, Suspend)</li>
+<li>Manage Tournaments (Create, Register Teams, Update Fixtures)</li>
+<li>Manage Reviews &amp; Ratings</li>
+<li>View Revenue Reports</li>
+<li>Logout</li>
+</ul>
+<h2 id="user-player">USER (PLAYER)</h2>
+<ul>
+<li>Registration (email / phone OTP)</li>
+<li>Login</li>
+<li>Discover Venues (by city, sport, rating, distance)</li>
+<li>View Venue Details (images, facility, rules, reviews)</li>
+<li>Select Sport &amp; Time Slot</li>
+<li>Book Slot (instant or split payment)</li>
+<li>Make Payment (UPI / card / net-banking)</li>
+<li>View My Bookings (upcoming, ongoing, completed, cancelled)</li>
+<li>Host / Join Pickup Match (Matchmaker)</li>
+<li>Post / Respond to Match Request</li>
+<li>Register for Tournament (individual or team)</li>
+<li>View Live Score</li>
+<li>Give Review &amp; Rating</li>
+<li>Manage Profile (favourite venues, membership tier)</li>
+<li>Logout</li>
+</ul>
+<h2 id="ground-manager-venue-owner-sub-role">GROUND MANAGER (Venue Owner
+Sub-Role)</h2>
+<ul>
+<li>Login with verified manager account</li>
+<li>View / Edit own venues</li>
+<li>Generate daily / weekly slot schedule</li>
+<li>View incoming bookings for his venues</li>
+<li>Update pricing (regular / peak / happy-hour)</li>
+<li>Respond to user reviews</li>
+<li>View venue-wise revenue report</li>
+</ul>
+<h2 id="admin-detailed-responsibilities">Admin — detailed
+responsibilities</h2>
+<ul>
+<li><strong>Manage Users:</strong> Admin can view all registered users,
+promote a player to Ground Manager, suspend abusive users, and handle
+KYC for venue owners.</li>
+<li><strong>View Feedback:</strong> Admin can view all feedback and
+ratings submitted by users across all venues.</li>
+<li><strong>Manage Contact Us:</strong> Admin can view all contact-us /
+support queries raised by users.</li>
+<li><strong>Manage Payment:</strong> Admin can view all payments,
+initiate refunds on cancellation and track revenue across venues.</li>
+<li><strong>Manage Venues &amp; Sports:</strong> Admin can add / edit /
+delete any venue, verify new venues, and toggle which sports are
+offered.</li>
+<li><strong>Manage Tournaments:</strong> Admin can create tournaments,
+approve team registrations and publish fixtures.</li>
+</ul>
+<h2 id="user-detailed-responsibilities">User — detailed
+responsibilities</h2>
+<ul>
+<li><strong>View Facilities:</strong> User can view all venues and their
+facilities (parking, CCTV, shower, drinking water, changing room,
+cafeteria, first aid, Wi-Fi, floodlights, scoreboard).</li>
+<li><strong>View Instructions:</strong> User can view the rules of each
+venue and the guidelines for each sport before confirming a
+booking.</li>
+<li><strong>Make Payment:</strong> User can make secure online payments,
+split the cost with friends, and view full payment history.</li>
+<li><strong>View Feedback:</strong> User can view all public reviews and
+ratings given by other players.</li>
+<li><strong>Join / Host Match:</strong> User can create or join pickup
+matches with skill-level filters.</li>
+<li><strong>Membership:</strong> User can upgrade membership (free →
+silver → gold → platinum) for better discounts and priority
+booking.</li>
+</ul>
+<h1 id="module-hierarchy">MODULE HIERARCHY</h1>
+<h2 id="what-is-module-hierarchy">What is Module Hierarchy?</h2>
+<p>A <strong>Module Hierarchy</strong> is a tree-style diagram that
+shows the top-down decomposition of a software system into modules and
+sub-modules. It helps developers, testers and examiners understand:</p>
+<ul>
+<li>Which modules exist in the system.</li>
+<li>Which sub-modules belong to which parent module.</li>
+<li>The relationship between high-level functional areas and their
+concrete screens and features.</li>
+</ul>
+<h2 id="why-use-module-hierarchy">Why Use Module Hierarchy?</h2>
+<ul>
+<li>Gives a bird’s-eye view of the entire application on a single
+page.</li>
+<li>Makes it easy to plan development, testing and code review by
+module.</li>
+<li>Helps new developers onboard quickly by reading the hierarchy
+first.</li>
+<li>Is required by several university project templates as part of the
+system-design documentation.</li>
+</ul>
+<h2 id="module-hierarchy-playarena">Module Hierarchy — PlayArena</h2>
+<div class="mermaid">flowchart TD
+    ROOT["PlayArena Application"]
+    ROOT --> AUTH["Authentication<br/>Module"]
+    ROOT --> USER["User (Player)<br/>Module"]
+    ROOT --> ADMIN["Admin / Ground<br/>Manager Module"]
+    ROOT --> COMMON["Common<br/>Module"]
+
+    AUTH --> AUTH1["Registration"]
+    AUTH --> AUTH2["Login<br/>(Email + OTP)"]
+    AUTH --> AUTH3["Forgot Password"]
+    AUTH --> AUTH4["Logout"]
+
+    USER --> U1["Profile<br/>Management"]
+    USER --> U2["Venue Discovery"]
+    USER --> U3["Booking"]
+    USER --> U4["My Bookings"]
+    USER --> U5["Matchmaker"]
+    USER --> U6["Tournaments"]
+    USER --> U7["Reviews & Ratings"]
+    USER --> U8["Live Score"]
+
+    U2 --> U2a["Search / Filter"]
+    U2 --> U2b["Venue Detail"]
+    U2 --> U2c["Favourites"]
+
+    U3 --> U3a["Slot Selection"]
+    U3 --> U3b["Payment<br/>(Razorpay)"]
+    U3 --> U3c["Split Payment"]
+    U3 --> U3d["QR Receipt"]
+
+    U5 --> U5a["Host Match"]
+    U5 --> U5b["Join Match"]
+    U5 --> U5c["Match Request"]
+
+    U6 --> U6a["Browse Tournaments"]
+    U6 --> U6b["Team Registration"]
+    U6 --> U6c["View Fixtures"]
+
+    ADMIN --> A1["Dashboard (KPIs)"]
+    ADMIN --> A2["Manage Venues"]
+    ADMIN --> A3["Manage Slots"]
+    ADMIN --> A4["Manage Bookings"]
+    ADMIN --> A5["Manage Users"]
+    ADMIN --> A6["Manage Tournaments"]
+    ADMIN --> A7["Manage Reviews"]
+    ADMIN --> A8["Revenue Reports"]
+
+    COMMON --> C1["Splash / Onboarding"]
+    COMMON --> C2["Settings"]
+    COMMON --> C3["Terms & Privacy"]
+    COMMON --> C4["Contact Us"]
+    COMMON --> C5["Notifications"]</div>
+<h2 id="module-description-table">Module Description Table</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Module</strong></th>
+<th style="text-align: left;"><strong>Sub-Modules</strong></th>
+<th style="text-align: left;"><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Authentication</td>
+<td style="text-align: left;">Registration, Login, Forgot Password,
+Logout</td>
+<td style="text-align: left;">Verifies the user’s identity and issues a
+session token.</td>
+</tr>
+<tr>
+<td style="text-align: left;">User (Player)</td>
+<td style="text-align: left;">Profile, Venue Discovery, Booking, My
+Bookings, Matchmaker, Tournaments, Reviews, Live Score</td>
+<td style="text-align: left;">Everything a player needs to book, play
+and connect.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Admin / Ground Manager</td>
+<td style="text-align: left;">Dashboard, Manage Venues, Manage Slots,
+Manage Bookings, Manage Users, Manage Tournaments, Manage Reviews,
+Revenue Reports</td>
+<td style="text-align: left;">Everything an owner or super-admin needs
+to operate the platform.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Common</td>
+<td style="text-align: left;">Splash, Onboarding, Settings, Terms,
+Contact, Notifications</td>
+<td style="text-align: left;">Cross-cutting screens visible to every
+role regardless of user type.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="system-architecture">SYSTEM ARCHITECTURE</h1>
+<h2 id="what-is-system-architecture">What is System Architecture?</h2>
+<p><strong>System architecture</strong> is the high-level structure of a
+software system. It specifies the system’s components, their
+responsibilities, and how they communicate with each other. A good
+architecture makes the system easier to build, test, scale and
+maintain.</p>
+<h2 id="why-architecture-matters">Why Architecture Matters</h2>
+<ul>
+<li>Separates concerns so each layer can be changed independently.</li>
+<li>Makes the code easier to test — each layer can be mocked in
+isolation.</li>
+<li>Enables multiple developers to work in parallel on different
+layers.</li>
+<li>Provides a blueprint for new developers joining the team.</li>
+</ul>
+<h2 id="playarena-architecture-style">PlayArena — Architecture
+Style</h2>
+<p>PlayArena follows a <strong>4-layer Clean Architecture</strong> with
+the <strong>BLoC</strong> pattern on the client side and
+<strong>Firebase</strong> as a managed backend:</p>
+<ol type="1">
+<li><strong>Presentation Layer</strong> — Flutter widgets and screens
+(the UI).</li>
+<li><strong>Business Logic Layer</strong> — BLoC components (events,
+states and business rules).</li>
+<li><strong>Data Layer</strong> — Repositories and Services that
+abstract Firebase.</li>
+<li><strong>Backend Layer (Cloud)</strong> — Firebase managed
+services.</li>
+</ol>
+<p>This architecture strictly separates UI code from business rules and
+data access — a well-known best-practice for medium-to-large Flutter
+applications.</p>
+<h2 id="system-architecture-diagram">System Architecture Diagram</h2>
+<div class="mermaid">flowchart TB
+    subgraph CLIENT["MOBILE CLIENT — Flutter App (Android / iOS)"]
+        direction TB
+        subgraph UI["1. Presentation Layer — UI Widgets / Screens"]
+            S1["Auth Screens"]
+            S2["Home / Venue Screens"]
+            S3["Booking Screens"]
+            S4["Matchmaker Screens"]
+            S5["Tournament Screens"]
+            S6["Admin Screens"]
+        end
+
+        subgraph BLOC["2. Business Logic Layer — BLoC"]
+            B1["AuthBloc"]
+            B2["BookingBloc"]
+            B3["MatchmakerBloc"]
+            B4["TournamentBloc"]
+            B5["AdminBloc"]
+        end
+
+        subgraph REPO["3. Data Layer — Repositories + Services"]
+            R1["AuthRepository"]
+            R2["BookingRepository"]
+            R3["VenueRepository"]
+            R4["MatchmakerRepository"]
+            SV1["FirestoreService"]
+            SV2["PaymentService (Razorpay)"]
+            SV3["CrashlyticsService"]
+        end
+    end
+
+    subgraph CLOUD["4. FIREBASE BACKEND — Google Cloud (Managed)"]
+        F1[("Cloud Firestore<br/>NoSQL DB")]
+        F2["Firebase Auth"]
+        F3["Firebase Storage"]
+        F4["Crashlytics"]
+        F5["Cloud Messaging"]
+    end
+
+    subgraph EXT["External Services"]
+        RP["Razorpay<br/>Payment Gateway"]
+    end
+
+    UI -- "dispatches Event" --> BLOC
+    BLOC -- "emits State" --> UI
+    BLOC -- "calls method" --> REPO
+    REPO -- "returns data" --> BLOC
+    REPO -- "read / write" --> CLOUD
+    REPO -. "pay / verify" .-> EXT
+    EXT -. "webhook" .-> CLOUD</div>
+<h2 id="layer-wise-responsibilities">Layer-wise Responsibilities</h2>
+<h3 id="presentation-layer-libpresentation">1. Presentation Layer
+(<code>lib/presentation/</code>)</h3>
+<p>Pure Flutter widgets — stateless where possible; stateful only when
+local animation / form state is needed. This layer <strong>does not know
+about Firebase or HTTP</strong>; it only renders what the BLoC tells it
+to.</p>
+<ul>
+<li>Dispatches <code>Event</code> objects to the BLoC on user
+interaction.</li>
+<li>Listens to the BLoC’s <code>State</code> stream and rebuilds widgets
+reactively.</li>
+</ul>
+<h3 id="business-logic-layer-bloc-libbloc">2. Business Logic Layer —
+BLoC (<code>lib/bloc/</code>)</h3>
+<p>Each feature has its own BLoC (Business Logic Component). A BLoC:</p>
+<ul>
+<li>Receives an <code>Event</code> from the UI.</li>
+<li>Runs the business rule (validation, combining multiple data sources,
+orchestrating multi-step flows).</li>
+<li>Calls the appropriate method on a <strong>Repository</strong>.</li>
+<li>Emits a new <code>State</code> that the UI renders.</li>
+</ul>
+<p>Key BLoCs in PlayArena: <code>AuthBloc</code>,
+<code>BookingBloc</code>, <code>MatchmakerBloc</code>,
+<code>TournamentBloc</code>, <code>AdminBloc</code>.</p>
+<h3 id="data-layer-repositories-services-libdata">3. Data Layer —
+Repositories + Services (<code>lib/data/</code>)</h3>
+<ul>
+<li><strong>Repositories</strong> expose a domain-friendly API
+(e.g. <code>bookSlot()</code>, <code>loginWithOtp()</code>). The BLoC
+talks only to repositories — never directly to Firebase.</li>
+<li><strong>Services</strong> wrap the raw Firebase SDK.
+<code>FirestoreService</code> centralises every Firestore call, converts
+<code>Timestamp</code> fields to ISO strings, and injects server-side
+timestamps on every create / update.</li>
+<li><strong>Models</strong> are immutable Dart classes (using
+<code>Equatable</code>) with <code>fromJson</code> / <code>toJson</code>
+factories.</li>
+</ul>
+<h3 id="backend-layer-firebase-managed-cloud">4. Backend Layer —
+Firebase (Managed Cloud)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Service</strong></th>
+<th style="text-align: left;"><strong>Responsibility</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Cloud Firestore</td>
+<td style="text-align: left;">Primary NoSQL data store — users, venues,
+slots, bookings, matches, tournaments, reviews.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Auth</td>
+<td style="text-align: left;">Identity &amp; session tokens —
+email/password + phone OTP.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Firebase Storage</td>
+<td style="text-align: left;">Binary blobs — venue images, user avatars,
+review photos.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Crashlytics</td>
+<td style="text-align: left;">Captures unhandled errors and stack traces
+in production.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cloud Messaging (FCM)</td>
+<td style="text-align: left;">Push notifications for booking reminders
+and tournament updates.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Security Rules</td>
+<td style="text-align: left;">Server-side enforcement of role-based
+access.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="typical-data-flow-example-booking-a-slot">Typical Data Flow —
+Example: Booking a Slot</h2>
+<p>The following example traces a single user action (“Book Now”)
+through every layer of the architecture:</p>
+<ol type="1">
+<li><strong>User</strong> taps <em>“Book Now”</em> in
+<code>BookingScreen</code> (Presentation Layer).</li>
+<li>The screen dispatches a <code>BookSlotEvent(slotId, userId)</code>
+to <code>BookingBloc</code>.</li>
+<li><code>BookingBloc</code> validates business rules (slot is still
+available, user is logged in, amount is non-zero) and calls
+<code>BookingRepository.bookSlot(...)</code>.</li>
+<li><code>BookingRepository</code> delegates to
+<code>PaymentService</code> (Razorpay) to collect the payment, then
+calls <code>FirestoreService</code> to run an <strong>atomic Firestore
+transaction</strong> that:
+<ul>
+<li>Marks the slot’s <code>isAvailable = false</code> and sets its
+<code>bookingId</code>.</li>
+<li>Creates a new document in the <code>bookings</code> collection with
+status <code>upcoming</code> and
+<code>paymentStatus = completed</code>.</li>
+</ul></li>
+<li>Firebase commits the transaction and returns the booking ID.</li>
+<li><code>BookingRepository</code> returns the booking object to
+<code>BookingBloc</code>.</li>
+<li><code>BookingBloc</code> emits
+<code>BookingSuccessState(booking)</code>.</li>
+<li><code>BookingScreen</code> listens to this state and navigates to
+<code>PaymentSuccessScreen</code>, which shows the QR code, receipt and
+“Share with friends” buttons.</li>
+</ol>
+<p>This end-to-end flow keeps UI, business rules and data access
+strictly separated, making the system easy to unit-test, easy to evolve,
+and resilient to Firebase SDK changes (only the Service layer is
+affected).</p>
+<h1 id="system-flow-diagram">SYSTEM FLOW DIAGRAM</h1>
+<ul>
+<li>A system flow diagram is a way to show the relationships between a
+business and its components, such as customers, admins and services.
+System flow diagrams are also known as <strong>“process flow
+diagrams”</strong> or <strong>“data flow diagrams.”</strong></li>
+</ul>
+<h3 id="what-is-flow-diagram">What is Flow Diagram?</h3>
+<ul>
+<li>System flows are system models that show the activities and
+decisions that a system executes from a user’s perspective.</li>
+</ul>
+<h3 id="what-is-system-diagram">What is System Diagram?</h3>
+<ul>
+<li>A system diagram is a visual model of a system, its components and
+their interactions. With supporting documentation, it can capture all
+the essential information of a system’s design — from user input at the
+UI layer, through business logic in the BLoC, down to data persistence
+in Firestore.</li>
+</ul>
+<h2 id="symbols-used-for-system-flow-diagram">Symbols Used for System
+Flow Diagram</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Meaning</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Oval</td>
+<td style="text-align: left;">Start or End</td>
+<td style="text-align: left;">The oval is used to represent the start
+and end of a process.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rectangle</td>
+<td style="text-align: left;">Process Step</td>
+<td style="text-align: left;">A step in the flowcharting process; the
+rectangle is the go-to symbol for a single action.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Arrow</td>
+<td style="text-align: left;">Direction / Flow</td>
+<td style="text-align: left;">Shows the direction of flow from one step
+to the next.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Diamond</td>
+<td style="text-align: left;">Decision</td>
+<td style="text-align: left;">Represents a decision point that calls for
+a Yes/No or True/False choice.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="extended-flowchart-symbols">Extended Flowchart Symbols</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol (Visual)</strong></th>
+<th style="text-align: left;"><strong>Name</strong></th>
+<th style="text-align: left;"><strong>Meaning / Use</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Rounded Rectangle (oval)</td>
+<td style="text-align: left;">Start / End</td>
+<td style="text-align: left;">Represents the start or end of a process
+or system flow.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Arrow</td>
+<td style="text-align: left;">Flow Direction</td>
+<td style="text-align: left;">Shows the direction of flow from one step
+to another.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Parallelogram</td>
+<td style="text-align: left;">Input / Output</td>
+<td style="text-align: left;">Represents input to or output from a
+process (e.g. data entry, display).</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rectangle</td>
+<td style="text-align: left;">Process</td>
+<td style="text-align: left;">Represents a process step or action to be
+performed.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Diamond</td>
+<td style="text-align: left;">Decision</td>
+<td style="text-align: left;">Represents a decision point requiring a
+Yes/No or True/False choice.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="system-flow-diagram-playarena">System Flow Diagram —
+PlayArena</h2>
+<div class="mermaid">flowchart TD
+    A([START]) --> B[Open PlayArena App]
+    B --> C{Registered?}
+    C -- No --> D[User Registration]
+    D --> E{Valid?}
+    E -- No --> D
+    E -- Yes --> F[User Login]
+    C -- Yes --> F
+    F --> G{Role?}
+
+    G -- Admin --> H[Admin Dashboard]
+    H --> H1[Manage Venues]
+    H --> H2[Manage Slots]
+    H --> H3[Manage Bookings]
+    H --> H4[Manage Users]
+    H --> H5[Manage Tournaments]
+    H1 & H2 & H3 & H4 & H5 --> Z[Logout]
+
+    G -- Player --> P[Home / Dashboard]
+    P --> P1[Discover Venues]
+    P1 --> P2[Select Venue]
+    P2 --> P3[Select Sport & Slot]
+    P3 --> P4{Slot Available?}
+    P4 -- No --> P1
+    P4 -- Yes --> P5[Proceed to Payment]
+    P5 --> P6{Payment Success?}
+    P6 -- No --> P5
+    P6 -- Yes --> P7[Booking Confirmed + QR]
+    P7 --> P8[My Bookings]
+    P8 --> P9[Give Review & Rating]
+    P9 --> Z
+
+    G -- Ground Manager --> M[Manager Dashboard]
+    M --> M1[View Own Venues]
+    M --> M2[Generate Slots]
+    M --> M3[View Incoming Bookings]
+    M1 & M2 & M3 --> Z
+
+    Z --> END([END])</div>
+<h1 id="uml-diagram">UML DIAGRAM</h1>
+<h2 id="what-is-uml-and-what-is-it-used-for">What is UML and What Is It
+Used For?</h2>
+<ul>
+<li>A <strong>UML Diagram</strong> is a diagram based on the UML
+(Unified Modeling Language) with the purpose of visually representing a
+system along with its main actors, roles, actions, artifacts or
+classes.</li>
+<li>It helps developers, designers and examiners to better understand,
+alter, maintain and document information about the system.</li>
+<li>UML is used by software developers across the industry.</li>
+<li>UML can be used to develop diagrams and provide users with
+ready-to-use, expressive modelling examples.</li>
+</ul>
+<h2 id="why-do-we-use-uml-diagrams">Why Do We Use UML Diagrams?</h2>
+<ul>
+<li>UML has applications beyond software development, such as business
+process flow in manufacturing and services.</li>
+<li>It is analogous to the blueprints used in other engineering fields
+and consists of different types of diagrams.</li>
+<li>In the aggregate, UML diagrams describe the <strong>boundary,
+structure and behaviour</strong> of the system and the objects within
+it.</li>
+</ul>
+<h2 id="why-are-uml-diagrams-important">Why Are UML Diagrams
+Important?</h2>
+<ul>
+<li>The importance of using UML for modeling cannot be overstated.</li>
+<li>UML is a powerful tool that can greatly improve the quality of your
+system analysis and design.</li>
+<li>It is hoped that these improved practices will translate into
+higher-quality systems.</li>
+</ul>
+<h2 id="what-is-the-need-of-uml-diagrams">What is the Need of UML
+Diagrams?</h2>
+<h3 id="importance-of-uml-diagrams-in-software-development">Importance
+of UML Diagrams in Software Development</h3>
+<ul>
+<li>The Unified Modeling Language (UML) is a standard language for
+specifying, visualising, constructing and documenting the artifacts of
+software systems as well as business modelling and other non-software
+systems.</li>
+</ul>
+<h2 id="advantages">Advantages</h2>
+<ul>
+<li>Provides a standard for software development.</li>
+<li>Reduces costs to develop diagrams of UML using supporting
+tools.</li>
+<li>Development time is reduced.</li>
+<li>Past issues faced by developers are minimised because the design is
+communicated clearly before coding starts.</li>
+</ul>
+<h2 id="types-of-uml-diagrams-used-in-playarena">Types of UML Diagrams
+Used in PlayArena</h2>
+<ol type="1">
+<li><strong>Use Case Diagram</strong></li>
+<li><strong>Activity Diagram</strong></li>
+<li><strong>Sequence Diagram</strong></li>
+<li><strong>Class Diagram</strong></li>
+</ol>
+<h1 id="use-case-diagram">USE CASE DIAGRAM</h1>
+<h2 id="purpose-of-use-case-diagram">Purpose of Use Case Diagram</h2>
+<ul>
+<li>Use Case Diagram is one of the UML diagrams and its specific purpose
+is to <strong>gather system requirements and actors</strong>.</li>
+<li>Use Case Diagrams specify the events of a system and their
+flows.</li>
+<li>However, Use Case Diagrams never describe <em>how</em> these events
+are implemented — that belongs in sequence or activity diagrams.</li>
+</ul>
+<h2 id="importance-of-use-cases">Importance of Use Cases</h2>
+<ul>
+<li>Use cases are important because they are in a <strong>tracking
+format</strong>.</li>
+<li>They make it easy to comprehend the functional requirements in the
+system.</li>
+<li>They also make it easy to identify the various interactions between
+the users and the system within an environment.</li>
+</ul>
+<h2 id="use-case-diagram-notations">Use Case Diagram Notations</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Notation</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Actor</strong></td>
+<td style="text-align: left;">Actors are usually individuals (or
+external systems) involved with the system, defined according to their
+roles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Use Case</strong></td>
+<td style="text-align: left;">A use case describes how an actor uses a
+system to accomplish a particular goal.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Relationship</strong></td>
+<td style="text-align: left;">The relationships between and among the
+actors and the use cases.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>System Boundary</strong></td>
+<td style="text-align: left;">Boundary that defines the whole system;
+actors are always outside of the system boundary.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="symbols-of-use-case-diagram">Symbols of Use Case Diagram</h2>
+<table>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Stick figure</td>
+<td style="text-align: left;">A user or system component that interacts
+with the system and initiates use cases.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Oval</td>
+<td style="text-align: left;">A specific functionality or process
+performed by the system (manual or automated).</td>
+</tr>
+<tr>
+<td style="text-align: center;">Solid line</td>
+<td style="text-align: left;">Connects actors to use cases, representing
+interaction or communication.</td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><code>&lt;&lt;include&gt;&gt;</code></td>
+<td style="text-align: left;">One use case mandatorily calls another use
+case (reuse of functionality).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>&lt;&lt;extend&gt;&gt;</code></td>
+<td style="text-align: left;">Extend relationship between use cases —
+one calls another under a certain condition; think of it as
+decision-driven.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rectangle</td>
+<td style="text-align: left;">Encloses all system use cases, defining
+the system’s scope and limits.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="use-case-diagram-admin-side">Use Case Diagram — Admin Side</h2>
+<div class="mermaid">flowchart LR
+    Admin((ADMIN))
+    subgraph SYSTEM["PlayArena System"]
+        UC1((Login))
+        UC2((Authenticate))
+        UC3((Manage Venues))
+        UC4((Manage Slots))
+        UC5((Manage Users))
+        UC6((Manage Bookings))
+        UC7((Manage Payments))
+        UC8((Manage Tournaments))
+        UC9((Manage Reviews))
+        UC10((Logout))
+    end
+    Admin --- UC1
+    UC1 -. "<<include>>" .-> UC2
+    Admin --- UC3
+    Admin --- UC4
+    Admin --- UC5
+    Admin --- UC6
+    Admin --- UC7
+    Admin --- UC8
+    Admin --- UC9
+    Admin --- UC10</div>
+<h2 id="use-case-diagram-user-side">Use Case Diagram — User Side</h2>
+<div class="mermaid">flowchart LR
+    User((PLAYER))
+    subgraph SYS["PlayArena System"]
+        R((Registration))
+        L((Login))
+        A((Authenticate))
+        V((View Venues))
+        S((Select Sport & Slot))
+        B((Book Slot))
+        P((Make Payment))
+        M((Matchmaker))
+        T((Join Tournament))
+        F((Give Review))
+        PR((Manage Profile))
+        LO((Logout))
+    end
+    User --- R
+    User --- L
+    L -. "<<include>>" .-> A
+    User --- V
+    User --- S
+    S -. "<<extend>>" .-> B
+    B -. "<<include>>" .-> P
+    User --- M
+    User --- T
+    User --- F
+    User --- PR
+    User --- LO</div>
+<h1 id="activity-diagram">Activity Diagram</h1>
+<h2 id="what-is-activity-diagram">What is Activity Diagram?</h2>
+<ul>
+<li>An <strong>Activity Diagram</strong> is a type of UML (Unified
+Modelling Language) diagram used in software engineering and systems
+modelling to represent the flow of activities or processes within a
+system, business process, or workflow.</li>
+<li>It is a graphical representation that visually depicts the steps,
+actions and decisions involved in a particular process.</li>
+<li>Activity diagrams are considered a variation of <strong>State Chart
+Diagrams</strong>.</li>
+</ul>
+<h2 id="why-do-we-use-activity-diagram">Why do we use Activity
+Diagram?</h2>
+<ul>
+<li>The basic usage of an Activity Diagram is similar to other UML
+diagrams.</li>
+<li>Its specific purpose is to <strong>model the control flow from one
+activity to another</strong>.</li>
+<li>This control flow does not include messages between objects or
+actors — that belongs to Sequence Diagrams.</li>
+<li>Activity Diagrams are suitable for modelling the activity flow of
+the system or business process.</li>
+</ul>
+<h2 id="how-do-you-write-an-activity-diagram">How do you write an
+Activity Diagram?</h2>
+<p>To draw an Activity Diagram from the beginning, follow these
+steps:</p>
+<ol type="1">
+<li><strong>Figure out the action steps</strong> from the use case.</li>
+<li><strong>Identify the actors</strong> who are involved in the
+process.</li>
+<li><strong>Find the flow</strong> or sequence among the
+activities.</li>
+<li><strong>Add swim lanes</strong> if there are multiple actors or
+departments involved to clarify responsibilities.</li>
+</ol>
+<h2 id="elements-of-activity-diagram">Elements of Activity Diagram</h2>
+<p>The fundamental elements of an activity diagram include:</p>
+<ul>
+<li><strong>Actions:</strong> The tasks or activities performed.</li>
+<li><strong>Control Elements:</strong> These govern the flow of
+activities and include:
+<ul>
+<li><strong>Decision:</strong> A branching point where the flow can
+diverge based on conditions.</li>
+<li><strong>Division (Fork):</strong> Splitting of flow into concurrent
+paths.</li>
+<li><strong>Merge (Join):</strong> Bringing multiple flows back into a
+single path.</li>
+<li><strong>Initiation:</strong> The starting point of the activity
+flow.</li>
+<li>And other control constructs.</li>
+</ul></li>
+</ul>
+<h2 id="what-is-a-swim-lane-diagram">What is a Swim Lane Diagram?</h2>
+<ul>
+<li>A <strong>Swim Lane Diagram</strong> is a type of process flow
+diagram or flowchart that visually distinguishes job sharing and
+responsibilities for sub-processes within a business process. Swim lanes
+can be arranged either <strong>horizontally</strong> or
+<strong>vertically</strong> depending on design preferences.</li>
+</ul>
+<h2 id="usage-of-swim-lane-diagram">Usage of Swim Lane Diagram</h2>
+<ul>
+<li>Swim Lane Diagrams are used to model business processes involving
+more than one department or role.</li>
+<li>They clarify not only the sequence of steps but also show
+<strong>who is responsible for each step</strong>.</li>
+<li>Swim lanes help identify potential delays, mistakes, or fraud risks
+by visually separating roles.</li>
+<li>These diagrams are widely used in <strong>Business Process Modeling
+Notation (BPMN)</strong> and <strong>UML Activity Diagram</strong>
+methodologies for clear responsibility assignments.</li>
+</ul>
+<h2 id="symbols-of-activity-diagram">Symbols of Activity Diagram</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Name</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Filled circle</td>
+<td style="text-align: left;">Initial Node</td>
+<td style="text-align: left;">The filled circle represents the starting
+point of the diagram.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rounded Rectangle</td>
+<td style="text-align: left;">Activity</td>
+<td style="text-align: left;">Represents activities that occur. An
+activity may be manual or automated.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Arrow</td>
+<td style="text-align: left;">Flow / Edge</td>
+<td style="text-align: left;">Arrows show the flow from one activity or
+decision to another.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Diamond</td>
+<td style="text-align: left;">Decision</td>
+<td style="text-align: left;">One flow enters and several leave with
+conditions like Yes / No.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Horizontal bar</td>
+<td style="text-align: left;">Fork</td>
+<td style="text-align: left;">One flow enters and several leave; denotes
+the beginning of parallel activities.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Horizontal bar</td>
+<td style="text-align: left;">Join</td>
+<td style="text-align: left;">Several flows enter and one leaves;
+denotes the end of parallel activities.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Bullseye circle</td>
+<td style="text-align: left;">Final Node</td>
+<td style="text-align: left;">Represents the ending point of the
+diagram. The activity diagram can have zero or more final states.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="activity-diagram-admin-side">Activity Diagram — Admin Side</h2>
+<div class="mermaid">flowchart TD
+    S([Start]) --> L[Admin Login]
+    L --> V{Verified?}
+    V -- No --> L
+    V -- Yes --> FORK(( ))
+    FORK --> A1[Manage Venues]
+    FORK --> A2[Manage Slots]
+    FORK --> A3[Manage Users]
+    FORK --> A4[Manage Bookings]
+    FORK --> A5[Manage Payments]
+    FORK --> A6[Manage Reviews]
+    A1 & A2 & A3 & A4 & A5 & A6 --> JOIN(( ))
+    JOIN --> LO[Logout]
+    LO --> E([End])</div>
+<h2 id="activity-diagram-user-side">Activity Diagram — User Side</h2>
+<div class="mermaid">flowchart TD
+    S([Start]) --> R[User Registration]
+    R --> V1{Valid?}
+    V1 -- No --> R
+    V1 -- Yes --> L[User Login]
+    L --> V2{Verify OTP?}
+    V2 -- No --> L
+    V2 -- Yes --> FORK(( ))
+    FORK --> U1[Discover Venues]
+    FORK --> U2[Select Sport & Slot]
+    FORK --> U3[Book Slot]
+    FORK --> U4[Make Payment]
+    FORK --> U5[Join Matchmaker]
+    FORK --> U6[Give Review]
+    U1 & U2 & U3 & U4 & U5 & U6 --> JOIN(( ))
+    JOIN --> LO[Logout]
+    LO --> E([End])</div>
+<h1 id="sequence-diagram">Sequence Diagram</h1>
+<h2 id="what-is-a-sequence-diagram">What is a Sequence Diagram?</h2>
+<ul>
+<li>A <strong>Sequence Diagram</strong> is a type of UML (Unified
+Modelling Language) diagram used in software engineering and system
+design.</li>
+<li>It is used to <strong>visualise the interactions and
+communication</strong> between different components or objects within a
+system over a <strong>specific period of time</strong>.</li>
+<li>It shows the objects participating in the interaction by their
+<em>Lifelines</em> and the <em>Messages</em> they send to each
+other.</li>
+</ul>
+<h2 id="what-is-a-sequence-diagram-used-for">What is a Sequence Diagram
+Used For?</h2>
+<ul>
+<li>UML Sequence Diagrams model the <strong>flow of logic</strong>
+within your system in a visual manner.</li>
+<li>They help to <strong>document and validate</strong> the logic of the
+system.</li>
+<li>They are commonly used for both <strong>Analysis and Design</strong>
+purposes.</li>
+</ul>
+<h2 id="sequence-diagram-notations-and-elements">Sequence Diagram
+Notations and Elements</h2>
+<h3 id="basic-sequence-diagram-notations">Basic Sequence Diagram
+Notations</h3>
+<ul>
+<li><strong>Class Roles or Participants</strong>: Describe the way an
+object will behave in a given context.</li>
+<li><strong>Activation or Execution Occurrence</strong>: Activation
+boxes represent the time an object needs to complete a task.</li>
+<li><strong>Messages</strong>: Represent communication between
+objects.</li>
+<li><strong>Lifelines</strong>: Show the existence of an object over
+time.</li>
+<li><strong>Destroying Objects</strong>: Represents the termination of
+objects during interaction.</li>
+<li><strong>Loops</strong>: Used to denote repeated interactions.</li>
+<li><strong>Synchronous Message</strong>: A message that requires a
+response before continuing.</li>
+<li><strong>Asynchronous Message</strong>: A message that does not wait
+for a response to continue.</li>
+</ul>
+<h3 id="elements-of-a-sequence-diagram">Elements of a Sequence
+Diagram</h3>
+<p>The following nodes and edges are typically drawn in a UML Sequence
+Diagram:</p>
+<ul>
+<li>Lifeline</li>
+<li>Execution Specification</li>
+<li>Message</li>
+<li>Combined Fragment</li>
+<li>Interaction Use</li>
+<li>State Invariant</li>
+<li>Continuation</li>
+<li>Destruction Occurrence</li>
+</ul>
+<h2 id="sequence-diagram-symbol-table">Sequence Diagram Symbol
+Table</h2>
+<table>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Overview</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Stick figure</td>
+<td style="text-align: left;"><strong>Actor</strong> are the entities
+that interact with a system. Although in most cases actors represent the
+user of the system, actors can actually be anything that needs to
+exchange information with the system. So, an actor may be a person, a
+mobile device, another system, etc.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Named rectangle</td>
+<td style="text-align: left;"><strong>Lifeline:</strong> A sequence
+diagram is made up of several lifeline notations arranged horizontally
+across the top of the diagram. No two lifelines should overlap each
+other. They represent the different objects or parts that interact with
+each other in the system during the sequence.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Thin vertical rectangle</td>
+<td style="text-align: left;"><strong>Activation:</strong> Activation
+boxes represent the time an object needs to complete a task. When an
+object is busy executing a process or waiting for a reply message, use a
+thin grey rectangle placed vertically on its lifeline.</td>
+</tr>
+<tr>
+<td style="text-align: center;">X at bottom</td>
+<td style="text-align: left;"><strong>Lifeline End:</strong> Represents
+destruction / removal of the object.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Solid arrow + label</td>
+<td style="text-align: left;"><strong>Asynchronous Message:</strong>
+used when the sender does not wait for a response; a normal arrow like
+in a flowchart.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Dotted arrow + open head</td>
+<td style="text-align: left;"><strong>Return Message:</strong> a reply
+message drawn with a dotted line and an open arrowhead pointing back to
+the original lifeline.</td>
+</tr>
+<tr>
+<td style="text-align: center;">U-shaped arrow</td>
+<td style="text-align: left;"><strong>Self-call:</strong> a message an
+object sends to itself, usually shown as a U-shaped arrow pointing back
+to itself.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Alternative fragment</td>
+<td style="text-align: left;"><strong>alt:</strong> This symbol has two
+parts: valid and invalid. The valid branch runs when the condition is
+true; the other (else) branch runs otherwise.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sequence-diagram-admin-side">Sequence Diagram — Admin Side</h2>
+<div class="mermaid">sequenceDiagram
+    actor Admin
+    participant App as PlayArena App
+    participant FA as Firebase Auth
+    participant FS as Firestore
+
+    Admin->>App: Login (email, password)
+    App->>FA: signInWithEmailAndPassword()
+    FA-->>App: idToken + role
+    App-->>Admin: Admin Dashboard
+
+    Admin->>App: Add / Edit Venue
+    App->>FS: set venues/{venueId}
+    FS-->>App: success
+    App-->>Admin: preview venue details
+
+    Admin->>App: Generate / Block Slot
+    App->>FS: set venues/{venueId}/slots/{slotId}
+    FS-->>App: success
+    App-->>Admin: updated slot list
+
+    Admin->>App: View Bookings
+    App->>FS: query bookings where venueId == X
+    FS-->>App: list of bookings
+    App-->>Admin: show bookings
+
+    Admin->>App: View Feedback
+    App->>FS: query reviews where venueId == X
+    FS-->>App: list of reviews
+    App-->>Admin: show feedback
+
+    Admin->>App: Logout
+    App->>FA: signOut()
+    FA-->>App: OK</div>
+<h2 id="sequence-diagram-user-side">Sequence Diagram — User Side</h2>
+<div class="mermaid">sequenceDiagram
+    actor User
+    participant App as PlayArena App
+    participant FA as Firebase Auth
+    participant FS as Firestore
+    participant PG as Razorpay
+
+    User->>App: Register (phone)
+    App->>FA: verifyPhoneNumber()
+    FA-->>User: OTP SMS
+    User->>App: enter OTP
+    App->>FA: signInWithCredential()
+    FA-->>App: uid + idToken
+    App->>FS: set users/{uid}
+    FS-->>App: success
+    App-->>User: Home / Dashboard
+
+    User->>App: Discover Venues
+    App->>FS: query venues
+    FS-->>App: venue list
+    App-->>User: show venues
+
+    User->>App: Select Sport & Slot
+    App->>FS: listen venues/{v}/slots
+    FS-->>App: real-time slot stream
+    App-->>User: show available slots
+
+    User->>App: Book Slot
+    App->>PG: createOrder(amount)
+    PG-->>App: order_id
+    User->>PG: Pay Now
+    PG-->>App: payment_success
+    App->>FS: txn.run() reserve slot + create booking
+    FS-->>App: bookingId + QR
+    App-->>User: Booking Confirmed
+
+    User->>App: Give Feedback
+    App->>FS: set reviews/{id}
+    FS-->>App: success
+    App-->>User: Thanks for feedback
+
+    User->>App: Logout
+    App->>FA: signOut()
+    FA-->>App: OK</div>
+<h1 id="class-diagram">Class Diagram</h1>
+<h2 id="what-is-a-class-diagram">What is a Class Diagram?</h2>
+<ul>
+<li>A <strong>Class Diagram</strong> is a type of UML (Unified Modelling
+Language) diagram used in software engineering and system design to
+visualise the structure of a system or application in terms of classes
+and their relationships.</li>
+<li>Class diagrams are primarily used to represent the <strong>static
+aspects</strong> of a system, focusing on:
+<ul>
+<li>Classes</li>
+<li>Their attributes</li>
+<li>Their methods (operations)</li>
+<li>Relationships between classes</li>
+</ul></li>
+</ul>
+<h2 id="how-do-you-identify-classes-in-a-class-diagram">How do you
+Identify Classes in a Class Diagram?</h2>
+<p>To identify classes, the following <strong>analysis
+activities</strong> are included:</p>
+<ul>
+<li>Identifying <strong>objects</strong> (often from use cases as a
+starting point).</li>
+<li>Identifying <strong>associations</strong> between objects.</li>
+<li>Identifying <strong>general attributes</strong> and
+<strong>responsibilities</strong> of objects.</li>
+<li>Modelling <strong>interactions</strong> between objects.</li>
+<li>Modelling how individual change state objects helps to identify
+operations.</li>
+</ul>
+<h2 id="components-of-class-diagram">Components of Class Diagram</h2>
+<p>In Class Diagrams, we work with the following key elements:</p>
+<ul>
+<li><strong>Class:</strong> Represents a relevant concept from the
+domain, such as a set of persons, objects, or ideas that are depicted in
+the IT system.</li>
+<li><strong>Attribute:</strong> Defines the properties or
+characteristics of a class.</li>
+<li><strong>Generalization:</strong> Shows inheritance between a general
+class (parent) and a more specific class (child).</li>
+<li><strong>Association:</strong> Represents a relationship between two
+or more classes.</li>
+<li><strong>Multiplicity:</strong> Defines how many instances of one
+class can be associated with instances of another class.</li>
+<li><strong>Aggregation:</strong> A special form of association that
+represents a “whole-part” relationship between classes.</li>
+</ul>
+<h2 id="class-diagram-symbol-table">Class Diagram Symbol Table</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Name</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Rectangle with 3 compartments (Name /
+Attributes / Operations)</td>
+<td style="text-align: left;">Class</td>
+<td style="text-align: left;">A class represents a concept that
+encapsulates state (attributes) and behaviour (operations). Each
+attribute has a type, and each operation has a signature. The class name
+is the only mandatory information.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Hollow-triangle arrow</td>
+<td style="text-align: left;">Generalization</td>
+<td style="text-align: left;">Another name for inheritance or an “is-a”
+relationship. It refers to a relationship between two classes where one
+class is a specialized version of another.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Solid line</td>
+<td style="text-align: left;">Association</td>
+<td style="text-align: left;">Represents static relationships between
+classes. Association names can be placed above, on, or below the
+association line. A filled arrow indicates the direction of the
+relationship.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1 ------ M</code></td>
+<td style="text-align: left;">Multiplicity (1–M)</td>
+<td style="text-align: left;">Represents a one-to-many relationship
+between classes.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>M ------ M</code></td>
+<td style="text-align: left;">Multiplicity (M–M)</td>
+<td style="text-align: left;">Represents a many-to-many relationship
+between classes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="class-diagram-playarena">Class Diagram — PlayArena</h2>
+<div class="mermaid">classDiagram
+    class User {
+        +String id
+        +String name
+        +String email
+        +String phone
+        +String avatarUrl
+        +UserRole role
+        +MembershipType membershipType
+        +int totalBookings
+        +List<String> favoriteVenues
+        +DateTime createdAt
+        +login()
+        +register()
+        +updateProfile()
+        +bookSlot()
+        +giveReview()
+    }
+
+    class Venue {
+        +String id
+        +String name
+        +String description
+        +String address
+        +String city
+        +double latitude
+        +double longitude
+        +List<SportType> sportTypes
+        +List<Amenity> amenities
+        +double rating
+        +double pricePerHour
+        +String ownerId
+        +bool isVerified
+        +addVenue()
+        +editVenue()
+        +deleteVenue()
+    }
+
+    class Slot {
+        +String id
+        +String venueId
+        +DateTime date
+        +String startTime
+        +String endTime
+        +double price
+        +bool isAvailable
+        +bool isPeakHour
+        +bool isHappyHour
+        +String bookedBy
+        +String bookingId
+        +markBooked()
+        +release()
+    }
+
+    class Booking {
+        +String id
+        +String venueId
+        +String userId
+        +SportType sportType
+        +Slot slot
+        +List<AddOn> addOns
+        +double totalAmount
+        +PaymentStatus paymentStatus
+        +BookingStatus bookingStatus
+        +String qrCode
+        +create()
+        +cancel()
+        +refund()
+    }
+
+    class Match {
+        +String id
+        +String createdByUserId
+        +String venueId
+        +SportType sportType
+        +int maxPlayers
+        +List<String> playerIds
+        +SkillLevel requiredSkillLevel
+        +double costPerPlayer
+        +MatchStatus status
+        +join()
+        +leave()
+    }
+
+    class Tournament {
+        +String id
+        +String name
+        +SportType sportType
+        +String venueId
+        +TournamentFormat format
+        +DateTime startDate
+        +double entryFee
+        +int maxTeams
+        +List<String> registeredTeams
+        +TournamentStatus status
+        +register()
+        +updateFixture()
+    }
+
+    class Team {
+        +String id
+        +String name
+        +String captainId
+        +SportType sportType
+        +List<TeamMember> members
+        +int wins
+        +int losses
+        +addMember()
+    }
+
+    class Review {
+        +String id
+        +String userId
+        +String venueId
+        +double rating
+        +String comment
+        +List<String> imageUrls
+        +int helpfulCount
+        +submit()
+    }
+
+    class AddOn {
+        +String id
+        +String name
+        +double price
+        +String description
+    }
+
+    User "1" -- "M" Booking : makes
+    User "1" -- "M" Review : writes
+    User "1" -- "M" Match : hosts/joins
+    Venue "1" -- "M" Slot : has
+    Venue "1" -- "M" Booking : receives
+    Venue "1" -- "M" Review : receives
+    Venue "1" -- "M" Tournament : hosts
+    Booking "M" -- "1" Slot : reserves
+    Booking "M" -- "M" AddOn : includes
+    Tournament "1" -- "M" Team : registers
+    Match "M" -- "M" User : players</div>
+<h1 id="er-diagram">ER Diagram</h1>
+<h2 id="what-is-an-er-diagram">What is an ER Diagram?</h2>
+<ul>
+<li>An <strong>Entity Relationship Diagram (ERD)</strong>, also known as
+an <strong>Entity Relationship Model</strong>, is a graphical
+representation that depicts relationships among <em>people, objects,
+places, concepts,</em> or <em>events</em> within an information
+technology (IT) system.</li>
+<li>ER Diagrams are built using components and concepts such as:
+<ul>
+<li>Entities</li>
+<li>Relationships</li>
+<li>Attributes</li>
+<li>Primary Keys</li>
+<li>Foreign Keys</li>
+</ul></li>
+</ul>
+<h2 id="why-do-we-use-er-diagrams">Why do we use ER Diagrams?</h2>
+<ul>
+<li>ER Diagrams are most often used to <strong>design or debug
+relational databases</strong> in the fields of:
+<ul>
+<li>Software Engineering</li>
+<li>Business Information Systems</li>
+<li>Education and Research</li>
+</ul></li>
+<li>ER Diagrams are also often used <strong>along with Data Flow
+Diagrams (DFDs)</strong>, which map out the flow of information for
+processes or systems.</li>
+<li>Even for NoSQL backends like Cloud Firestore used in PlayArena, ERDs
+are extremely useful to visualise the <em>logical</em> structure of
+collections and the references between them.</li>
+</ul>
+<h2 id="er-diagram-symbols">ER Diagram Symbols</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Name</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Ellipse</td>
+<td style="text-align: left;">Attributes</td>
+<td style="text-align: left;">Attributes are the characteristics of an
+entity.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Rectangle</td>
+<td style="text-align: left;">Entity</td>
+<td style="text-align: left;">An entity is an object or concept about
+which you want to store information.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Line</td>
+<td style="text-align: left;">Links (Connector)</td>
+<td style="text-align: left;">Links connect entity to entity, entity to
+attributes, or entity to relationships.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Diamond</td>
+<td style="text-align: left;">Relationship</td>
+<td style="text-align: left;">Represents a relationship. Entities can
+also be self-linked, e.g. an admin supervising other managers.</td>
+</tr>
+<tr>
+<td style="text-align: center;">Underlined Ellipse</td>
+<td style="text-align: left;">Key Attribute</td>
+<td style="text-align: left;">A key attribute uniquely identifies an
+entity from an entity set (like a primary key).</td>
+</tr>
+<tr>
+<td style="text-align: center;">Double Ellipse</td>
+<td style="text-align: left;">Multivalued Attribute</td>
+<td style="text-align: left;">A multivalued attribute can have more than
+one value — e.g. a venue has multiple <code>amenities</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="er-diagram-playarena">ER Diagram — PlayArena</h2>
+<div class="mermaid">erDiagram
+    USERS ||--o{ BOOKINGS : makes
+    USERS ||--o{ REVIEWS : writes
+    USERS ||--o{ MATCHES : hosts
+    USERS ||--o{ MATCH_REQUESTS : posts
+    USERS }o--o{ TEAMS : member_of
+
+    VENUES ||--o{ SLOTS : has
+    VENUES ||--o{ BOOKINGS : receives
+    VENUES ||--o{ REVIEWS : receives
+    VENUES ||--o{ TOURNAMENTS : hosts
+
+    SLOTS ||--|| BOOKINGS : reserved_by
+    BOOKINGS }o--o{ ADD_ONS : includes
+
+    TOURNAMENTS ||--o{ TEAMS : registers
+
+    USERS {
+        string id PK
+        string name
+        string email
+        string phone
+        string role
+        string membershipType
+        int totalBookings
+        datetime createdAt
+    }
+
+    VENUES {
+        string id PK
+        string name
+        string address
+        string city
+        double rating
+        double pricePerHour
+        string ownerId FK
+        bool isVerified
+        datetime createdAt
+    }
+
+    SLOTS {
+        string id PK
+        string venueId FK
+        datetime date
+        string startTime
+        string endTime
+        double price
+        bool isAvailable
+        string bookedBy FK
+        string bookingId FK
+    }
+
+    BOOKINGS {
+        string id PK
+        string venueId FK
+        string userId FK
+        string sportType
+        double totalAmount
+        string paymentStatus
+        string bookingStatus
+        string qrCode
+        datetime createdAt
+    }
+
+    MATCHES {
+        string id PK
+        string createdByUserId FK
+        string venueId FK
+        string sportType
+        int maxPlayers
+        string requiredSkillLevel
+        string status
+    }
+
+    MATCH_REQUESTS {
+        string id PK
+        string hostUserId FK
+        string sportType
+        string venueId FK
+        int playersNeeded
+        string skillLevel
+        string status
+    }
+
+    TEAMS {
+        string id PK
+        string name
+        string captainId FK
+        string sportType
+        int wins
+        int losses
+    }
+
+    TOURNAMENTS {
+        string id PK
+        string name
+        string sportType
+        string venueId FK
+        string format
+        datetime startDate
+        double entryFee
+        int maxTeams
+        string status
+    }
+
+    REVIEWS {
+        string id PK
+        string userId FK
+        string venueId FK
+        double rating
+        string comment
+        int helpfulCount
+    }
+
+    ADD_ONS {
+        string id PK
+        string name
+        double price
+        string description
+    }</div>
+<h1 id="data-dictionary">Data Dictionary</h1>
+<h2 id="what-is-a-data-dictionary">What is a Data Dictionary?</h2>
+<ul>
+<li>A <strong>Data Dictionary</strong> is a structured repository or
+document that provides detailed information about the data used in a
+database or information system.</li>
+<li>Examples of information contained in a data dictionary include:
+<ul>
+<li>The <strong>data types</strong> of fields (e.g. integer, real,
+Character, image).</li>
+<li>Details of all fields in an organisation’s databases.</li>
+</ul></li>
+</ul>
+<h2 id="benefits-of-a-data-dictionary">Benefits of a Data
+Dictionary</h2>
+<p>There are several advantages of using a Data Dictionary in computer
+system analysis and design, such as:</p>
+<ul>
+<li>Data Clarity and Understanding</li>
+<li>Improved Data Documentation</li>
+<li>Data Consistency</li>
+<li>Efficient Data Management</li>
+<li>Data Quality Improvement</li>
+<li>Cost Savings</li>
+<li>Reduced Risk</li>
+</ul>
+<h2 id="why-do-we-need-a-data-dictionary">Why Do We Need a Data
+Dictionary?</h2>
+<ul>
+<li>A data dictionary is used to provide <strong>detailed
+information</strong> about the contents of a dataset or database.</li>
+<li>It includes:
+<ul>
+<li>Names of measured variables</li>
+<li>Their data types or formats</li>
+<li>Text descriptions of data items</li>
+</ul></li>
+<li>A data dictionary thus provides a <strong>concise guide to
+understanding and using the data</strong> effectively.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> PlayArena uses <strong>Cloud
+Firestore</strong> (NoSQL) as its backing database. The tables below
+represent the logical structure of each Firestore
+<strong>collection</strong>. “Size” values are indicative maximum
+lengths enforced in the app layer; Firestore itself does not enforce
+column sizes.</p>
+</blockquote>
+<h2 id="users">1) USERS</h2>
+<p><strong>Collection path:</strong> <code>users/{uid}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Document ID, equals Firebase Auth
+UID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Full name of the user.</td>
+</tr>
+<tr>
+<td style="text-align: left;">email</td>
+<td style="text-align: left;">NOT NULL, UNIQUE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: left;">Email address of the user.</td>
+</tr>
+<tr>
+<td style="text-align: left;">phone</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Phone number with country code.</td>
+</tr>
+<tr>
+<td style="text-align: left;">avatarUrl</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">255</td>
+<td style="text-align: left;">URL of the user’s profile picture
+(Firebase Storage).</td>
+</tr>
+<tr>
+<td style="text-align: left;">role</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">One of: <code>player</code>,
+<code>admin</code>, <code>groundManager</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;">membershipType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">One of: <code>free</code>,
+<code>silver</code>, <code>gold</code>, <code>platinum</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;">totalBookings</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Total number of bookings made by the
+user.</td>
+</tr>
+<tr>
+<td style="text-align: left;">favoriteVenues</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of favourite venue IDs.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp when the user account was
+created.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp set on every profile
+write.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="venues">2) VENUES</h2>
+<p><strong>Collection path:</strong> <code>venues/{venueId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique venue document ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Name of the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">description</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: left;">Description of the venue and its
+facilities.</td>
+</tr>
+<tr>
+<td style="text-align: left;">address</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: left;">Street address of the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">city</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">City where the venue is located.</td>
+</tr>
+<tr>
+<td style="text-align: left;">latitude</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Geographical latitude.</td>
+</tr>
+<tr>
+<td style="text-align: left;">longitude</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Geographical longitude.</td>
+</tr>
+<tr>
+<td style="text-align: left;">imageUrls</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of URLs for images of the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportTypes</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">Sports offered: boxCricket, football,
+pickleball, badminton, tennis.</td>
+</tr>
+<tr>
+<td style="text-align: left;">amenities</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">parking, cctv, shower, drinkingWater,
+changingRoom, cafeteria, firstAid, wifi, floodlights, scoreboard.</td>
+</tr>
+<tr>
+<td style="text-align: left;">rating</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Average user rating out of 5.</td>
+</tr>
+<tr>
+<td style="text-align: left;">totalReviews</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Total number of reviews.</td>
+</tr>
+<tr>
+<td style="text-align: left;">pricePerHour</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Standard booking price per hour.</td>
+</tr>
+<tr>
+<td style="text-align: left;">peakPricePerHour</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Peak-hour price per hour.</td>
+</tr>
+<tr>
+<td style="text-align: left;">happyHourPrice</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Discounted happy-hour price.</td>
+</tr>
+<tr>
+<td style="text-align: left;">openTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Venue opening time
+(e.g. <code>06:00</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;">closeTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Venue closing time
+(e.g. <code>23:00</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;">isVerified</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Bool</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Whether the venue has been verified by
+admins.</td>
+</tr>
+<tr>
+<td style="text-align: left;">ownerId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with USERS — ground manager who
+owns the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">contactPhone</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Contact phone number for the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">availableSlots</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Currently available booking slots.</td>
+</tr>
+<tr>
+<td style="text-align: left;">totalSlots</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Total capacity of booking slots.</td>
+</tr>
+<tr>
+<td style="text-align: left;">rules</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: left;">Specific rules and regulations of the
+venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp set when venue was
+created.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp updated on every
+write.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="slots">3) SLOTS</h2>
+<p><strong>Collection path:</strong>
+<code>venues/{venueId}/slots/{slotId}</code> (sub-collection)</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique slot document ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with VENUES table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">date</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Date of the slot.</td>
+</tr>
+<tr>
+<td style="text-align: left;">startTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Start time of the slot (HH:mm).</td>
+</tr>
+<tr>
+<td style="text-align: left;">endTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">End time of the slot (HH:mm).</td>
+</tr>
+<tr>
+<td style="text-align: left;">duration</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Duration of the slot in minutes.</td>
+</tr>
+<tr>
+<td style="text-align: left;">price</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Price for this specific slot block.</td>
+</tr>
+<tr>
+<td style="text-align: left;">isAvailable</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Bool</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Whether the slot can currently be
+booked.</td>
+</tr>
+<tr>
+<td style="text-align: left;">isHappyHour</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Bool</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Indicates if this slot falls under
+happy-hour pricing.</td>
+</tr>
+<tr>
+<td style="text-align: left;">isPeakHour</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Bool</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Indicates if this slot falls under
+peak-hour pricing.</td>
+</tr>
+<tr>
+<td style="text-align: left;">bookedBy</td>
+<td style="text-align: left;">NULLABLE, FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">User ID of the person who booked the
+slot.</td>
+</tr>
+<tr>
+<td style="text-align: left;">bookingId</td>
+<td style="text-align: left;">NULLABLE, FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Booking document ID that holds this
+slot.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp when the slot was first
+generated.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp updated on availability
+change.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bookings">4) BOOKINGS</h2>
+<p><strong>Collection path:</strong>
+<code>bookings/{bookingId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique booking ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with VENUES table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Name of the venue at the time of
+booking.</td>
+</tr>
+<tr>
+<td style="text-align: left;">userId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with USERS table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">userName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the user at time of booking.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">The sport specific to this booking.</td>
+</tr>
+<tr>
+<td style="text-align: left;">slot</td>
+<td style="text-align: left;">EMBEDDED</td>
+<td style="text-align: left;">Map (SlotModel)</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">Embedded object with slot details.</td>
+</tr>
+<tr>
+<td style="text-align: left;">addOns</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;Map&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of additional items purchased with
+the booking.</td>
+</tr>
+<tr>
+<td style="text-align: left;">totalAmount</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Total cost of the booking (slot +
+add-ons).</td>
+</tr>
+<tr>
+<td style="text-align: left;">paymentStatus</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">pending, completed, failed, refunded.</td>
+</tr>
+<tr>
+<td style="text-align: left;">bookingStatus</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">upcoming, ongoing, completed,
+cancelled.</td>
+</tr>
+<tr>
+<td style="text-align: left;">qrCode</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">255</td>
+<td style="text-align: left;">QR-code string for entry
+verification.</td>
+</tr>
+<tr>
+<td style="text-align: left;">splitPayment</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;Map&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">Details of split payments with
+friends.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp of when the booking was
+made.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp updated on every
+write.</td>
+</tr>
+<tr>
+<td style="text-align: left;">cancelledAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Set when booking is cancelled.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="matches-pickup">5) MATCHES (Pickup)</h2>
+<p><strong>Collection path:</strong> <code>matches/{matchId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique match ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdByUserId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">User ID of the organiser.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdByUserName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the organiser.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Venue at which the match is held.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Name of the venue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">The sport being played.</td>
+</tr>
+<tr>
+<td style="text-align: left;">matchDate</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Date of the match.</td>
+</tr>
+<tr>
+<td style="text-align: left;">startTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Start time (HH:mm).</td>
+</tr>
+<tr>
+<td style="text-align: left;">endTime</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">End time (HH:mm).</td>
+</tr>
+<tr>
+<td style="text-align: left;">maxPlayers</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Maximum players allowed.</td>
+</tr>
+<tr>
+<td style="text-align: left;">currentPlayers</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Current number of players joined.</td>
+</tr>
+<tr>
+<td style="text-align: left;">playerIds</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of player user IDs.</td>
+</tr>
+<tr>
+<td style="text-align: left;">requiredSkillLevel</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">beginner, intermediate, advanced,
+professional.</td>
+</tr>
+<tr>
+<td style="text-align: left;">costPerPlayer</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Cost each player contributes.</td>
+</tr>
+<tr>
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">open, full, inProgress, completed,
+cancelled.</td>
+</tr>
+<tr>
+<td style="text-align: left;">notes</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: left;">Additional notes by the organiser.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp when match was created.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="match_requests">6) MATCH_REQUESTS</h2>
+<p><strong>Collection path:</strong>
+<code>matchRequests/{requestId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique request ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">hostUserId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">User looking for players.</td>
+</tr>
+<tr>
+<td style="text-align: left;">hostName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the host.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Sport to be played.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Intended venue ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Intended venue name.</td>
+</tr>
+<tr>
+<td style="text-align: left;">date</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Date of play.</td>
+</tr>
+<tr>
+<td style="text-align: left;">time</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Time of play.</td>
+</tr>
+<tr>
+<td style="text-align: left;">playersNeeded</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Number of additional players
+required.</td>
+</tr>
+<tr>
+<td style="text-align: left;">playersJoined</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of user IDs who agreed to join.</td>
+</tr>
+<tr>
+<td style="text-align: left;">skillLevel</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">beginner, intermediate, advanced,
+any.</td>
+</tr>
+<tr>
+<td style="text-align: left;">description</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: left;">Text description of the request.</td>
+</tr>
+<tr>
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">open, full, cancelled, completed.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp when request was created.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp updated on every
+write.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="teams">7) TEAMS</h2>
+<p><strong>Collection path:</strong> <code>teams/{teamId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique team ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Team name.</td>
+</tr>
+<tr>
+<td style="text-align: left;">captainId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">User ID of the team captain.</td>
+</tr>
+<tr>
+<td style="text-align: left;">captainName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the team captain.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">The sport this team plays.</td>
+</tr>
+<tr>
+<td style="text-align: left;">members</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">List&lt;Map&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">Embedded list of team members (userId,
+name, role).</td>
+</tr>
+<tr>
+<td style="text-align: left;">matchesPlayed</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Lifetime matches played.</td>
+</tr>
+<tr>
+<td style="text-align: left;">wins</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Total wins.</td>
+</tr>
+<tr>
+<td style="text-align: left;">losses</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Total losses.</td>
+</tr>
+<tr>
+<td style="text-align: left;">rating</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Calculated ELO / skill rating.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tournaments">8) TOURNAMENTS</h2>
+<p><strong>Collection path:</strong>
+<code>tournaments/{tournamentId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique tournament ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Name of the tournament.</td>
+</tr>
+<tr>
+<td style="text-align: left;">sportType</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">The sport being played.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Hosting venue ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: left;">Hosting venue name.</td>
+</tr>
+<tr>
+<td style="text-align: left;">format</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">knockout, roundRobin, league.</td>
+</tr>
+<tr>
+<td style="text-align: left;">startDate</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Start date and time.</td>
+</tr>
+<tr>
+<td style="text-align: left;">endDate</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Expected end date and time.</td>
+</tr>
+<tr>
+<td style="text-align: left;">entryFee</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Cost for a team to enter.</td>
+</tr>
+<tr>
+<td style="text-align: left;">prizePool</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Total prize money to be distributed.</td>
+</tr>
+<tr>
+<td style="text-align: left;">maxTeams</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Maximum teams allowed.</td>
+</tr>
+<tr>
+<td style="text-align: left;">registeredTeams</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">List of Team IDs registered.</td>
+</tr>
+<tr>
+<td style="text-align: left;">matches</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;Map&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">Embedded list of tournament fixtures.</td>
+</tr>
+<tr>
+<td style="text-align: left;">status</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String (enum)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">upcoming, ongoing, completed.</td>
+</tr>
+<tr>
+<td style="text-align: left;">rules</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: left;">Rules and regulations for the event.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp when tournament was
+created.</td>
+</tr>
+<tr>
+<td style="text-align: left;">updatedAt</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Server timestamp updated on every
+write.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reviews">9) REVIEWS</h2>
+<p><strong>Collection path:</strong>
+<code>venues/{venueId}/reviews/{reviewId}</code> and mirror at
+<code>reviews/{reviewId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique review ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">userId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with USERS table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">userName</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the user.</td>
+</tr>
+<tr>
+<td style="text-align: left;">userAvatarUrl</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">255</td>
+<td style="text-align: left;">URL to user’s avatar at review time.</td>
+</tr>
+<tr>
+<td style="text-align: left;">venueId</td>
+<td style="text-align: left;">FOREIGN KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Mapped with VENUES table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">rating</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Rating given out of 5.</td>
+</tr>
+<tr>
+<td style="text-align: left;">comment</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: left;">Text content of the review.</td>
+</tr>
+<tr>
+<td style="text-align: left;">imageUrls</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">List&lt;String&gt;</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;">URLs of photos attached to the
+review.</td>
+</tr>
+<tr>
+<td style="text-align: left;">createdAt</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Timestamp</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Timestamp when review was submitted.</td>
+</tr>
+<tr>
+<td style="text-align: left;">helpfulCount</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Int</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Number of users who marked this review as
+helpful.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="add_ons">10) ADD_ONS</h2>
+<p><strong>Collection path:</strong> <code>addOns/{addOnId}</code></p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ATTRIBUTE</strong></th>
+<th style="text-align: left;"><strong>CONSTRAINT</strong></th>
+<th style="text-align: left;"><strong>DATA TYPE</strong></th>
+<th style="text-align: center;"><strong>SIZE</strong></th>
+<th style="text-align: left;"><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">PRIMARY KEY</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">Unique add-on ID.</td>
+</tr>
+<tr>
+<td style="text-align: left;">name</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: left;">Name of the add-on (e.g. ‘Tennis
+Racket’).</td>
+</tr>
+<tr>
+<td style="text-align: left;">price</td>
+<td style="text-align: left;">NOT NULL</td>
+<td style="text-align: left;">Double</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Cost to rent / purchase the item.</td>
+</tr>
+<tr>
+<td style="text-align: left;">description</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: left;">Description of the add-on.</td>
+</tr>
+<tr>
+<td style="text-align: left;">iconUrl</td>
+<td style="text-align: left;">NULLABLE</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: center;">255</td>
+<td style="text-align: left;">URL of icon / image for the add-on.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="screen-layouts">Screen Layouts</h1>
+<p><em>(The following pages contain annotated screenshots of every user
+and admin screen in PlayArena. Each screen is captured from the running
+Flutter app on an Android device and Android Studio Pixel 6
+emulator.)</em></p>
+<h1 id="user-layout">USER LAYOUT</h1>
+<h2 id="splash-onboarding">14.1 Splash / Onboarding</h2>
+<p><strong>DESCRIPTION:</strong> This is the first screen shown when the
+app is launched. It displays the PlayArena logo, a tagline and an
+onboarding carousel introducing the four main features — discover, book,
+play, connect — before the user registers or logs in.</p>
+<h2 id="user-registration">14.2 User Registration</h2>
+<p><strong>DESCRIPTION:</strong> A simple account registration form with
+fields for name, email, phone number and password. On submit, the phone
+number is verified via Firebase Auth OTP before the user account is
+created in the <code>users</code> collection.</p>
+<h2 id="user-login-email-otp">14.3 User Login (Email / OTP)</h2>
+<p><strong>DESCRIPTION:</strong> This image shows the login interface.
+The user can sign in either using email + password or phone number +
+OTP. “Forgot password?” and “Don’t have an account? Register” links are
+available.</p>
+<h2 id="home-dashboard">14.4 Home / Dashboard</h2>
+<p><strong>DESCRIPTION:</strong> This screen displays the user dashboard
+with a welcome banner, quick-access tiles for “Explore Venues”, “My
+Bookings”, “Matchmaker” and “Tournaments”, plus sections for ongoing
+offers, voucher wallet and popular sports in the area.</p>
+<h2 id="venue-listing">14.5 Venue Listing</h2>
+<p><strong>DESCRIPTION:</strong> Shows all available venues in a
+scrollable grid. Each card shows the venue photo, name, city, rating,
+supported sports and starting price. Users can filter by sport, city,
+rating and price range.</p>
+<h2 id="venue-detail">14.6 Venue Detail</h2>
+<p><strong>DESCRIPTION:</strong> This screen shows full details of a
+selected venue — image gallery, full address, list of sports, amenities,
+opening hours, rules, pricing breakdown (regular / peak / happy-hour)
+and recent reviews.</p>
+<h2 id="select-sport-slot">14.7 Select Sport &amp; Slot</h2>
+<p><strong>DESCRIPTION:</strong> This screenshot is about selecting a
+sport, a date and a time slot. The screen shows a calendar,
+horizontally-scrollable time-slot chips and the calculated price for the
+selected slot.</p>
+<h2 id="booking-confirmation">14.8 Booking Confirmation</h2>
+<p><strong>DESCRIPTION:</strong> This screen is about showing booking
+details (venue, date, time, quantity, price) and the total amount before
+the user proceeds to payment. The user can also choose to split the
+payment with friends.</p>
+<h2 id="payment">14.9 Payment</h2>
+<p><strong>DESCRIPTION:</strong> Razorpay secure payment gateway is
+opened as a bottom sheet. The user can pay via UPI, credit / debit card,
+net-banking or wallet. Once payment is successful, the booking is
+reserved atomically in Firestore.</p>
+<h2 id="payment-success-receipt">14.10 Payment Success / Receipt</h2>
+<p><strong>DESCRIPTION:</strong> This screenshot shows the booking
+receipt — receipt number, transaction ID, venue, date, time, quantity,
+address, payment type and status. The user can download the receipt as
+PDF, scan the QR code at the venue gate, or give feedback after the
+match.</p>
+<h2 id="my-bookings">14.11 My Bookings</h2>
+<p><strong>DESCRIPTION:</strong> It shows the user’s booked slot details
+in a tabular form — sport, date, time, quantity, amount and status
+(BOOKED / PENDING / CANCELLED). Action buttons allow the user to
+download receipt, give feedback or cancel the booking.</p>
+<h2 id="matchmaker">14.12 Matchmaker</h2>
+<p><strong>DESCRIPTION:</strong> This screen lists all open pickup
+matches near the user filtered by sport and skill level. Each card shows
+the host’s name, venue, date/time, players needed and cost per player.
+The user can tap “Join” to instantly reserve a spot.</p>
+<h2 id="tournaments-1">14.13 Tournaments</h2>
+<p><strong>DESCRIPTION:</strong> A tournament browsing screen with
+upcoming, ongoing and completed events. Each card shows name, sport,
+format (knockout / round-robin / league), entry fee, prize pool and
+number of teams registered. Users can register their team from here.</p>
+<h2 id="profile-settings">14.14 Profile &amp; Settings</h2>
+<p><strong>DESCRIPTION:</strong> Shows the user’s avatar, name,
+membership tier, total bookings and favourite venues. From settings the
+user can change avatar, update phone / email, manage notifications, view
+Terms &amp; Conditions, Contact Us or log out.</p>
+<h1 id="admin-layout">ADMIN LAYOUT</h1>
+<h2 id="admin-login">15.1 Admin Login</h2>
+<p><strong>DESCRIPTION:</strong> This image shows a secure admin login
+interface, branded as the “Control Room” of PlayArena. Access is
+restricted to users whose Firestore profile has
+<code>role == admin</code> or <code>role == groundManager</code>.</p>
+<h2 id="admin-dashboard">15.2 Admin Dashboard</h2>
+<p><strong>DESCRIPTION:</strong> This screenshot is about the admin
+control centre. Aggregate KPIs are displayed as cards: Total Users,
+Total Venues, Total Bookings, Total Feedback. Quick-action buttons take
+the admin to Manage Venues or Manage Slots.</p>
+<h2 id="manage-venues">15.3 Manage Venues</h2>
+<p><strong>DESCRIPTION:</strong> This screenshot shows Add, Edit and
+Delete operations on venues and sports. The admin can upload venue
+images, set pricing (regular / peak / happy-hour), configure amenities
+and verify newly added venues.</p>
+<h2 id="manage-slots">15.4 Manage Slots</h2>
+<p><strong>DESCRIPTION:</strong> It is used to manage and view all game
+slots with their date, time and availability status. The admin can
+generate bulk slots for the next 7/30 days or block specific slots for
+maintenance.</p>
+<h2 id="manage-bookings">15.5 Manage Bookings</h2>
+<p><strong>DESCRIPTION:</strong> Shows every booking made across the
+platform with user, sport, slot, amount, status and payment status. The
+admin can cancel and refund bookings, scan the QR code for entry and
+filter by date / venue / status.</p>
+<h2 id="venue-wise-bookings">15.6 Venue-wise Bookings</h2>
+<p><strong>DESCRIPTION:</strong> Shows bookings filtered for a single
+venue — useful for ground managers who own multiple venues. Revenue per
+day, week and month is visualised as charts.</p>
+<h2 id="admin-profile">15.7 Admin Profile</h2>
+<p><strong>DESCRIPTION:</strong> The admin can update his own profile,
+change password, manage which venues he operates, and view activity
+logs. A <strong>Logout</strong> button returns the user to the login
+screen.</p>
+<h1 id="future-enhancement">FUTURE ENHANCEMENT</h1>
+<p><strong>1. Web and Desktop Apps</strong></p>
+<p>Extend the existing Flutter code base to run on Web (admin panel) and
+macOS / Windows desktops for venue owners with a laptop at the reception
+counter.</p>
+<p><strong>2. AI-Based Recommendations</strong></p>
+<p>Suggest venues, time slots and pickup matches based on the user’s
+past booking history, location, skill level and friend network using
+Cloud Functions + Vertex AI.</p>
+<p><strong>3. Push Notifications &amp; SMS</strong></p>
+<p>Send booking confirmations, upcoming-match reminders, tournament
+updates and personalised offers via Firebase Cloud Messaging and
+SMS.</p>
+<p><strong>4. Live Streaming of Matches</strong></p>
+<p>Integrate a live streaming module (using Agora / 100ms) so that
+tournament matches can be broadcast to a public audience within the
+app.</p>
+<p><strong>5. In-app Coach Booking</strong></p>
+<p>Allow certified coaches to register on the platform and take
+one-to-one sessions bookable through the same slot engine.</p>
+<p><strong>6. Wearable Integration</strong></p>
+<p>Integrate with Apple Watch / Wear OS to capture heart rate, calories
+and step count during a match and store it as part of the user’s playing
+history.</p>
+<p><strong>7. Multilingual Support</strong></p>
+<p>Add Hindi, Gujarati and regional Indian languages to broaden the user
+base in Tier-2 / Tier-3 cities.</p>
+<p><strong>8. Loyalty &amp; Referral Program</strong></p>
+<p>Launch a coin-based loyalty system — users earn coins on every
+booking, referral or tournament win and redeem them against future
+bookings.</p>
+<h1 id="conclusion">CONCLUSION</h1>
+<ul>
+<li><p>In conclusion, our project <strong>PlayArena</strong> is a
+cross-platform mobile application that makes sports-venue slot booking
+fast, transparent and collaborative. Users can select venues, choose
+their preferred sport and time slot, split the cost with friends and
+make payments online — all without ever visiting the venue
+physically.</p></li>
+<li><p>This system reduces manual work, saves time and eliminates
+booking confusion such as double-booking or disputed cash payments. It
+is user-friendly and secure for both players and venue
+administrators.</p></li>
+<li><p>From this project, we learned modern mobile development with
+<strong>Flutter and Dart</strong>, the BLoC state-management pattern,
+real-time cloud databases using <strong>Firebase Firestore</strong>,
+secure authentication with Firebase Auth, integrated payments with
+Razorpay, and how to build a real-world multi-role production
+system.</p></li>
+<li><p>In future, we plan to improve the system by adding AI-based
+recommendations, live match streaming, in-app coach booking,
+multilingual support and a loyalty / referral programme.</p></li>
+<li><p>This project also helps in the better <strong>management of
+sports venues and user data</strong>, making the system more organised
+for owners and richer in experience for players.</p></li>
+<li><p>Overall, PlayArena improves the sports-booking experience by
+providing easy booking, quick access, real-time availability and a
+connected player community — transforming a traditionally offline,
+fragmented experience into a seamless digital platform.</p></li>
+</ul>
+<h1 id="bibliography">BIBLIOGRAPHY</h1>
+<ul>
+<li>https://flutter.dev/ — Official Flutter documentation.</li>
+<li>https://dart.dev/ — Official Dart language documentation.</li>
+<li>https://firebase.google.com/docs — Firebase documentation (Auth,
+Firestore, Storage, Crashlytics).</li>
+<li>https://bloclibrary.dev/ — flutter_bloc official documentation.</li>
+<li>https://pub.dev/ — Dart / Flutter packages repository.</li>
+<li>https://razorpay.com/docs/ — Razorpay Flutter integration
+guide.</li>
+<li>https://playo.co/ — Reference product for sports-venue booking
+UX.</li>
+<li>https://hudle.in/ — Reference product for sports-venue booking
+UX.</li>
+<li>https://www.bookmyturf.com/ — Reference product for turf
+booking.</li>
+<li>https://material.io/ — Material 3 Design guidelines.</li>
+<li>https://www.w3schools.com/ — General web-technology reference.</li>
+<li>https://chat.openai.com/ — ChatGPT for code explanation and
+documentation help.</li>
+<li>https://stackoverflow.com/ — Community Q&amp;A for Flutter /
+Firebase.</li>
+<li>https://github.com/ — Open-source Flutter and Firebase sample
+projects.</li>
+</ul>
+<h1 id="log-sheet">Log-sheet</h1>
+<p><em>(The following page contains the project log-sheet, filled week
+by week and signed by the project guide Prof. AyushSingh
+Kushwaha.)</em></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Week</strong></th>
+<th style="text-align: left;"><strong>Date</strong></th>
+<th style="text-align: left;"><strong>Work Done</strong></th>
+<th style="text-align: left;"><strong>Guide Remarks</strong></th>
+<th style="text-align: center;"><strong>Sign</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Project title finalised, requirement
+analysis</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Technology selection (Flutter + Firebase),
+UI wireframes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Firebase Auth + Firestore setup, user
+registration module</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Login (email &amp; OTP) + role-based
+routing</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Venue listing and venue detail
+screens</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Slot model + real-time slot
+availability</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Booking flow + Razorpay integration</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">My Bookings + QR code + cancel / refund
+flow</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Matchmaker module (host / join /
+match-request)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Tournaments module (teams + fixtures)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Admin dashboard, venue / slot
+management</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Reviews, ratings, profile settings</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Testing (unit + integration + manual)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Bug fixing, documentation, report
+writing</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

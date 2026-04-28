@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
+import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/data/models/booking_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
+import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart'
+    show effectiveBookingStatus;
 
 class AdminVenueBookingsScreen extends StatefulWidget {
   final String venueId;
@@ -53,20 +56,26 @@ class _AdminVenueBookingsScreenState extends State<AdminVenueBookingsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
         leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_ios_new,
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.adminVenues);
+            }
+          },
+          icon: Icon(Icons.arrow_back_ios_new,
               color: AppColors.textPrimary),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Venue Bookings',
+            Text('Venue Bookings',
                 style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             Text(widget.venueName,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textSecondary, fontSize: 12)),
           ],
         ),
@@ -75,7 +84,7 @@ class _AdminVenueBookingsScreenState extends State<AdminVenueBookingsScreen> {
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.accentYellow))
           : _bookings.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -108,8 +117,10 @@ class _VenueBookingCard extends StatelessWidget {
   final BookingModel booking;
   const _VenueBookingCard({required this.booking});
 
+  BookingStatus get _effectiveStatus => effectiveBookingStatus(booking);
+
   Color get _statusColor {
-    switch (booking.bookingStatus) {
+    switch (_effectiveStatus) {
       case BookingStatus.upcoming:
         return AppColors.footballAccent;
       case BookingStatus.ongoing:
@@ -158,7 +169,7 @@ class _VenueBookingCard extends StatelessWidget {
               children: [
                 Text(
                   booking.userName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -167,13 +178,13 @@ class _VenueBookingCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '$dateStr  |  ${booking.slot.startTime} – ${booking.slot.endTime}',
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 12),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   booking.sportType.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: AppColors.textDisabled, fontSize: 11),
                 ),
               ],
@@ -199,7 +210,7 @@ class _VenueBookingCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  booking.bookingStatus.name.toUpperCase(),
+                  _effectiveStatus.name.toUpperCase(),
                   style: TextStyle(
                     color: _statusColor,
                     fontSize: 10,

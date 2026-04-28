@@ -66,10 +66,10 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline,
+          Icon(Icons.error_outline,
               color: AppColors.textDisabled, size: 64),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No payment information available',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
           ),
@@ -95,7 +95,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
           const SizedBox(height: 40),
           _buildSuccessIcon(),
           const SizedBox(height: 28),
-          const Text(
+          Text(
             'Payment Successful!',
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -104,7 +104,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Your slot has been booked successfully',
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -161,7 +161,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Amount Paid',
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -244,7 +244,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
           width: 90,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 13,
             ),
@@ -253,7 +253,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -294,8 +294,8 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
       height: 52,
       child: OutlinedButton.icon(
         onPressed: () => context.go(AppRoutes.home),
-        icon: const Icon(Icons.home_outlined, color: AppColors.textPrimary),
-        label: const Text(
+        icon: Icon(Icons.home_outlined, color: AppColors.textPrimary),
+        label: Text(
           'Back to Home',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -304,7 +304,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
           ),
         ),
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.divider),
+          side: BorderSide(color: AppColors.divider),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),

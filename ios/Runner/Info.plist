@@ -17,6 +17,13 @@
 	<string>Play Arena needs camera access to take venue photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Play Arena needs photo library access to select venue images</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>https</string>
+		<string>http</string>
+		<string>mailto</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

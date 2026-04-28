@@ -28,15 +28,17 @@ class VenueDetailLoaded extends VenueState {
   final VenueModel venue;
   final List<SlotModel> slots;
   final List<ReviewModel> reviews;
+  final List<DateTime> availableDates;
 
   const VenueDetailLoaded({
     required this.venue,
     required this.slots,
     required this.reviews,
+    this.availableDates = const [],
   });
 
   @override
-  List<Object?> get props => [venue, slots, reviews];
+  List<Object?> get props => [venue, slots, reviews, availableDates];
 }
 
 class VenueError extends VenueState {

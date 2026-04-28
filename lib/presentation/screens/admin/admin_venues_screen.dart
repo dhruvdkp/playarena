@@ -42,16 +42,16 @@ class _AdminVenuesScreenState extends State<AdminVenuesScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Venue',
+        title: Text('Delete Venue',
             style: TextStyle(color: AppColors.textPrimary)),
         content: Text(
           'Are you sure you want to delete "${venue.name}"? This will also delete all slots and reviews.',
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel',
+            child: Text('Cancel',
                 style: TextStyle(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
@@ -84,7 +84,7 @@ class _AdminVenuesScreenState extends State<AdminVenuesScreen> {
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
-        title: const Text(
+        title: Text(
           'Manage Venues',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -95,7 +95,7 @@ class _AdminVenuesScreenState extends State<AdminVenuesScreen> {
         actions: [
           IconButton(
             onPressed: _loadVenues,
-            icon: const Icon(Icons.refresh, color: AppColors.textSecondary),
+            icon: Icon(Icons.refresh, color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -117,14 +117,14 @@ class _AdminVenuesScreenState extends State<AdminVenuesScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.stadium_outlined,
+                      Icon(Icons.stadium_outlined,
                           size: 64, color: AppColors.textDisabled),
                       const SizedBox(height: 16),
-                      const Text('No venues yet',
+                      Text('No venues yet',
                           style: TextStyle(
                               color: AppColors.textSecondary, fontSize: 16)),
                       const SizedBox(height: 8),
-                      const Text('Tap + to add your first venue',
+                      Text('Tap + to add your first venue',
                           style: TextStyle(
                               color: AppColors.textDisabled, fontSize: 13)),
                     ],
@@ -215,7 +215,7 @@ class _VenueListTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         venue.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -230,7 +230,7 @@ class _VenueListTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${venue.address}, ${venue.city}',
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: AppColors.textSecondary, fontSize: 12),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -302,7 +302,7 @@ class _VenueListTile extends StatelessWidget {
       height: 120,
       width: double.infinity,
       color: AppColors.card,
-      child: const Center(
+      child: Center(
         child:
             Icon(Icons.stadium, size: 40, color: AppColors.textDisabled),
       ),

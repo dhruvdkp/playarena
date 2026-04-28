@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'package:gamebooking/bloc/auth/auth_bloc.dart';
 import 'package:gamebooking/bloc/booking/booking_bloc.dart';
 import 'package:gamebooking/bloc/venue/venue_bloc.dart';
 import 'package:gamebooking/core/constants/app_colors.dart';
@@ -27,7 +30,7 @@ class VenueDetailScreen extends StatefulWidget {
 }
 
 class _VenueDetailScreenState extends State<VenueDetailScreen> {
-  DateTime _selectedDate = DateTime.now();
+  DateTime? _selectedDate;
   String? _selectedSlotId;
   int _currentImageIndex = 0;
   final PageController _imagePageController = PageController();
@@ -85,7 +88,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       size: 48, color: AppColors.error),
                   const SizedBox(height: 16),
                   Text(state.message,
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: TextStyle(color: AppColors.textSecondary)),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context
@@ -100,7 +103,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         }
 
         if (state is VenueDetailLoaded) {
-          return _buildContent(state.venue, state.slots, state.reviews);
+          return _buildContent(
+            state.venue,
+            state.slots,
+            state.reviews,
+            state.availableDates,
+          );
         }
 
         return const Scaffold(body: SizedBox.shrink());
@@ -112,7 +120,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     VenueModel venue,
     List<SlotModel> slots,
     List<ReviewModel> reviews,
+    List<DateTime> availableDates,
   ) {
+    final effectiveDate = _selectedDate ??
+        (availableDates.isNotEmpty
+            ? availableDates.first
+            : DateTime.now());
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -154,11 +167,11 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   ],
 
                   // ── Date Picker ───────────────────────────────────
-                  _buildDatePicker(),
+                  _buildDatePicker(availableDates, effectiveDate),
                   const SizedBox(height: 16),
 
                   // ── Slot Picker ───────────────────────────────────
-                  _buildSlotSection(slots),
+                  _buildSlotSection(slots, effectiveDate),
                   const SizedBox(height: 24),
 
                   // ── Reviews Section ───────────────────────────────
@@ -167,7 +180,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
                   // ── Contact Button ────────────────────────────────
                   _buildContactButton(venue),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -175,9 +188,8 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         ],
       ),
 
-      // ── Floating Book Now Button ──────────────────────────────────────
-      floatingActionButton: _buildBookNowButton(venue),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // ── Pinned Book Now bottom bar ────────────────────────────────────
+      bottomNavigationBar: _buildBookNowBar(venue),
     );
   }
 
@@ -192,9 +204,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
       backgroundColor: AppColors.primaryBackground,
       leading: _buildCircularBackButton(),
       actions: [
-        _buildCircularIconButton(Icons.favorite_border, () {}),
+        _buildFavoriteButton(venue),
         const SizedBox(width: 8),
-        _buildCircularIconButton(Icons.share_outlined, () {}),
+        _buildCircularIconButton(
+          Icons.share_outlined,
+          () => _shareVenue(venue),
+        ),
         const SizedBox(width: 12),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -215,7 +230,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
                       color: AppColors.surface,
-                      child: const Center(
+                      child: Center(
                         child: Icon(Icons.stadium_outlined,
                             size: 56, color: AppColors.textDisabled),
                       ),
@@ -226,14 +241,14 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             else
               Container(
                 color: AppColors.surface,
-                child: const Center(
+                child: Center(
                   child: Icon(Icons.stadium_outlined,
                       size: 56, color: AppColors.textDisabled),
                 ),
               ),
 
             // Gradient overlay
-            const Positioned.fill(
+            Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -309,6 +324,50 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     );
   }
 
+  Widget _buildFavoriteButton(VenueModel venue) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final user =
+            authState is AuthAuthenticated ? authState.user : null;
+        final liked = user != null && user.favoriteVenues.contains(venue.id);
+        return CircleAvatar(
+          backgroundColor:
+              AppColors.primaryBackground.withValues(alpha: 0.6),
+          radius: 18,
+          child: IconButton(
+            icon: Icon(
+              liked ? Icons.favorite : Icons.favorite_border,
+              size: 18,
+            ),
+            color: liked ? AppColors.error : AppColors.textPrimary,
+            padding: EdgeInsets.zero,
+            onPressed: user == null
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Sign in to save favorites'),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                : () {
+                    final next = liked
+                        ? user.favoriteVenues
+                            .where((id) => id != venue.id)
+                            .toList()
+                        : [...user.favoriteVenues, venue.id];
+                    context.read<AuthBloc>().add(
+                          AuthProfileUpdateRequested(
+                            user: user.copyWith(favoriteVenues: next),
+                          ),
+                        );
+                  },
+          ),
+        );
+      },
+    );
+  }
+
   // ── Venue Header ─────────────────────────────────────────────────────────
 
   Widget _buildVenueHeader(VenueModel venue) {
@@ -340,7 +399,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               const SizedBox(height: 4),
               Text(
                 '${venue.openTime} - ${venue.closeTime}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 13,
                 ),
@@ -386,11 +445,50 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   // ── Address ──────────────────────────────────────────────────────────────
 
+  Future<void> _openInMaps(VenueModel venue) async {
+    final query = Uri.encodeComponent('${venue.name}, ${venue.address}');
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$query'
+      '&center=${venue.latitude},${venue.longitude}',
+    );
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open maps')),
+      );
+    }
+  }
+
+  Future<void> _callVenue(String phone) async {
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (!await launchUrl(uri)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open phone dialer')),
+      );
+    }
+  }
+
+  Future<void> _shareVenue(VenueModel venue) async {
+    final mapsUrl =
+        'https://www.google.com/maps/search/?api=1&query=${venue.latitude},${venue.longitude}';
+    final lines = <String>[
+      'Check out ${venue.name} on Play Arena!',
+      '',
+      '${venue.address}, ${venue.city}',
+      'Sports: ${venue.sportTypes.map((s) => s.name).join(', ')}',
+      'Rating: ${venue.rating.toStringAsFixed(1)} (${venue.totalReviews} reviews)',
+      'From ₹${venue.pricePerHour.toStringAsFixed(0)}/hr',
+      if (venue.contactPhone.isNotEmpty) 'Contact: ${venue.contactPhone}',
+      '',
+      'Map: $mapsUrl',
+    ];
+    await Share.share(lines.join('\n'), subject: venue.name);
+  }
+
   Widget _buildAddress(VenueModel venue) {
     return GestureDetector(
-      onTap: () {
-        // TODO: Open in maps
-      },
+      onTap: () => _openInMaps(venue),
       child: Row(
         children: [
           Container(
@@ -409,7 +507,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               children: [
                 Text(
                   venue.address,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -417,7 +515,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                 ),
                 Text(
                   venue.city,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                   ),
@@ -425,7 +523,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               ],
             ),
           ),
-          const Icon(Icons.open_in_new,
+          Icon(Icons.open_in_new,
               size: 16, color: AppColors.textSecondary),
         ],
       ),
@@ -543,7 +641,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     Expanded(
                       child: Text(
                         rule.trim(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
                         ),
@@ -606,9 +704,8 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   // ── Date Picker ──────────────────────────────────────────────────────────
 
-  Widget _buildDatePicker() {
+  Widget _buildDatePicker(List<DateTime> dates, DateTime selected) {
     final today = DateTime.now();
-    final dates = List.generate(14, (i) => today.add(Duration(days: i)));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,6 +715,37 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 14),
+        if (dates.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.divider),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.event_busy_outlined,
+                    color: AppColors.textDisabled, size: 32),
+                const SizedBox(height: 8),
+                Text(
+                  'No slots available yet.',
+                  style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Admin will add slots soon.',
+                  style: TextStyle(
+                      color: AppColors.textSecondary, fontSize: 12),
+                ),
+              ],
+            ),
+          )
+        else
         SizedBox(
           height: 80,
           child: ListView.separated(
@@ -626,7 +754,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             separatorBuilder: (_, __) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
               final date = dates[index];
-              final isSelected = _isSameDay(date, _selectedDate);
+              final isSelected = _isSameDay(date, selected);
               final isToday = _isSameDay(date, today);
 
               return GestureDetector(
@@ -720,9 +848,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   // ── Slot Section ─────────────────────────────────────────────────────────
 
-  Widget _buildSlotSection(List<SlotModel> slots) {
+  Widget _buildSlotSection(List<SlotModel> slots, DateTime selectedDate) {
     final todaySlots = slots
-        .where((s) => _isSameDay(s.date, _selectedDate))
+        .where((s) => _isSameDay(s.date, selectedDate))
         .toList()
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
@@ -762,24 +890,13 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '${AppStrings.reviews} (${reviews.length})',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            TextButton(
-              onPressed: () {
-                // TODO: Navigate to all reviews
-              },
-              child: const Text(AppStrings.seeAll),
-            ),
-          ],
+        Text(
+          '${AppStrings.reviews} (${reviews.length})',
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 8),
         if (reviews.isEmpty)
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Center(
               child: Text(
@@ -798,9 +915,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   Widget _buildContactButton(VenueModel venue) {
     return OutlinedButton.icon(
-      onPressed: () {
-        // TODO: Open phone dialer
-      },
+      onPressed: () => _callVenue(venue.contactPhone),
       icon: const Icon(Icons.phone_outlined),
       label: Text('Contact Venue (${venue.contactPhone})'),
       style: OutlinedButton.styleFrom(
@@ -810,44 +925,52 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     );
   }
 
-  // ── Book Now FAB ─────────────────────────────────────────────────────────
+  // ── Book Now bottom bar ──────────────────────────────────────────────────
 
-  Widget _buildBookNowButton(VenueModel venue) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _selectedSlotId != null
-            ? () => context.push('/booking/${venue.id}')
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.actionGreen,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: AppColors.divider,
-          disabledForegroundColor: AppColors.textDisabled,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 6,
-          shadowColor: AppColors.actionGreen.withValues(alpha: 0.4),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.flash_on, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              _selectedSlotId != null
-                  ? AppStrings.bookNow
-                  : 'Select a Slot to Book',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
+  Widget _buildBookNowBar(VenueModel venue) {
+    return Material(
+      color: AppColors.surface,
+      elevation: 8,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          child: SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: _selectedSlotId != null
+                  ? () => context.push('/booking/${venue.id}')
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.actionGreen,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: AppColors.divider,
+                disabledForegroundColor: AppColors.textDisabled,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                elevation: 0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.flash_on, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    _selectedSlotId != null
+                        ? AppStrings.bookNow
+                        : 'Select a Slot to Book',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -884,7 +1007,7 @@ class _AmenityIcon extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             data.label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 10,
               fontWeight: FontWeight.w500,
@@ -976,7 +1099,7 @@ class _PriceCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 10,
               fontWeight: FontWeight.w500,
@@ -1036,7 +1159,7 @@ class _ReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
@@ -1044,7 +1167,7 @@ class _ReviewCard extends StatelessWidget {
                     ),
                     Text(
                       Helpers.formatDateRelative(review.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textDisabled,
                         fontSize: 11,
                       ),
@@ -1072,7 +1195,7 @@ class _ReviewCard extends StatelessWidget {
           // Comment
           Text(
             review.comment,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 13,
               height: 1.5,
@@ -1084,12 +1207,12 @@ class _ReviewCard extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(Icons.thumb_up_alt_outlined,
+                Icon(Icons.thumb_up_alt_outlined,
                     size: 14, color: AppColors.textDisabled),
                 const SizedBox(width: 4),
                 Text(
                   '${review.helpfulCount} found helpful',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textDisabled,
                     fontSize: 11,
                   ),

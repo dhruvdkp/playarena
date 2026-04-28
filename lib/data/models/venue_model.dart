@@ -39,6 +39,8 @@ class VenueModel extends Equatable {
   final int availableSlots;
   final int totalSlots;
   final String rules;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const VenueModel({
     required this.id,
@@ -64,6 +66,8 @@ class VenueModel extends Equatable {
     required this.availableSlots,
     required this.totalSlots,
     this.rules = '',
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory VenueModel.fromJson(Map<String, dynamic> json) {
@@ -103,6 +107,12 @@ class VenueModel extends Equatable {
       availableSlots: json['availableSlots'] as int? ?? 0,
       totalSlots: json['totalSlots'] as int? ?? 0,
       rules: json['rules'] as String? ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -131,6 +141,8 @@ class VenueModel extends Equatable {
       'availableSlots': availableSlots,
       'totalSlots': totalSlots,
       'rules': rules,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -158,6 +170,8 @@ class VenueModel extends Equatable {
     int? availableSlots,
     int? totalSlots,
     String? rules,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return VenueModel(
       id: id ?? this.id,
@@ -183,6 +197,8 @@ class VenueModel extends Equatable {
       availableSlots: availableSlots ?? this.availableSlots,
       totalSlots: totalSlots ?? this.totalSlots,
       rules: rules ?? this.rules,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -211,5 +227,7 @@ class VenueModel extends Equatable {
         availableSlots,
         totalSlots,
         rules,
+        createdAt,
+        updatedAt,
       ];
 }

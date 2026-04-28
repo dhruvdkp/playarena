@@ -14,6 +14,7 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
   VenueModel? _currentVenue;
   List<SlotModel> _currentSlots = [];
   List<ReviewModel> _currentReviews = [];
+  List<DateTime> _currentAvailableDates = [];
 
   VenueBloc({required VenueRepository venueRepository})
       : _venueRepository = venueRepository,
@@ -77,20 +78,25 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
         emit(const VenueError(message: 'Venue not found'));
         return;
       }
+      final dates =
+          await _venueRepository.getAvailableSlotDates(event.venueId);
+      final initialDate = dates.isNotEmpty ? dates.first : DateTime.now();
       final slots = await _venueRepository.getVenueSlots(
         event.venueId,
-        DateTime.now(),
+        initialDate,
       );
       final reviews = await _venueRepository.getVenueReviews(event.venueId);
 
       _currentVenue = venue;
       _currentSlots = slots;
       _currentReviews = reviews;
+      _currentAvailableDates = dates;
 
       emit(VenueDetailLoaded(
         venue: venue,
         slots: slots,
         reviews: reviews,
+        availableDates: dates,
       ));
     } catch (e) {
       emit(VenueError(message: e.toString()));
@@ -101,7 +107,8 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
     VenueLoadSlots event,
     Emitter<VenueState> emit,
   ) async {
-    emit(const VenueLoading());
+    // Don't emit Loading — would blank the venue detail page and reset
+    // scroll. Just fetch + emit the new Loaded state.
     try {
       final slots = await _venueRepository.getVenueSlots(
         event.venueId,
@@ -114,6 +121,7 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
           venue: _currentVenue!,
           slots: _currentSlots,
           reviews: _currentReviews,
+          availableDates: _currentAvailableDates,
         ));
       }
     } catch (e) {
@@ -135,6 +143,7 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
           venue: _currentVenue!,
           slots: _currentSlots,
           reviews: _currentReviews,
+          availableDates: _currentAvailableDates,
         ));
       }
     } catch (e) {
@@ -156,6 +165,7 @@ class VenueBloc extends Bloc<VenueEvent, VenueState> {
           venue: _currentVenue!,
           slots: _currentSlots,
           reviews: _currentReviews,
+          availableDates: _currentAvailableDates,
         ));
       }
     } catch (e) {

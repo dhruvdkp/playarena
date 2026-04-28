@@ -64,7 +64,7 @@ class VenueCard extends StatelessWidget {
               : _buildPlaceholderImage(),
 
           // Gradient overlay
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
               gradient: AppColors.cardImageOverlay,
             ),
@@ -143,7 +143,7 @@ class VenueCard extends StatelessWidget {
           // Venue name
           Text(
             venue.name,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -157,7 +157,7 @@ class VenueCard extends StatelessWidget {
           // Address
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_outlined,
                 size: 14,
                 color: AppColors.textSecondary,
@@ -166,7 +166,7 @@ class VenueCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   venue.address,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                   ),
@@ -253,7 +253,7 @@ class VenueCard extends StatelessWidget {
   Widget _buildPlaceholderImage() {
     return Container(
       color: AppColors.surface,
-      child: const Center(
+      child: Center(
         child: Icon(
           Icons.stadium_outlined,
           size: 48,

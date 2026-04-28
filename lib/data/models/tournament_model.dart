@@ -144,6 +144,8 @@ class TournamentModel extends Equatable {
   final List<MatchModel> matches;
   final TournamentStatus status;
   final String rules;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const TournamentModel({
     required this.id,
@@ -161,6 +163,8 @@ class TournamentModel extends Equatable {
     required this.matches,
     required this.status,
     required this.rules,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
@@ -192,6 +196,12 @@ class TournamentModel extends Equatable {
         orElse: () => TournamentStatus.upcoming,
       ),
       rules: json['rules'] as String,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -212,6 +222,8 @@ class TournamentModel extends Equatable {
       'matches': matches.map((e) => e.toJson()).toList(),
       'status': status.name,
       'rules': rules,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -231,6 +243,8 @@ class TournamentModel extends Equatable {
     List<MatchModel>? matches,
     TournamentStatus? status,
     String? rules,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return TournamentModel(
       id: id ?? this.id,
@@ -248,6 +262,8 @@ class TournamentModel extends Equatable {
       matches: matches ?? this.matches,
       status: status ?? this.status,
       rules: rules ?? this.rules,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -268,5 +284,7 @@ class TournamentModel extends Equatable {
         matches,
         status,
         rules,
+        createdAt,
+        updatedAt,
       ];
 }

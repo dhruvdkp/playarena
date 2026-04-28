@@ -12,6 +12,8 @@ import 'package:gamebooking/core/constants/app_strings.dart';
 import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/core/utils/helpers.dart';
 import 'package:gamebooking/data/models/booking_model.dart';
+import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart'
+    show effectiveBookingStatus;
 import 'package:gamebooking/data/models/match_request_model.dart';
 import 'package:gamebooking/data/models/tournament_model.dart' hide MatchModel, MatchStatus;
 import 'package:gamebooking/data/models/venue_model.dart';
@@ -50,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadData() {
     context.read<VenueBloc>().add(const VenueLoadAll());
-    context.read<MatchmakerBloc>().add(const MatchmakerLoadMatches());
+    context.read<MatchmakerBloc>().add(const MatchmakerSubscribe());
     context.read<TournamentBloc>().add(const TournamentLoadAll());
 
     final authState = context.read<AuthBloc>().state;
@@ -89,19 +91,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
 
               // ── Upcoming Bookings ────────────────────────────────
-              _buildSectionHeader(AppStrings.upcomingBookings, onSeeAll: () {
-                // TODO: Navigate to bookings list
-              }),
+              _buildSectionHeader(AppStrings.upcomingBookings),
               const SizedBox(height: 12),
               _buildUpcomingBookings(),
               const SizedBox(height: 24),
 
-              // ── Popular Venues ───────────────────────────────────
-              _buildSectionHeader('Popular Venues', onSeeAll: () {
+              // ── My Favorite Venues ───────────────────────────────
+              _buildSectionHeader('My Favorites', onSeeAll: () {
                 context.go(AppRoutes.venues);
               }),
               const SizedBox(height: 12),
-              _buildPopularVenues(),
+              _buildFavoriteVenues(),
               const SizedBox(height: 24),
 
               // ── Open Games ───────────────────────────────────────
@@ -112,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildOpenGames(),
               const SizedBox(height: 24),
 
-              // ── Live Tournaments ─────────────────────────────────
-              _buildSectionHeader('Live Tournaments', onSeeAll: () {
+              // ── Tournaments (upcoming + ongoing) ─────────────────
+              _buildSectionHeader(AppStrings.tournaments, onSeeAll: () {
                 context.push(AppRoutes.tournaments);
               }),
               const SizedBox(height: 12),
@@ -140,15 +140,10 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           // SafeArea around the body already handles status-bar inset.
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF0A0F1E),
-                AppColors.primaryBackground,
-              ],
-            ),
+          decoration: BoxDecoration(
+            // Theme-aware: dark mode → stadium-night gradient;
+            // light mode → soft gray-to-white.
+            gradient: AppColors.stadiumGradient,
           ),
           child: Row(
             children: [
@@ -198,34 +193,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              // Notification bell
-              IconButton(
-                onPressed: () {
-                  // TODO: Navigate to notifications
-                },
-                icon: Stack(
-                  children: [
-                    const Icon(
-                      Icons.notifications_outlined,
-                      color: AppColors.textPrimary,
-                      size: 26,
-                    ),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppColors.actionGreen,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         );
@@ -262,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.divider),
           ),
-          child: const Row(
+          child: Row(
             children: [
               Icon(Icons.search, color: AppColors.textDisabled, size: 22),
               SizedBox(width: 12),
@@ -413,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
         List<BookingModel> upcomingBookings = [];
         if (state is BookingListLoaded) {
           upcomingBookings = state.bookings
-              .where((b) => b.bookingStatus == BookingStatus.upcoming)
+              .where((b) => effectiveBookingStatus(b) == BookingStatus.upcoming)
               .toList();
         }
 
@@ -442,42 +409,54 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Popular Venues ───────────────────────────────────────────────────────
+  // ── My Favorite Venues ───────────────────────────────────────────────────
 
-  Widget _buildPopularVenues() {
-    return BlocBuilder<VenueBloc, VenueState>(
-      builder: (context, state) {
-        if (state is VenueLoading) {
-          return const _ShimmerVenueCards();
-        }
+  Widget _buildFavoriteVenues() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final favIds = authState is AuthAuthenticated
+            ? authState.user.favoriteVenues.toSet()
+            : const <String>{};
 
-        if (state is VenueLoaded) {
-          final venues = state.venues;
-          if (venues.isEmpty) {
-            return _buildEmptyState(
-              icon: Icons.stadium_outlined,
-              message: AppStrings.noResults,
-            );
-          }
-
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: venues.length > 3 ? 3 : venues.length,
-            itemBuilder: (context, index) {
-              return VenueCard(
-                venue: venues[index],
-                onTap: () => context.push('/venues/${venues[index].id}'),
-              );
-            },
+        if (favIds.isEmpty) {
+          return _buildEmptyState(
+            icon: Icons.favorite_border,
+            message: 'No favorited venues yet.\n'
+                'Tap the heart icon on any venue to save it here.',
+            actionLabel: 'Browse Venues',
+            onAction: () => context.go(AppRoutes.venues),
           );
         }
 
-        if (state is VenueError) {
-          return _buildErrorState(state.message);
-        }
-
-        return const SizedBox.shrink();
+        return BlocBuilder<VenueBloc, VenueState>(
+          builder: (context, state) {
+            if (state is VenueLoading) return const _ShimmerVenueCards();
+            if (state is VenueError) return _buildErrorState(state.message);
+            if (state is VenueLoaded) {
+              final favs = state.venues
+                  .where((v) => favIds.contains(v.id))
+                  .toList();
+              if (favs.isEmpty) {
+                return _buildEmptyState(
+                  icon: Icons.favorite_border,
+                  message: 'Your favorited venues are not in the catalog yet.',
+                );
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: favs.length > 3 ? 3 : favs.length,
+                itemBuilder: (context, index) {
+                  return VenueCard(
+                    venue: favs[index],
+                    onTap: () => context.push('/venues/${favs[index].id}'),
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        );
       },
     );
   }
@@ -593,7 +572,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Text(
             message,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
             ),
@@ -687,7 +666,7 @@ class _UpcomingBookingCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   booking.venueName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -703,12 +682,12 @@ class _UpcomingBookingCard extends StatelessWidget {
           // Date
           Row(
             children: [
-              const Icon(Icons.calendar_today_outlined,
+              Icon(Icons.calendar_today_outlined,
                   size: 14, color: AppColors.textSecondary),
               const SizedBox(width: 6),
               Text(
                 Helpers.formatDateRelative(booking.slot.date),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12,
                 ),
@@ -720,12 +699,12 @@ class _UpcomingBookingCard extends StatelessWidget {
           // Time
           Row(
             children: [
-              const Icon(Icons.access_time,
+              Icon(Icons.access_time,
                   size: 14, color: AppColors.textSecondary),
               const SizedBox(width: 6),
               Text(
                 '${booking.slot.startTime} - ${booking.slot.endTime}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12,
                 ),
@@ -795,7 +774,10 @@ class _OpenGameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final spotsLeft = match.playersNeeded - match.playersJoined.length;
 
-    return Container(
+    return InkWell(
+      onTap: () => context.push('/matchmaker/match/${match.id}'),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
       width: 240,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -864,7 +846,7 @@ class _OpenGameCard extends StatelessWidget {
           // Venue
           Text(
             match.venueName,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w700,
               fontSize: 14,
@@ -877,7 +859,7 @@ class _OpenGameCard extends StatelessWidget {
           // Host
           Text(
             'Hosted by ${match.hostName}',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
             ),
@@ -887,21 +869,21 @@ class _OpenGameCard extends StatelessWidget {
           // Date + time
           Row(
             children: [
-              const Icon(Icons.calendar_today_outlined,
+              Icon(Icons.calendar_today_outlined,
                   size: 13, color: AppColors.textSecondary),
               const SizedBox(width: 4),
               Text(
                 Helpers.formatDateRelative(match.date),
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textSecondary, fontSize: 11),
               ),
               const SizedBox(width: 10),
-              const Icon(Icons.access_time,
+              Icon(Icons.access_time,
                   size: 13, color: AppColors.textSecondary),
               const SizedBox(width: 4),
               Text(
                 match.time,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textSecondary, fontSize: 11),
               ),
             ],
@@ -920,25 +902,53 @@ class _OpenGameCard extends StatelessWidget {
                   fontSize: 13,
                 ),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.actionGreen,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'Join',
-                  style: TextStyle(
-                    color: AppColors.primaryBackground,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                  ),
-                ),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, authState) {
+                  final user = authState is AuthAuthenticated
+                      ? authState.user
+                      : null;
+                  final isHost =
+                      user != null && user.id == match.hostUserId;
+                  final hasJoined = user != null &&
+                      match.playersJoined.contains(user.id);
+                  final isFull = spotsLeft <= 0;
+                  late final String label;
+                  late final Color bg;
+                  if (isHost) {
+                    label = 'Hosting';
+                    bg = AppColors.accentYellow;
+                  } else if (hasJoined) {
+                    label = 'Joined';
+                    bg = AppColors.footballAccent;
+                  } else if (isFull) {
+                    label = 'Full';
+                    bg = AppColors.error;
+                  } else {
+                    label = 'Open';
+                    bg = AppColors.actionGreen;
+                  }
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: bg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: AppColors.primaryBackground,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
         ],
+      ),
       ),
     );
   }
@@ -1002,7 +1012,7 @@ class _TournamentCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   tournament.sportType.name.toUpperCase(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -1015,7 +1025,7 @@ class _TournamentCard extends StatelessWidget {
             // Tournament name
             Text(
               tournament.name,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
@@ -1028,7 +1038,7 @@ class _TournamentCard extends StatelessWidget {
             // Venue
             Text(
               tournament.venueName,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
               ),
@@ -1058,7 +1068,7 @@ class _TournamentCard extends StatelessWidget {
                 ),
                 Text(
                   '${tournament.registeredTeams.length}/${tournament.maxTeams} teams',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 11,
                   ),
@@ -1154,7 +1164,7 @@ class _ShimmerBoxState extends State<_ShimmerBox>
             gradient: LinearGradient(
               begin: Alignment(-1.0 + 2.0 * _controller.value, 0),
               end: Alignment(1.0 + 2.0 * _controller.value, 0),
-              colors: const [
+              colors: [
                 AppColors.surface,
                 AppColors.card,
                 AppColors.surface,

@@ -12,6 +12,14 @@ class MatchmakerRepository {
     return data.map((json) => MatchRequestModel.fromJson(json)).toList();
   }
 
+  /// Live stream of open matches. Consumed by MatchmakerBloc in Phase C.
+  Stream<List<MatchRequestModel>> openMatchesLiveStream() {
+    return _firestoreService.openMatchesStream().map(
+          (list) =>
+              list.map((json) => MatchRequestModel.fromJson(json)).toList(),
+        );
+  }
+
   Future<MatchRequestModel> createMatchRequest(
     MatchRequestModel matchRequest,
   ) async {
@@ -22,27 +30,17 @@ class MatchmakerRepository {
   }
 
   Future<MatchRequestModel> joinMatch(String matchId, String userId) async {
-    final currentData = await _firestoreService.getMatchRequestById(matchId);
-    if (currentData == null) throw Exception('Match request not found');
-
-    final current = MatchRequestModel.fromJson(currentData);
-
-    if (current.status != MatchRequestStatus.open) {
-      throw Exception('This match is no longer open for joining');
-    }
-    if (current.playersJoined.contains(userId)) {
-      throw Exception('You have already joined this match');
-    }
-
-    await _firestoreService.joinMatch(matchId, userId);
-
-    final updatedPlayers = [...current.playersJoined, userId];
-    if (updatedPlayers.length >= current.playersNeeded) {
-      await _firestoreService.updateMatchRequestStatus(matchId, 'full');
-    }
-
+    await _firestoreService.joinMatchTransaction(matchId, userId);
     final updatedData = await _firestoreService.getMatchRequestById(matchId);
-    return MatchRequestModel.fromJson(updatedData!);
+    if (updatedData == null) throw Exception('Match request not found');
+    return MatchRequestModel.fromJson(updatedData);
+  }
+
+  Future<MatchRequestModel> leaveMatch(String matchId, String userId) async {
+    await _firestoreService.leaveMatchTransaction(matchId, userId);
+    final updatedData = await _firestoreService.getMatchRequestById(matchId);
+    if (updatedData == null) throw Exception('Match request not found');
+    return MatchRequestModel.fromJson(updatedData);
   }
 
   Future<MatchRequestModel?> getMatchById(String id) async {

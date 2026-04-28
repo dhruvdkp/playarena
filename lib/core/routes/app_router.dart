@@ -13,9 +13,12 @@ import 'package:gamebooking/presentation/screens/booking/payment_success_screen.
 import 'package:gamebooking/presentation/screens/booking/my_bookings_screen.dart';
 import 'package:gamebooking/presentation/screens/settings/settings_screen.dart';
 import 'package:gamebooking/presentation/screens/matchmaker/matchmaker_screen.dart';
+import 'package:gamebooking/presentation/screens/matchmaker/match_detail_screen.dart';
 import 'package:gamebooking/presentation/screens/tournament/tournament_list_screen.dart';
 import 'package:gamebooking/presentation/screens/tournament/tournament_detail_screen.dart';
 import 'package:gamebooking/presentation/screens/profile/profile_screen.dart';
+import 'package:gamebooking/presentation/screens/teams/my_teams_screen.dart';
+import 'package:gamebooking/presentation/screens/teams/team_detail_screen.dart';
 import 'package:gamebooking/presentation/screens/live_score/live_score_screen.dart';
 import 'package:gamebooking/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:gamebooking/presentation/screens/shell/main_shell_screen.dart';
@@ -45,9 +48,12 @@ abstract class AppRoutes {
   static const String myBookings = '/my-bookings';
   static const String settings = '/settings';
   static const String matchmaker = '/matchmaker';
+  static const String matchDetail = '/matchmaker/match/:id';
   static const String tournaments = '/tournaments';
   static const String tournamentDetail = '/tournaments/:id';
   static const String profile = '/profile';
+  static const String myTeams = '/profile/teams';
+  static const String teamDetail = '/profile/teams/:id';
   static const String liveScores = '/live-scores';
 
   // Admin routes
@@ -147,6 +153,7 @@ class AppRouter {
                 builder: (context, state) => const VenueListScreen(),
                 routes: <RouteBase>[
                   GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
                     path: ':id',
                     name: 'venueDetail',
                     builder: (context, state) {
@@ -165,6 +172,17 @@ class AppRouter {
                 path: AppRoutes.matchmaker,
                 name: 'matchmaker',
                 builder: (context, state) => const MatchmakerScreen(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: 'match/:id',
+                    name: 'matchDetail',
+                    builder: (context, state) {
+                      final id = state.pathParameters['id']!;
+                      return MatchDetailScreen(matchId: id);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -175,6 +193,25 @@ class AppRouter {
                 path: AppRoutes.profile,
                 name: 'profile',
                 builder: (context, state) => const ProfileScreen(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: 'teams',
+                    name: 'myTeams',
+                    builder: (context, state) => const MyTeamsScreen(),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
+                        path: ':id',
+                        name: 'teamDetail',
+                        builder: (context, state) {
+                          final id = state.pathParameters['id']!;
+                          return TeamDetailScreen(teamId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

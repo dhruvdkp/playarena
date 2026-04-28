@@ -34,7 +34,7 @@ class BookingSummaryCard extends StatelessWidget {
         children: [
           // ── Header with status badge ──
           _buildHeader(),
-          const Divider(color: AppColors.divider, height: 1),
+          Divider(color: AppColors.divider, height: 1),
 
           Padding(
             padding: const EdgeInsets.all(16),
@@ -72,9 +72,9 @@ class BookingSummaryCard extends StatelessWidget {
                 // ── Add-ons ──
                 if (booking.addOns.isNotEmpty) ...[
                   const SizedBox(height: 14),
-                  const Divider(color: AppColors.divider, height: 1),
+                  Divider(color: AppColors.divider, height: 1),
                   const SizedBox(height: 14),
-                  const Text(
+                  Text(
                     'Add-ons',
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -91,14 +91,14 @@ class BookingSummaryCard extends StatelessWidget {
                           children: [
                             Text(
                               '${addOn.name} x${addOn.quantity}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.textPrimary,
                                 fontSize: 13,
                               ),
                             ),
                             Text(
                               '\u20B9${(addOn.price * addOn.quantity).toInt()}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.textSecondary,
                                 fontSize: 13,
                               ),
@@ -111,9 +111,9 @@ class BookingSummaryCard extends StatelessWidget {
                 // ── Split payment ──
                 if (booking.splitPayment.isNotEmpty) ...[
                   const SizedBox(height: 14),
-                  const Divider(color: AppColors.divider, height: 1),
+                  Divider(color: AppColors.divider, height: 1),
                   const SizedBox(height: 14),
-                  const Text(
+                  Text(
                     'Split Payment',
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -140,7 +140,7 @@ class BookingSummaryCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 split.userName,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.textPrimary,
                                   fontSize: 13,
                                 ),
@@ -163,12 +163,12 @@ class BookingSummaryCard extends StatelessWidget {
 
                 // ── Total ──
                 const SizedBox(height: 14),
-                const Divider(color: AppColors.divider, height: 1),
+                Divider(color: AppColors.divider, height: 1),
                 const SizedBox(height: 14),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Total Amount',
                       style: TextStyle(
                         color: AppColors.textPrimary,
@@ -198,7 +198,7 @@ class BookingSummaryCard extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.qr_code_2,
                           size: 80,
@@ -208,7 +208,7 @@ class BookingSummaryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Center(
+                  Center(
                     child: Text(
                       'Show this QR at venue',
                       style: TextStyle(
@@ -236,7 +236,7 @@ class BookingSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Booking Summary',
                   style: TextStyle(
                     color: AppColors.textPrimary,
@@ -247,7 +247,7 @@ class BookingSummaryCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'ID: ${booking.id.length > 8 ? booking.id.substring(0, 8).toUpperCase() : booking.id.toUpperCase()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textDisabled,
                     fontSize: 11,
                     fontFamily: 'monospace',
@@ -270,7 +270,7 @@ class BookingSummaryCard extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 13,
             ),

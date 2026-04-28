@@ -20,6 +20,8 @@ class MatchRequestModel extends Equatable {
   final SkillLevel skillLevel;
   final String description;
   final MatchRequestStatus status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const MatchRequestModel({
     required this.id,
@@ -35,6 +37,8 @@ class MatchRequestModel extends Equatable {
     required this.skillLevel,
     required this.description,
     required this.status,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory MatchRequestModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +65,12 @@ class MatchRequestModel extends Equatable {
         (e) => e.name == json['status'],
         orElse: () => MatchRequestStatus.open,
       ),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -79,6 +89,8 @@ class MatchRequestModel extends Equatable {
       'skillLevel': skillLevel.name,
       'description': description,
       'status': status.name,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -96,6 +108,8 @@ class MatchRequestModel extends Equatable {
     SkillLevel? skillLevel,
     String? description,
     MatchRequestStatus? status,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return MatchRequestModel(
       id: id ?? this.id,
@@ -111,6 +125,8 @@ class MatchRequestModel extends Equatable {
       skillLevel: skillLevel ?? this.skillLevel,
       description: description ?? this.description,
       status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -129,5 +145,7 @@ class MatchRequestModel extends Equatable {
         skillLevel,
         description,
         status,
+        createdAt,
+        updatedAt,
       ];
 }

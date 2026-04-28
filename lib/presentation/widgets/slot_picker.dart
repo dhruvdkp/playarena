@@ -25,7 +25,7 @@ class SlotPicker extends StatelessWidget {
       return Container(
         height: 100,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           'No slots available for this date',
           style: TextStyle(
             color: AppColors.textSecondary,

@@ -120,6 +120,8 @@ class BookingModel extends Equatable {
   final String? qrCode;
   final List<SplitPaymentModel> splitPayment;
   final DateTime createdAt;
+  final DateTime? updatedAt;
+  final DateTime? cancelledAt;
 
   const BookingModel({
     required this.id,
@@ -136,6 +138,8 @@ class BookingModel extends Equatable {
     this.qrCode,
     required this.splitPayment,
     required this.createdAt,
+    this.updatedAt,
+    this.cancelledAt,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -170,6 +174,12 @@ class BookingModel extends Equatable {
               .toList() ??
           [],
       createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
+      cancelledAt: json['cancelledAt'] != null
+          ? DateTime.parse(json['cancelledAt'] as String)
+          : null,
     );
   }
 
@@ -189,6 +199,8 @@ class BookingModel extends Equatable {
       'qrCode': qrCode,
       'splitPayment': splitPayment.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'cancelledAt': cancelledAt?.toIso8601String(),
     };
   }
 
@@ -207,6 +219,8 @@ class BookingModel extends Equatable {
     String? qrCode,
     List<SplitPaymentModel>? splitPayment,
     DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? cancelledAt,
   }) {
     return BookingModel(
       id: id ?? this.id,
@@ -223,6 +237,8 @@ class BookingModel extends Equatable {
       qrCode: qrCode ?? this.qrCode,
       splitPayment: splitPayment ?? this.splitPayment,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      cancelledAt: cancelledAt ?? this.cancelledAt,
     );
   }
 
@@ -242,5 +258,7 @@ class BookingModel extends Equatable {
         qrCode,
         splitPayment,
         createdAt,
+        updatedAt,
+        cancelledAt,
       ];
 }

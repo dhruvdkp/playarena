@@ -9,6 +9,7 @@ import 'package:gamebooking/core/routes/app_router.dart';
 import 'package:gamebooking/data/models/add_on_model.dart';
 import 'package:gamebooking/data/models/booking_model.dart';
 import 'package:gamebooking/data/models/venue_model.dart';
+import 'package:gamebooking/data/services/firestore_service.dart';
 import 'package:intl/intl.dart';
 
 class BookingScreen extends StatefulWidget {
@@ -21,16 +22,38 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  final List<AddOnModel> _availableAddOns = const [
-    AddOnModel(id: 'addon_bat', name: 'Bat Rental', price: 100, description: 'Premium cricket bat'),
-    AddOnModel(id: 'addon_ball', name: 'Ball', price: 50, description: 'Match-quality ball'),
-    AddOnModel(id: 'addon_shoes', name: 'Shoes', price: 150, description: 'Sports shoes rental'),
-    AddOnModel(id: 'addon_refreshments', name: 'Refreshments', price: 200, description: 'Water & energy drinks'),
-  ];
+  final FirestoreService _firestore = FirestoreService();
+  List<AddOnModel> _availableAddOns = [];
+  bool _isLoadingAddOns = true;
+  String? _addOnsError;
 
   final Set<String> _selectedAddOnIds = {};
   final List<_SplitFriend> _splitFriends = [];
   final TextEditingController _friendNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAddOns();
+  }
+
+  Future<void> _loadAddOns() async {
+    try {
+      final docs = await _firestore.getAddOns();
+      if (!mounted) return;
+      setState(() {
+        _availableAddOns =
+            docs.map((m) => AddOnModel.fromJson(m)).toList();
+        _isLoadingAddOns = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _addOnsError = e.toString();
+        _isLoadingAddOns = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -49,14 +72,14 @@ class _BookingScreenState extends State<BookingScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Complete Booking',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
       body: BlocConsumer<BookingBloc, BookingState>(
         listener: (context, state) {
@@ -156,7 +179,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   children: [
                     Text(
                       venueName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -165,7 +188,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     const SizedBox(height: 4),
                     Text(
                       sportLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 14,
                       ),
@@ -193,7 +216,7 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(Icons.access_time, color: AppColors.actionGreen, size: 20),
               SizedBox(width: 8),
@@ -259,7 +282,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ],
           ] else
-            const Text(
+            Text(
               'No slot selected. Please go back and select a time slot.',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
@@ -276,11 +299,11 @@ class _BookingScreenState extends State<BookingScreen> {
         Text(
           '$label: ',
           style:
-              const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              TextStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -294,7 +317,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
             Icon(Icons.add_shopping_cart,
                 color: AppColors.accentYellow, size: 22),
@@ -310,6 +333,31 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
         ),
         const SizedBox(height: 12),
+        if (_isLoadingAddOns)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.actionGreen,
+                strokeWidth: 2,
+              ),
+            ),
+          )
+        else if (_addOnsError != null)
+          _buildAddOnsMessage(
+            icon: Icons.error_outline,
+            color: AppColors.error,
+            title: 'Could not load add-ons',
+            subtitle: _addOnsError!,
+          )
+        else if (_availableAddOns.isEmpty)
+          _buildAddOnsMessage(
+            icon: Icons.inventory_2_outlined,
+            color: AppColors.textSecondary,
+            title: 'No add-ons available',
+            subtitle: 'This venue has no rentable add-ons configured.',
+          )
+        else
         ..._availableAddOns.map((addOn) {
           final isSelected = _selectedAddOnIds.contains(addOn.id);
           return Padding(
@@ -382,7 +430,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           if (addOn.description != null)
                             Text(
                               addOn.description!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.textDisabled,
                                 fontSize: 12,
                               ),
@@ -432,6 +480,43 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
+  Widget _buildAddOnsMessage({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSplitPaymentSection(double perPersonAmount) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +524,7 @@ class _BookingScreenState extends State<BookingScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.group, color: AppColors.footballAccent, size: 22),
                 SizedBox(width: 8),
@@ -496,7 +581,7 @@ class _BookingScreenState extends State<BookingScreen> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.divider),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(Icons.people_outline,
                     color: AppColors.textDisabled, size: 40),
@@ -520,13 +605,13 @@ class _BookingScreenState extends State<BookingScreen> {
             child: Column(
               children: [
                 _splitPersonTile('You', perPersonAmount, isYou: true),
-                const Divider(color: AppColors.divider, height: 1),
+                Divider(color: AppColors.divider, height: 1),
                 ..._splitFriends.map((friend) {
                   return Column(
                     children: [
                       _splitPersonTile(friend.name, perPersonAmount),
                       if (friend != _splitFriends.last)
-                        const Divider(
+                        Divider(
                             color: AppColors.divider, height: 1),
                     ],
                   );
@@ -574,7 +659,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           Text(
             '\u20B9${amount.toStringAsFixed(0)}',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -605,25 +690,25 @@ class _BookingScreenState extends State<BookingScreen> {
         backgroundColor: AppColors.surface,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Add Friend',
           style: TextStyle(color: AppColors.textPrimary),
         ),
         content: TextField(
           controller: _friendNameController,
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: 'Enter friend\'s name',
-            hintStyle: const TextStyle(color: AppColors.textDisabled),
+            hintStyle: TextStyle(color: AppColors.textDisabled),
             filled: true,
             fillColor: AppColors.card,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.divider),
+              borderSide: BorderSide(color: AppColors.divider),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.divider),
+              borderSide: BorderSide(color: AppColors.divider),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -634,7 +719,7 @@ class _BookingScreenState extends State<BookingScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(color: AppColors.textSecondary),
             ),
@@ -675,7 +760,7 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Price Breakdown',
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -693,14 +778,14 @@ class _BookingScreenState extends State<BookingScreen> {
             const SizedBox(height: 8),
             _priceRow('Discount', -discount, isDiscount: true),
           ],
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(color: AppColors.divider, height: 1),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Total',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -729,7 +814,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
               color: AppColors.textSecondary, fontSize: 14),
         ),
         Text(

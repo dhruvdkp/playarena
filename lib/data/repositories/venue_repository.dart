@@ -41,6 +41,28 @@ class VenueRepository {
     return data.map((json) => SlotModel.fromJson(json)).toList();
   }
 
+  /// Returns the unique sorted dates (date-only) for which the venue has any
+  /// admin-created slot. Used by the date picker so users only see days the
+  /// venue actually offers.
+  Future<List<DateTime>> getAvailableSlotDates(String venueId) async {
+    final data = await _firestoreService.getAllSlots(venueId);
+    final set = <DateTime>{};
+    for (final j in data) {
+      final raw = j['date'];
+      DateTime? d;
+      if (raw is String) d = DateTime.tryParse(raw);
+      if (d == null) continue;
+      // Only future + today
+      final dayOnly = DateTime(d.year, d.month, d.day);
+      final today = DateTime.now();
+      final todayOnly = DateTime(today.year, today.month, today.day);
+      if (dayOnly.isBefore(todayOnly)) continue;
+      set.add(dayOnly);
+    }
+    final list = set.toList()..sort();
+    return list;
+  }
+
   Future<List<ReviewModel>> getVenueReviews(String venueId) async {
     final data = await _firestoreService.getVenueReviews(venueId);
     return data.map((json) => ReviewModel.fromJson(json)).toList();

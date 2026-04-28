@@ -9,6 +9,50 @@ import 'package:gamebooking/data/models/venue_model.dart';
 import 'package:gamebooking/data/services/firestore_service.dart';
 import 'package:intl/intl.dart';
 
+/// Returns the booking's effective status, treating any non-cancelled
+/// `upcoming` / `ongoing` doc whose slot end has passed as `completed`.
+/// Firestore docs are not auto-flipped server-side, so we derive at render.
+BookingStatus effectiveBookingStatus(BookingModel b) {
+  if (b.bookingStatus == BookingStatus.cancelled) {
+    return BookingStatus.cancelled;
+  }
+  if (b.bookingStatus == BookingStatus.completed) {
+    return BookingStatus.completed;
+  }
+  final end = _slotEndDateTime(b);
+  final now = DateTime.now();
+  if (end != null && now.isAfter(end)) return BookingStatus.completed;
+  final start = _slotStartDateTime(b);
+  if (start != null && now.isAfter(start)) return BookingStatus.ongoing;
+  return BookingStatus.upcoming;
+}
+
+DateTime? _slotStartDateTime(BookingModel b) {
+  final parts = b.slot.startTime.split(':');
+  if (parts.length < 2) return null;
+  final h = int.tryParse(parts[0]);
+  final m = int.tryParse(parts[1]);
+  if (h == null || m == null) return null;
+  final d = b.slot.date;
+  return DateTime(d.year, d.month, d.day, h, m);
+}
+
+DateTime? _slotEndDateTime(BookingModel b) {
+  final parts = b.slot.endTime.split(':');
+  if (parts.length >= 2) {
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h != null && m != null) {
+      final d = b.slot.date;
+      return DateTime(d.year, d.month, d.day, h, m);
+    }
+  }
+  // Fallback: start + duration minutes.
+  final start = _slotStartDateTime(b);
+  if (start == null) return null;
+  return start.add(Duration(minutes: b.slot.duration));
+}
+
 /// Live "My Bookings" screen — every value comes from a Firestore snapshot
 /// stream so cancellations, new bookings, and status changes appear in real
 /// time without any pull-to-refresh.
@@ -45,14 +89,14 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
         backgroundColor: AppColors.primaryBackground,
         appBar: AppBar(
           backgroundColor: AppColors.surface,
-          title: const Text(
+          title: Text(
             'My Bookings',
             style: TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          iconTheme: const IconThemeData(color: AppColors.textPrimary),
+          iconTheme: IconThemeData(color: AppColors.textPrimary),
         ),
         body: _buildSignedOutState(context),
       );
@@ -65,7 +109,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'My Bookings',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -73,7 +117,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: _firestoreService.userBookingsStream(userId),
@@ -129,10 +173,10 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.lock_outline,
+          Icon(Icons.lock_outline,
               color: AppColors.textDisabled, size: 64),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Please sign in to view your bookings',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
           ),
@@ -160,7 +204,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
             const Icon(Icons.error_outline,
                 color: AppColors.error, size: 56),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Could not load bookings',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -172,7 +216,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
               ),
@@ -240,7 +284,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -248,7 +292,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
         ),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 11,
           ),
@@ -261,7 +305,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
 
   Widget _buildTabBar(List<BookingModel> bookings) {
     int countOf(BookingStatus s) =>
-        bookings.where((b) => b.bookingStatus == s).length;
+        bookings.where((b) => effectiveBookingStatus(b) == s).length;
 
     return Container(
       color: AppColors.primaryBackground,
@@ -293,7 +337,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
   ) {
     final filtered = filter == null
         ? all
-        : all.where((b) => b.bookingStatus == filter).toList();
+        : all.where((b) => effectiveBookingStatus(b) == filter).toList();
 
     if (filtered.isEmpty) {
       return _buildEmptyState(filter);
@@ -307,7 +351,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
         final booking = filtered[index];
         return _BookingCard(
           booking: booking,
-          onCancel: booking.bookingStatus == BookingStatus.upcoming
+          onCancel: effectiveBookingStatus(booking) == BookingStatus.upcoming
               ? () => _confirmCancel(booking)
               : null,
         );
@@ -328,7 +372,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.event_busy_outlined,
             color: AppColors.textDisabled,
             size: 56,
@@ -336,7 +380,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
           const SizedBox(height: 14),
           Text(
             message,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 15,
             ),
@@ -370,19 +414,19 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Cancel booking?',
           style: TextStyle(color: AppColors.textPrimary),
         ),
         content: Text(
           'Cancel your booking at ${booking.venueName}? '
           'The slot will be released and made available to others.',
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
+            child: Text(
               'Keep',
               style: TextStyle(color: AppColors.textSecondary),
             ),
@@ -437,8 +481,10 @@ class _BookingCard extends StatelessWidget {
 
   const _BookingCard({required this.booking, this.onCancel});
 
+  BookingStatus get _effectiveStatus => effectiveBookingStatus(booking);
+
   Color get _statusColor {
-    switch (booking.bookingStatus) {
+    switch (_effectiveStatus) {
       case BookingStatus.upcoming:
         return AppColors.actionGreen;
       case BookingStatus.ongoing:
@@ -507,7 +553,7 @@ class _BookingCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     booking.venueName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -523,7 +569,7 @@ class _BookingCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    booking.bookingStatus.name.toUpperCase(),
+                    _effectiveStatus.name.toUpperCase(),
                     style: TextStyle(
                       color: _statusColor,
                       fontSize: 10,
@@ -566,7 +612,7 @@ class _BookingCard extends StatelessWidget {
                     '${booking.splitPayment.length} friend${booking.splitPayment.length > 1 ? 's' : ''}',
                   ),
                 ],
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Divider(color: AppColors.divider, height: 1),
                 ),
@@ -576,7 +622,7 @@ class _BookingCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Total',
                             style: TextStyle(
                               color: AppColors.textSecondary,
@@ -616,7 +662,7 @@ class _BookingCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Booking ID · ${booking.id}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textDisabled,
                     fontSize: 11,
                   ),
@@ -657,7 +703,7 @@ class _BookingCard extends StatelessWidget {
           width: 80,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 13,
             ),
@@ -666,7 +712,7 @@ class _BookingCard extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,

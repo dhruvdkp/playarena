@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -141,14 +141,14 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Reset Password',
           style: TextStyle(color: AppColors.textPrimary),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Enter your email address and we\'ll send you a link to reset your password.',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(color: AppColors.textSecondary),
             ),
@@ -389,7 +389,7 @@ class _LoginScreenState extends State<LoginScreen> {
             label: const Text(AppStrings.google),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.textPrimary,
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: AppColors.divider),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -409,7 +409,7 @@ class _LoginScreenState extends State<LoginScreen> {
             label: const Text('Apple'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.textPrimary,
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: AppColors.divider),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
